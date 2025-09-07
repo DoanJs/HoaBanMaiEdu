@@ -23,7 +23,12 @@ export default function ModalEditComponent() {
             ></button>
           </div>
           <div className="modal-body">
-            Khi muốn đồ ăn/đồ vật yêu thích con có thể mô tả dựa vào những đặc
+            <div className="form-floating">
+              <textarea
+              style={{height:'100%'}}
+                className="form-control"
+                rows={20}
+                value={`Khi muốn đồ ăn/đồ vật yêu thích con có thể mô tả dựa vào những đặc
             điểm như: Kích thước, hình dạng, màu sắc, mùi vị… và nói lên cảm
             nhận của mình. Ví dụ: Con thích ăn kẹo có màu nâu, có vị ngọt, mùi
             café ăn rất là ngon/ Con thích ăn cơm với cá chấm nước mắm/ Con
@@ -40,7 +45,10 @@ export default function ModalEditComponent() {
             cô Lài ăn thịt… Tuy nhiên, cần cô hỗ trợ mớm từ kết nối hoặc gợi ý
             bằng câu hỏi thì con mới có thể diễn đạt trọn vẹn chuỗi các sự việc.
             Con thực hiện được 3/5 cơ hội, tần suất đạt 60% mục tiêu yêu cầu
-            nhưng chưa có tính liên tục và duy trì.
+            nhưng chưa có tính liên tục và duy trì.`}
+                onChange={() => console.log('change')}
+              ></textarea>
+            </div>
           </div>
           <div className="modal-footer">
             <button

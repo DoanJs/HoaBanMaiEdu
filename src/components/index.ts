@@ -1,3 +1,4 @@
+import CartItemComponent from "./CartItemComponent";
 import Children from "./Children";
 import FieldItemComponent from "./FieldItemComponent";
 import HomeItemComponent from "./HomeItemComponent";
@@ -13,9 +14,12 @@ import TargetComponent from "./TargetComponent";
 import TextComponent from "./TextComponent";
 
 export {
+  CartItemComponent,
   Children,
   FieldItemComponent,
   HomeItemComponent,
+  ModalDeleteComponent,
+  ModalEditComponent,
   Navbar,
   ProcessBar,
   ReportItemComponent,
@@ -23,5 +27,5 @@ export {
   SectionComponent,
   SpaceComponent,
   TargetComponent,
-  TextComponent,ModalDeleteComponent, ModalEditComponent
+  TextComponent,
 };

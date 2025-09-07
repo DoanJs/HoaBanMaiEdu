@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { colors } from "../constants/colors";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
 import RowComponent from "./RowComponent";
 import SpaceComponent from "./SpaceComponent";
 import TextComponent from "./TextComponent";
-import { colors } from "../constants/colors";
 
 export default function TargetComponent() {
   const location = useLocation();
@@ -18,10 +18,22 @@ export default function TargetComponent() {
   const handleRemoveSelect = () => {};
   return (
     <div style={{ width: "100%" }}>
-      <RowComponent>
-        {showUIIconTarget(icon)}
-        <SpaceComponent width={8} />
-        <TextComponent text={title.toUpperCase()} size={32} />
+      <RowComponent justify="space-between">
+        <RowComponent>
+          {showUIIconTarget(icon)}
+          <SpaceComponent width={8} />
+          <TextComponent text={title.toUpperCase()} size={32} />
+        </RowComponent>
+        <div style={{width:'30%'}}>
+          <form className="d-flex">
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Tìm mục tiêu"
+              aria-label="Search"
+            />
+          </form>
+        </div>
       </RowComponent>
 
       <div
@@ -42,7 +54,7 @@ export default function TargetComponent() {
           </thead>
           <tbody>
             {Array.from({ length: 20 }).map((_, index) => (
-              <tr key={index} style={{color: colors.textBold}}>
+              <tr key={index} style={{ color: colors.textBold }}>
                 <td style={{ textAlign: "center" }}>{index + 1}</td>
                 <td>
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -66,7 +78,6 @@ export default function TargetComponent() {
                       type="checkbox"
                       value=""
                       id="flexCheckChecked"
-                      // checked
                     />
                   </div>
                 </td>

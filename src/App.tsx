@@ -6,6 +6,7 @@ import {
   TargetComponent,
 } from "./components";
 import {
+  AddReportScreen,
   BankScreen,
   CartScreen,
   MediaScreen,
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="plan" element={<PlanScreen />} />
           <Route path="report" element={<ReportScreen />} />
           <Route path="reportItem" element={<ReportItemComponent />} />
+          <Route path="addReport" element={<AddReportScreen />} />
           <Route path="media" element={<MediaScreen />} />
           <Route path="setting" element={<SettingScreen />} />
           <Route path="cart" element={<CartScreen />} />

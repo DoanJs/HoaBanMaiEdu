@@ -86,7 +86,7 @@ export default function Navbar() {
             flex: 1,
             alignItems: "flex-start",
             borderRadius: 10,
-            height: "85%",
+            height: "90%",
           }}
         >
           <SectionComponent

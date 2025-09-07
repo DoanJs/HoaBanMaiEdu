@@ -1,7 +1,7 @@
 import { AddCircle } from "iconsax-react";
+import { Link } from "react-router-dom";
 import { RowComponent, SpaceComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
-import { Link } from "react-router-dom";
 import { sizes } from "../../constants/sizes";
 import useEnableHomeItemStore from "../../zustand/store";
 
@@ -32,12 +32,18 @@ export default function PlanScreen() {
         </div>
         <Link
           to={"../bank"}
-          style={{ cursor: "pointer", display: "flex", textDecoration: "none" }}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            textDecoration: "none",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
           onClick={() => setEnableHomeItem("NGÂN HÀNG MỤC TIÊU")}
         >
           <AddCircle size={30} color={colors.primary} variant="Bold" />
           <SpaceComponent width={4} />
-          <TextComponent text="Thêm mới" size={sizes.thinTitle} />
+          <TextComponent text="Thêm mới" size={sizes.bigText} />
         </Link>
       </RowComponent>
 

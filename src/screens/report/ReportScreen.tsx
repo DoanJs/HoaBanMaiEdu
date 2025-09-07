@@ -1,7 +1,7 @@
 import { AddCircle } from "iconsax-react";
+import { Link } from "react-router-dom";
 import { RowComponent, SpaceComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
-import { Link } from "react-router-dom";
 import { sizes } from "../../constants/sizes";
 
 export default function ReportScreen() {
@@ -28,11 +28,20 @@ export default function ReportScreen() {
             aria-describedby="basic-addon1"
           />
         </div>
-        <RowComponent styles={{ cursor: "pointer" }}>
+        <Link
+          to={"../addReport"}
+          style={{
+            cursor: "pointer",
+            textDecoration: "none",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <AddCircle size={30} color={colors.primary} variant="Bold" />
-          <SpaceComponent width={4}/>
-          <TextComponent text="Thêm mới" size={sizes.thinTitle}/>
-        </RowComponent>
+          <SpaceComponent width={4} />
+          <TextComponent text="Thêm mới" size={sizes.bigText} />
+        </Link>
       </RowComponent>
 
       <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
@@ -40,9 +49,9 @@ export default function ReportScreen() {
           <Link
             to={"../reportItem"}
             state={{
-              type: 'BC',
-              title: `BC ${index + 1 < 10 ? `0${index + 1}` : index + 1}/2025`
-        }}
+              type: "BC",
+              title: `BC ${index + 1 < 10 ? `0${index + 1}` : index + 1}/2025`,
+            }}
             key={index}
             type="button"
             className="btn "
