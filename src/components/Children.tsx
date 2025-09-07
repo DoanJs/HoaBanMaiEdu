@@ -26,6 +26,7 @@ export default function Children() {
           flexDirection: "column",
           width: "100%",
           padding: 24,
+          borderRadius: 10,
         }}
       >
         <TextComponent
@@ -52,11 +53,13 @@ export default function Children() {
             flexWrap: "wrap",
             justifyContent: "center",
             height: "90%",
+            width: "70%",
             overflow: 10 > 11 ? "scroll" : "hidden",
             alignItems: "flex-start",
+            overflowY: 3 > 4 ? "scroll" : undefined,
           }}
         >
-          {Array.from({ length: 10 }).map((_, index) => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <Link
               to={"/home"}
               key={index}
@@ -67,16 +70,17 @@ export default function Children() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: 10,
+                margin: 32,
               }}
             >
               <img
+              alt=""
                 src="voi.jpg"
-                style={{ height: 60, width: 60, borderRadius: 100 }}
+                style={{ height: 120, width: 120, borderRadius: 10 }}
               />
               <SpaceComponent height={8} />
               <TextComponent
-                text="An"
+                text="Nguyễn Kim Trung"
                 size={16}
                 styles={{ fontWeight: "bold" }}
               />

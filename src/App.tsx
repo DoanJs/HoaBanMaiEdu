@@ -9,8 +9,10 @@ import {
   AddReportScreen,
   BankScreen,
   CartScreen,
+  LoginScreen,
   MediaScreen,
   PlanScreen,
+  RegisterScreen,
   ReportScreen,
   SettingScreen,
 } from "./screens";
@@ -20,7 +22,7 @@ export default function App() {
     <div>
       <Routes>
         <Route path="/" element={<Children />} />
-        <Route path="/home" element={<Navbar />}>
+        <Route path="home" element={<Navbar />}>
           <Route path="bank" element={<BankScreen />} />
           <Route path="target" element={<TargetComponent />} />
           <Route path="plan" element={<PlanScreen />} />
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="setting" element={<SettingScreen />} />
           <Route path="cart" element={<CartScreen />} />
         </Route>
+        <Route path="login" element={<LoginScreen />}/>
+        <Route path="register" element={<RegisterScreen />}/>
 
         <Route path="*" element={<>404</>} />
       </Routes>

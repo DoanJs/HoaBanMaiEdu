@@ -23,20 +23,35 @@ export default function Navbar() {
         height: sizes.height,
       }}
     >
-      <div style={{ flex: 1, background: colors.primaryLight, padding: 20 }}>
+      <div
+        style={{
+          flex: 1,
+          background: colors.primaryLight,
+          padding: 20,
+          borderRadius: 10,
+        }}
+      >
         <RowComponent justify="space-between">
-          <Link to={"/"}>
-            <img
-              alt=""
-              src="HBMIcon.jpg"
-              style={{
-                height: 60,
-                width: 60,
-                borderRadius: 10,
-                marginLeft: 16,
-              }}
+          <RowComponent>
+            <Link to={"/"}>
+              <img
+                alt=""
+                src="HBMIcon.jpg"
+                style={{
+                  height: 60,
+                  width: 60,
+                  borderRadius: 10,
+                  marginLeft: 16,
+                }}
+              />
+            </Link>
+            <SpaceComponent width={10}/>
+            <TextComponent
+              text="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU"
+              styles={{ fontWeight: "bold" }}
+              size={sizes.title}
             />
-          </Link>
+          </RowComponent>
 
           <RowComponent>
             <RowComponent
@@ -48,17 +63,23 @@ export default function Navbar() {
               }}
             >
               <img
+              alt=""
                 src="voi.jpg"
-                style={{ height: 30, width: 30, borderRadius: 100 }}
+                style={{ height: 36, width: 36, borderRadius: 100 }}
               />
               <SpaceComponent height={4} />
-              <TextComponent text="An" styles={{ fontWeight: "bold" }} />
+              <TextComponent
+                text="Nguyễn Kim Trung"
+                styles={{ fontWeight: "bold" }}
+                size={sizes.bigText}
+              />
             </RowComponent>
-            <SpaceComponent width={10} />
+            <SpaceComponent width={16} />
             <div>
               <TextComponent
                 text="Giáo viên phụ trách:"
                 styles={{ fontWeight: "bold" }}
+                size={sizes.bigText}
               />
               <TextComponent text="1. Nguyễn Thị Lài" />
               <TextComponent text="2. Thái Thị Miền" />
@@ -67,14 +88,19 @@ export default function Navbar() {
 
           <RowComponent>
             <RowComponent styles={{ flexDirection: "column" }}>
-              <TextComponent text="TRẦN THỊ MY NY" color={colors.textBold} />
+              <TextComponent
+                text="TRẦN THỊ MY NY"
+                color={colors.textBold}
+                size={sizes.bigText}
+                styles={{ fontWeight: "bold" }}
+              />
               <TextComponent text="Giám đốc" color={colors.textBold} />
             </RowComponent>
             <SpaceComponent width={6} />
             <img
               alt=""
               src="voi.jpg"
-              style={{ height: 36, width: 36, borderRadius: 100 }}
+              style={{ height: 40, width: 40, borderRadius: 100 }}
             />
           </RowComponent>
         </RowComponent>
