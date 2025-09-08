@@ -57,24 +57,26 @@ export default function Navbar() {
             <RowComponent
               styles={{
                 display: "flex",
-                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
+                borderRight:'1px solid',
+                borderRightColor: colors.primary,
+                paddingRight: 16
               }}
             >
-              <img
-                alt=""
-                src="voi.jpg"
-                style={{ height: 36, width: 36, borderRadius: 100 }}
-              />
-              <SpaceComponent height={4} />
-              <TextComponent
-                text="Nguyễn Kim Trung"
-                styles={{ fontWeight: "bold" }}
-                size={sizes.bigText}
-              />
+                <img
+                  alt=""
+                  src="voi.jpg"
+                  style={{ height: 36, width: 36, borderRadius: 100 }}
+                />
+                <SpaceComponent width={10} />
+                <TextComponent
+                  text="Nguyễn Kim Trung"
+                  styles={{ fontWeight: "bold" }}
+                  size={sizes.bigText}
+                />
             </RowComponent>
-            <SpaceComponent width={16} />
+            <SpaceComponent width={10}/>
             <div>
               <TextComponent
                 text="Giáo viên phụ trách:"
