@@ -1,6 +1,7 @@
 import LoginScreen from "./auth/LoginScreen";
 import RegisterScreen from "./auth/RegisterScreen";
 import BankScreen from "./bank/BankScreen";
+import CalloverScreen from "./callover/CalloverScreen";
 import CartScreen from "./cart/CartScreen";
 import MediaScreen from "./media/MediaScreen";
 import PlanScreen from "./plan/PlanScreen";
@@ -10,12 +11,12 @@ import SettingScreen from "./setting/SettingScreen";
 
 export {
   AddReportScreen,
-  BankScreen,
-  CartScreen,
+  BankScreen, CalloverScreen, CartScreen,
   LoginScreen,
   MediaScreen,
   PlanScreen,
   RegisterScreen,
   ReportScreen,
-  SettingScreen,
+  SettingScreen
 };
+

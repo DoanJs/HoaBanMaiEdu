@@ -1,4 +1,4 @@
-import { Bank, Chart, Document, Gallery, Setting2, ShoppingCart } from "iconsax-react";
+import { Bank, Calendar1, Chart, Document, Gallery, Setting2, ShoppingCart } from "iconsax-react";
 import { Link } from "react-router-dom";
 import { SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
@@ -53,6 +53,18 @@ export default function HomeItemComponent(props: Props) {
           />
         );
         navigate = "report";
+        break;
+      case "callover":
+        result = (
+          <Calendar1
+            size={26}
+            color={
+              value === title ? colors.primaryLightOpacity : colors.textBold
+            }
+            variant="Bold"
+          />
+        );
+        navigate = "callover";
         break;
       case "image":
         result = (

@@ -47,7 +47,7 @@ export default function ReportScreen() {
       <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
         {Array.from({ length: 20 }).map((_, index) => (
           <Link
-            to={"../reportItem"}
+            to={"../reportList"}
             state={{
               type: "BC",
               title: `BC ${index + 1 < 10 ? `0${index + 1}` : index + 1}/2025`,

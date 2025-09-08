@@ -2,12 +2,13 @@ import { Route, Routes } from "react-router-dom";
 import {
   Children,
   Navbar,
-  ReportItemComponent,
-  TargetComponent,
+  ReportListComponent,
+  TargetComponent
 } from "./components";
 import {
   AddReportScreen,
   BankScreen,
+  CalloverScreen,
   CartScreen,
   LoginScreen,
   MediaScreen,
@@ -27,14 +28,15 @@ export default function App() {
           <Route path="target" element={<TargetComponent />} />
           <Route path="plan" element={<PlanScreen />} />
           <Route path="report" element={<ReportScreen />} />
-          <Route path="reportItem" element={<ReportItemComponent />} />
+          <Route path="reportList" element={<ReportListComponent />} />
           <Route path="addReport" element={<AddReportScreen />} />
+          <Route path="callover" element={<CalloverScreen />} />
           <Route path="media" element={<MediaScreen />} />
           <Route path="setting" element={<SettingScreen />} />
           <Route path="cart" element={<CartScreen />} />
         </Route>
-        <Route path="login" element={<LoginScreen />}/>
-        <Route path="register" element={<RegisterScreen />}/>
+        <Route path="login" element={<LoginScreen />} />
+        <Route path="register" element={<RegisterScreen />} />
 
         <Route path="*" element={<>404</>} />
       </Routes>
