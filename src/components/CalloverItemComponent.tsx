@@ -7,8 +7,10 @@ import { sizes } from "../constants/sizes";
 export default function CalloverItemComponent() {
   const [isShow, setIsShow] = useState(false);
   return (
-    <RowComponent styles={{ display: 'flex', flexDirection: 'column', 
-    justifyContent: 'center', alignItems: 'center' }}>
+    <RowComponent styles={{
+      display: 'flex', flexDirection: 'column',
+      justifyContent: 'center', alignItems: 'center'
+    }}>
       <TextComponent text="30/12" styles={{ fontWeight: 'bold' }} size={sizes.bigTitle} />
       {
         isShow &&
@@ -39,10 +41,13 @@ export default function CalloverItemComponent() {
             id="flexCheckChecked"
           />
         </div>
-        <SpaceComponent width={20} />
+
         {
           isShow &&
-          <Edit size={24} color={colors.orange} style={{ cursor: 'pointer' }} data-bs-toggle="modal" data-bs-target="#staticBackdrop" />
+          <>
+            <SpaceComponent width={20} />
+            <Edit size={24} color={colors.orange} style={{ cursor: 'pointer' }} data-bs-toggle="modal" data-bs-target="#staticBackdrop" />
+          </>
         }
       </RowComponent>
     </RowComponent>
