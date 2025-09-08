@@ -45,7 +45,7 @@ export default function Navbar() {
                 }}
               />
             </Link>
-            <SpaceComponent width={10}/>
+            <SpaceComponent width={10} />
             <TextComponent
               text="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU"
               styles={{ fontWeight: "bold" }}
@@ -63,7 +63,7 @@ export default function Navbar() {
               }}
             >
               <img
-              alt=""
+                alt=""
                 src="voi.jpg"
                 style={{ height: 36, width: 36, borderRadius: 100 }}
               />
@@ -150,6 +150,12 @@ export default function Navbar() {
                 <HomeItemComponent
                   title="BÁO CÁO"
                   icon="chart"
+                  value={enableHomeItem}
+                  onClick={(val) => setEnableHomeItem(val)}
+                />
+                <HomeItemComponent
+                  title="ĐIỂM DANH"
+                  icon="callover"
                   value={enableHomeItem}
                   onClick={(val) => setEnableHomeItem(val)}
                 />

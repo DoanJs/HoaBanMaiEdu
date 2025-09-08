@@ -70,7 +70,7 @@ export default function Children() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                margin: 32,
+                margin: 20,
               }}
             >
               <img

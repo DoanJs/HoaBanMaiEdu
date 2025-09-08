@@ -15,7 +15,7 @@ export default function TargetComponent() {
     navigate("../bank");
   };
 
-  const handleRemoveSelect = () => {};
+  const handleRemoveSelect = () => { };
   return (
     <div style={{ width: "100%" }}>
       <RowComponent justify="space-between">
@@ -24,7 +24,7 @@ export default function TargetComponent() {
           <SpaceComponent width={8} />
           <TextComponent text={title.toUpperCase()} size={32} />
         </RowComponent>
-        <div style={{width:'30%'}}>
+        <div style={{ width: '30%' }}>
           <form className="d-flex">
             <input
               className="form-control me-2"
@@ -73,7 +73,7 @@ export default function TargetComponent() {
                     }}
                   >
                     <input
-                      onChange={() => {}}
+                      onChange={() => { }}
                       className="form-check-input"
                       type="checkbox"
                       value=""
