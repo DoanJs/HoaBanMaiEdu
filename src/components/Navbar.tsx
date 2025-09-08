@@ -57,7 +57,6 @@ export default function Navbar() {
             <RowComponent
               styles={{
                 display: "flex",
-                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 borderRight:'1px solid',
@@ -65,8 +64,6 @@ export default function Navbar() {
                 paddingRight: 16
               }}
             >
-              <TextComponent text="Họ và tên trẻ:" size={sizes.bigText} styles={{fontWeight:'bold'}}/>
-              <RowComponent>
                 <img
                   alt=""
                   src="voi.jpg"
@@ -78,7 +75,6 @@ export default function Navbar() {
                   styles={{ fontWeight: "bold" }}
                   size={sizes.bigText}
                 />
-              </RowComponent>
             </RowComponent>
             <SpaceComponent width={10}/>
             <div>
