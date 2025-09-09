@@ -1,6 +1,6 @@
 import { AddCircle } from "iconsax-react";
 import { Link } from "react-router-dom";
-import { RowComponent, SpaceComponent, TextComponent } from "../../components";
+import { RowComponent, SearchComponent, SpaceComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
 import useEnableHomeItemStore from "../../zustand/store";
@@ -18,18 +18,7 @@ export default function PlanScreen() {
           borderBottomColor: colors.gray,
         }}
       >
-        <div className="input-group" style={{ width: "30%" }}>
-          <span className="input-group-text" id="basic-addon1">
-            Tìm tháng
-          </span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Nhập tháng"
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-          />
-        </div>
+        <SearchComponent placeholder="Nhập tháng" title="Tìm tháng"/>
         <Link
           to={"../bank"}
           style={{

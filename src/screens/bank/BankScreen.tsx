@@ -1,19 +1,16 @@
-import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { FieldItemComponent, RowComponent } from "../../components";
-import { getDocsData } from "../../constants/firebase/getDocsData";
 
 export default function BankScreen() {
-  const [fields, setFields] = useState([]);
+  // const [fields, setFields] = useState([]);
 
-  useEffect(() => {
-    getDocsData({
-      nameCollect: "fields",
-      setData: setFields,
-    });
-  }, []);
+  // useEffect(() => {
+  //   getDocsData({
+  //     nameCollect: "fields",
+  //     setData: setFields,
+  //   });
+  // }, []);
 
-  console.log(fields)
   return (
     <RowComponent
       styles={{

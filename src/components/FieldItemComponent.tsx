@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { ProcessBar, RowComponent, SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
-import { showUIIconTarget } from "../constants/showUIIconTarget";
 import { sizes } from "../constants/sizes";
+import { showUIIconTarget } from "../constants/showUIIconTarget";
 
 interface Props {
   title: string;
@@ -11,6 +11,7 @@ interface Props {
 
 export default function FieldItemComponent(props: Props) {
   const { title, icon } = props;
+
   return (
     <div>
       <Link

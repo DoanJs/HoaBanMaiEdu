@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { colors } from "../constants/colors";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
 import RowComponent from "./RowComponent";
+import SearchComponent from "./SearchComponent";
 import SpaceComponent from "./SpaceComponent";
+import TargetItemComponent from "./TargetItemComponent";
 import TextComponent from "./TextComponent";
 
 export default function TargetComponent() {
@@ -15,32 +16,23 @@ export default function TargetComponent() {
     navigate("../bank");
   };
 
-  const handleRemoveSelect = () => { };
+  const handleRemoveSelect = () => {};
   return (
     <div style={{ width: "100%" }}>
-      <RowComponent justify="space-between">
+      <RowComponent justify="space-between" styles={{ paddingTop: 10 }}>
         <RowComponent>
           {showUIIconTarget(icon)}
           <SpaceComponent width={8} />
           <TextComponent text={title.toUpperCase()} size={32} />
         </RowComponent>
-        <div style={{ width: '30%' }}>
-          <form className="d-flex">
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Tìm mục tiêu"
-              aria-label="Search"
-            />
-          </form>
-        </div>
+        <SearchComponent placeholder="Nhập mục tiêu " title="Tìm mục tiêu" />
       </RowComponent>
 
       <div
         style={{
           width: "100%",
           overflowY: "scroll",
-          height: "85%",
+          height: "82%",
         }}
       >
         <table className="table">
@@ -54,34 +46,7 @@ export default function TargetComponent() {
           </thead>
           <tbody>
             {Array.from({ length: 20 }).map((_, index) => (
-              <tr key={index} style={{ color: colors.textBold }}>
-                <td style={{ textAlign: "center" }}>{index + 1}</td>
-                <td>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  Iusto deserunt et reiciendis, facilis tempore itaque iste
-                  officia ut perferendis nostrum nam doloribus praesentium
-                  dolore sed aliquid voluptates necessitatibus sapiente culpa.
-                </td>
-                <td style={{ textAlign: "center" }}>2</td>
-                <td>
-                  <div
-                    className="form-check"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <input
-                      onChange={() => { }}
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="flexCheckChecked"
-                    />
-                  </div>
-                </td>
-              </tr>
+              <TargetItemComponent index={index} key={index} />
             ))}
           </tbody>
         </table>

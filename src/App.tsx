@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import {
-  Children,
   Navbar,
   ReportListComponent,
   TargetComponent
@@ -10,6 +9,7 @@ import {
   BankScreen,
   CalloverScreen,
   CartScreen,
+  ChildrenScreen,
   LoginScreen,
   MediaScreen,
   PlanScreen,
@@ -22,7 +22,7 @@ export default function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Children />} />
+        <Route path="/" element={<ChildrenScreen />} />
         <Route path="home" element={<Navbar />}>
           <Route path="bank" element={<BankScreen />} />
           <Route path="target" element={<TargetComponent />} />
