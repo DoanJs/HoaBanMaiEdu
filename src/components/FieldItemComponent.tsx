@@ -6,11 +6,10 @@ import { showUIIconTarget } from "../constants/showUIIconTarget";
 
 interface Props {
   title: string;
-  icon: string;
 }
 
 export default function FieldItemComponent(props: Props) {
-  const { title, icon } = props;
+  const { title } = props;
 
   return (
     <div>
@@ -18,7 +17,6 @@ export default function FieldItemComponent(props: Props) {
         to={"../target"}
         state={{
           title,
-          icon,
         }}
         style={{
           textDecoration: "none",
@@ -44,7 +42,7 @@ export default function FieldItemComponent(props: Props) {
             alignItems: "center",
           }}
         >
-          <div>{showUIIconTarget(icon)}</div>
+          <div>{showUIIconTarget(title)}</div>
           <SpaceComponent width={6} />
           <TextComponent
             text={title}

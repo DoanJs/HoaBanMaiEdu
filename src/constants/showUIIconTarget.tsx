@@ -8,23 +8,23 @@ import {
 } from "iconsax-react";
 import { colors } from "./colors";
 
-export const showUIIconTarget = (icon: string) => {
+export const showUIIconTarget = (title: string) => {
   let result: any;
-  switch (icon) {
-    case "message":
+  switch (title) {
+    case "Ngôn ngữ hiểu":
       result = <Message size={30} color={colors.textBold} variant="Bold" />;
       break;
-    case "message2":
+    case "Ngôn ngữ diễn đạt":
       result = <Message2 size={30} color={colors.textBold} variant="Bold" />;
       break;
-    case "hierarchy":
+    case "Nhận thức":
       result = <Hierarchy size={30} color={colors.textBold} variant="Bold" />;
 
       break;
-    case "notepad2":
+    case "Vận động tinh":
       result = <Notepad2 size={30} color={colors.textBold} variant="Bold" />;
       break;
-    case "profile2User":
+    case "Giao tiếp sớm":
       result = (
         <Profile2User size={30} color={colors.textBold} variant="Bold" />
       );

@@ -1,16 +1,28 @@
+import { collection, query } from "firebase/firestore";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { FieldItemComponent, RowComponent } from "../../components";
+import {
+  FieldItemComponent,
+  RowComponent,
+  SpinnerComponent,
+} from "../../components";
+import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
+import { db } from "../../firebase.config";
+import { FieldModel } from "../../models/FieldModel";
+import useFieldStore from "../../zustand/useFieldStore";
 
 export default function BankScreen() {
-  // const [fields, setFields] = useState([]);
+  const { fields, setFields } = useFieldStore();
+  const q = query(collection(db, "fields"));
+  const { data, loading } = useFirestoreWithMeta("fieldsCache", q, "fields");
 
-  // useEffect(() => {
-  //   getDocsData({
-  //     nameCollect: "fields",
-  //     setData: setFields,
-  //   });
-  // }, []);
+  useEffect(() => {
+    if (!loading) {
+      setFields(data as FieldModel[]);
+    }
+  }, [data, loading]);
 
+  if (loading) return <SpinnerComponent />;
   return (
     <RowComponent
       styles={{
@@ -19,12 +31,9 @@ export default function BankScreen() {
       }}
     >
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        <FieldItemComponent title="Ngôn ngữ hiểu" icon="message" />
-        <FieldItemComponent title="Ngôn ngữ diễn đạt" icon="message2" />
-        <FieldItemComponent title="Nhận thức" icon="notepad2" />
-        <FieldItemComponent title="Vận động tinh" icon="hierarchy" />
-        <FieldItemComponent title="Giao tiếp sớm" icon="profile2User" />
-        <FieldItemComponent title="Hành vi/tập trung chú ý" icon="airpods" />
+        {fields.map((_, index) => (
+          <FieldItemComponent key={index} title={_.name} />
+        ))}
       </div>
 
       <Outlet />

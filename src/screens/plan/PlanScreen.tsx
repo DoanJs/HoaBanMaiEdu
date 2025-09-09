@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { RowComponent, SearchComponent, SpaceComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import useEnableHomeItemStore from "../../zustand/store";
+import useSelectTargetStore from "../../zustand/useSelectTargetStore";
 
 export default function PlanScreen() {
-  const { setEnableHomeItem } = useEnableHomeItemStore();
+  const { setSelectTarget } = useSelectTargetStore();
   return (
     <div>
       <RowComponent
@@ -28,7 +28,7 @@ export default function PlanScreen() {
             justifyContent: "center",
             alignItems: "center",
           }}
-          onClick={() => setEnableHomeItem("NGÂN HÀNG MỤC TIÊU")}
+          onClick={() => setSelectTarget("NGÂN HÀNG MỤC TIÊU")}
         >
           <AddCircle size={30} color={colors.primary} variant="Bold" />
           <SpaceComponent width={4} />

@@ -14,14 +14,16 @@ import RowComponent from "./RowComponent";
 import SearchComponent from "./SearchComponent";
 import SectionComponent from "./SectionComponent";
 import SpaceComponent from "./SpaceComponent";
+import SpinnerComponent from "./SpinnerComponent";
 import TargetComponent from "./TargetComponent";
 import TargetItemComponent from "./TargetItemComponent";
 import TextComponent from "./TextComponent";
 
 export {
-  CalloverItemComponent,CardImageComponent,
+  CalloverItemComponent,
+  CardImageComponent,
   CartItemComponent,
-  FieldItemComponent,TargetItemComponent,
+  FieldItemComponent,
   HomeItemComponent,
   ModalDeleteComponent,
   ModalEditCallover,
@@ -34,6 +36,8 @@ export {
   SearchComponent,
   SectionComponent,
   SpaceComponent,
+  SpinnerComponent,
   TargetComponent,
+  TargetItemComponent,
   TextComponent,
 };

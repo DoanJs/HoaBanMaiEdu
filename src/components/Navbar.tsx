@@ -8,10 +8,10 @@ import {
 } from ".";
 import { colors } from "../constants/colors";
 import { sizes } from "../constants/sizes";
-import useEnableHomeItemStore from "../zustand/store";
+import useSelectTargetStore from "../zustand/useSelectTargetStore";
 
 export default function Navbar() {
-  const { enableHomeItem, setEnableHomeItem } = useEnableHomeItemStore();
+  const { selectTarget, setSelectTarget } = useSelectTargetStore();
 
   return (
     <SectionComponent
@@ -140,45 +140,45 @@ export default function Navbar() {
                 <HomeItemComponent
                   title="NGÂN HÀNG MỤC TIÊU"
                   icon="bank"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="KẾ HOẠCH"
                   icon="plan"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="BÁO CÁO"
                   icon="chart"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="ĐIỂM DANH"
                   icon="callover"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="HÌNH ẢNH/VIDEO"
                   icon="image"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="CÀI ĐẶT"
                   icon="setting"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
               </RowComponent>
               <HomeItemComponent
                 title="GIỎ MỤC TIÊU"
                 icon="cart"
-                value={enableHomeItem}
-                onClick={(val) => setEnableHomeItem(val)}
+                value={selectTarget}
+                onClick={(val) => setSelectTarget(val)}
               />
             </RowComponent>
           </SectionComponent>

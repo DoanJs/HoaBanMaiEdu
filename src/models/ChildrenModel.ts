@@ -2,10 +2,13 @@ import { TimeAtModel } from "./TimeAtModel";
 
 export interface ChildrenModel {
   id: string;
-  name: string;
+  fullName: string;
   shortName: string;
-  url: string;
+  avatar: string;
+  birth: string
+  gender: string
   teacherIds: [string]
+  parentIds:[string]
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

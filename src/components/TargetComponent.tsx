@@ -10,7 +10,7 @@ export default function TargetComponent() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { title, icon } = location.state || {};
+  const { title } = location.state || {};
 
   const handleAddTarget = () => {
     navigate("../bank");
@@ -21,7 +21,7 @@ export default function TargetComponent() {
     <div style={{ width: "100%" }}>
       <RowComponent justify="space-between" styles={{ paddingTop: 10 }}>
         <RowComponent>
-          {showUIIconTarget(icon)}
+          {showUIIconTarget(title)}
           <SpaceComponent width={8} />
           <TextComponent text={title.toUpperCase()} size={32} />
         </RowComponent>
