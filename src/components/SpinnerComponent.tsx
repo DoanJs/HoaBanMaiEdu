@@ -17,7 +17,7 @@ export default function SpinnerComponent(props: Props) {
       <div
         className="spinner-border"
         role="status"
-        style={{ height: height ?? undefined, width: width ?? undefined }}
+        style={{ height: height ?? 26, width: width ?? 26 }}
       >
         <span className="visually-hidden">Loading...</span>
       </div>

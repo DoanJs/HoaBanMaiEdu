@@ -5,7 +5,7 @@ export interface ChildrenModel {
   fullName: string;
   shortName: string;
   avatar: string;
-  birth: string
+  birth: TimeAtModel
   gender: string
   teacherIds: [string]
   parentIds:[string]

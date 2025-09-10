@@ -1,4 +1,3 @@
-// src/utils/cacheService.ts
 import localforage from "localforage";
 
 localforage.config({

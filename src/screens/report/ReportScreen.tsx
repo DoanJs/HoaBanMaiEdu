@@ -16,7 +16,7 @@ export default function ReportScreen() {
           borderBottomColor: colors.gray,
         }}
       >
-       <SearchComponent placeholder="Nhập tháng" title="Tìm tháng"/>
+       <SearchComponent placeholder="Nhập tháng" title="Tìm tháng"  onChange={() => {}}/>
         <Link
           to={"../addReport"}
           style={{

@@ -18,7 +18,7 @@ export default function PlanScreen() {
           borderBottomColor: colors.gray,
         }}
       >
-        <SearchComponent placeholder="Nhập tháng" title="Tìm tháng"/>
+        <SearchComponent placeholder="Nhập tháng" title="Tìm tháng" onChange={() => {}}/>
         <Link
           to={"../bank"}
           style={{

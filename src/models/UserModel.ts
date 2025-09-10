@@ -9,6 +9,7 @@ export interface UserModel {
   avatar: string;
   birth: string
   role: string
+  position: string
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

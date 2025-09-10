@@ -5,13 +5,17 @@ import SearchComponent from "./SearchComponent";
 import SpaceComponent from "./SpaceComponent";
 import TargetItemComponent from "./TargetItemComponent";
 import TextComponent from "./TextComponent";
+import useTargetStore from "../zustand/useTargetStore";
+import { TargetModel } from "../models/TargetModel";
 
 export default function TargetComponent() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { targets } = useTargetStore();
 
-  const { title } = location.state || {};
+  const { title, fieldId } = location.state || {};
 
+  console.log(targets);
   const handleAddTarget = () => {
     navigate("../bank");
   };
@@ -25,7 +29,7 @@ export default function TargetComponent() {
           <SpaceComponent width={8} />
           <TextComponent text={title.toUpperCase()} size={32} />
         </RowComponent>
-        <SearchComponent placeholder="Nhập mục tiêu " title="Tìm mục tiêu" />
+        <SearchComponent placeholder="Nhập mục tiêu " title="Tìm mục tiêu" onChange={() => {}}/>
       </RowComponent>
 
       <div
@@ -45,9 +49,12 @@ export default function TargetComponent() {
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: 20 }).map((_, index) => (
-              <TargetItemComponent index={index} key={index} />
-            ))}
+            {targets.length > 0 &&
+              targets
+                .filter((target: TargetModel) => target.fieldId === fieldId)
+                .map((_, index) => (
+                  <TargetItemComponent index={index} key={index} target={_}/>
+                ))}
           </tbody>
         </table>
       </div>

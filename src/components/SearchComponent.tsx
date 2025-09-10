@@ -1,13 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useChildrenStore from "../zustand/useChildrenStore";
 
 interface Props {
   title: string;
   placeholder: string;
+  type?: string;
+  onChange: (val: any) => void;
 }
 
 export default function SearchComponent(props: Props) {
-  const { title, placeholder } = props;
+  const { title, placeholder, type, onChange } = props;
+  const { children } = useChildrenStore();
   const [value, setValue] = useState("");
+
+  useEffect(() => {
+    let items: any = [];
+    switch (type) {
+      case "searchChildren":
+        items = children.filter((child) =>
+          child.fullName.toLowerCase().includes(value.toLowerCase())
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    onChange(items);
+  }, [value]);
 
   return (
     <div className="input-group" style={{ width: "30%" }}>

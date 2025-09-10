@@ -30,7 +30,7 @@ export default function CardImageComponent(props: Props) {
       <img
         alt=""
         src={avatar}
-        style={{ height: 120, width: 120, borderRadius: 10, ...imgStyles }}
+        style={{ height: 120, width: 120, objectFit: 'cover', borderRadius: 10, ...imgStyles }}
       />
       <SpaceComponent height={8} />
       <TextComponent

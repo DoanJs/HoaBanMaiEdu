@@ -1,15 +1,21 @@
 import { Link } from "react-router-dom";
-import { ProcessBar, RowComponent, SpaceComponent, TextComponent } from ".";
+import {
+  ProcessBar,
+  RowComponent,
+  SpaceComponent,
+  TextComponent
+} from ".";
 import { colors } from "../constants/colors";
-import { sizes } from "../constants/sizes";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
+import { sizes } from "../constants/sizes";
 
 interface Props {
   title: string;
+  fieldId: string;
 }
 
 export default function FieldItemComponent(props: Props) {
-  const { title } = props;
+  const { title, fieldId } = props;
 
   return (
     <div>
@@ -17,6 +23,7 @@ export default function FieldItemComponent(props: Props) {
         to={"../target"}
         state={{
           title,
+          fieldId
         }}
         style={{
           textDecoration: "none",

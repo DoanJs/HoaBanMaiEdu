@@ -59,24 +59,24 @@ export default function Navbar() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRight:'1px solid',
+                borderRight: "1px solid",
                 borderRightColor: colors.primary,
-                paddingRight: 16
+                paddingRight: 16,
               }}
             >
-                <img
-                  alt=""
-                  src="voi.jpg"
-                  style={{ height: 36, width: 36, borderRadius: 100 }}
-                />
-                <SpaceComponent width={10} />
-                <TextComponent
-                  text="Nguyễn Kim Trung"
-                  styles={{ fontWeight: "bold" }}
-                  size={sizes.bigText}
-                />
+              <img
+                alt=""
+                src="voi.jpg"
+                style={{ height: 36, width: 36, borderRadius: 100 }}
+              />
+              <SpaceComponent width={10} />
+              <TextComponent
+                text="Nguyễn Kim Trung"
+                styles={{ fontWeight: "bold" }}
+                size={sizes.bigText}
+              />
             </RowComponent>
-            <SpaceComponent width={10}/>
+            <SpaceComponent width={10} />
             <div>
               <TextComponent
                 text="Giáo viên phụ trách:"
@@ -99,11 +99,18 @@ export default function Navbar() {
               <TextComponent text="Giám đốc" color={colors.textBold} />
             </RowComponent>
             <SpaceComponent width={6} />
-            <img
-              alt=""
-              src="voi.jpg"
-              style={{ height: 40, width: 40, borderRadius: 100 }}
-            />
+            <Link to={'profile'}>
+              <img
+                alt=""
+                src="voi.jpg"
+                style={{
+                  height: 40,
+                  width: 40,
+                  borderRadius: 100,
+                  cursor: "pointer",
+                }}
+              />
+            </Link>
           </RowComponent>
         </RowComponent>
 
