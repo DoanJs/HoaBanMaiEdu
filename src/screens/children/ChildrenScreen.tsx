@@ -18,26 +18,18 @@ import useUserStore from "../../zustand/useUserStore";
 
 export default function ChildrenScreen() {
   const { user } = useUserStore();
-  const { children, setChildren } = useChildrenStore();
-  const [childrenData, setChildrenData] = useState<ChildrenModel[]>();
+  const { children,setChildren } = useChildrenStore();
   const { data: data_children, loading: loading_children } =
-    useFirestoreWithMeta(
-      "childrenCache",
-      query_children(`${user?.id}`),
-      "children"
-    );
+    useFirestoreWithMeta("childrenCache", query_children, "children");
 
-  useEffect(() => {
-    if (!loading_children) {
-      setChildren(data_children as ChildrenModel[]);
+    useEffect(() => {
+      if (!loading_children) {
+        let items = (data_children as ChildrenModel[]).filter((child) =>
+          child.teacherIds.includes(user?.id as string)
+      );
+        setChildren(items);
     }
   }, [data_children, loading_children]);
-
-  // useEffect(() => {
-  //   if (children) {
-  //     setChildrenData(children);
-  //   }
-  // }, [children]);
 
   if (loading_children) return <SpinnerComponent />;
   return (
@@ -71,7 +63,8 @@ export default function ChildrenScreen() {
             title="Tìm trẻ"
             placeholder="Nhập tên trẻ"
             type="searchChildren"
-            onChange={(val) => setChildrenData(val)}
+            arrSource={data_children as ChildrenModel[]}
+            onChange={(val) => setChildren(val)}
           />
           <RowComponent
             styles={{

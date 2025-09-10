@@ -45,7 +45,8 @@ export default function App() {
       if (currentUser) {
         // chỉ fetch khi có user
         getDoc(doc(db, "users", currentUser.uid as string))
-          .then((result) => setUser({...result.data(), id: currentUser.uid} as UserModel))
+          .then((result) => {
+            setUser({...result.data(), id: currentUser.uid} as UserModel)})
           .catch((error) => console.log(error));
       } else {
         // clear user khi logout

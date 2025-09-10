@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
-import useChildrenStore from "../zustand/useChildrenStore";
+import { ChildrenModel } from "../models/ChildrenModel";
+import useUserStore from "../zustand/useUserStore";
 
 interface Props {
   title: string;
   placeholder: string;
   type?: string;
+  arrSource: ChildrenModel[];
   onChange: (val: any) => void;
 }
 
 export default function SearchComponent(props: Props) {
-  const { title, placeholder, type, onChange } = props;
-  const { children } = useChildrenStore();
+  const { user } = useUserStore();
+  const { title, placeholder, type, arrSource, onChange } = props;
   const [value, setValue] = useState("");
 
   useEffect(() => {
     let items: any = [];
     switch (type) {
       case "searchChildren":
-        items = children.filter((child) =>
-          child.fullName.toLowerCase().includes(value.toLowerCase())
-        );
+        items = arrSource
+          .filter((child) => child.teacherIds.includes(user?.id as string))
+          .filter((child) =>
+            child.fullName.toLowerCase().includes(value.toLowerCase())
+          );
         break;
 
       default:

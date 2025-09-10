@@ -29,7 +29,7 @@ export default function TargetComponent() {
           <SpaceComponent width={8} />
           <TextComponent text={title.toUpperCase()} size={32} />
         </RowComponent>
-        <SearchComponent placeholder="Nhập mục tiêu " title="Tìm mục tiêu" onChange={() => {}}/>
+        <SearchComponent placeholder="Nhập mục tiêu " title="Tìm mục tiêu" onChange={() => {}} arrSource={[]}/>
       </RowComponent>
 
       <div
