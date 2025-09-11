@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { ChildrenModel } from "../models/ChildrenModel";
+import { TargetModel } from "../models/TargetModel";
 
 interface Props {
   title: string;
   placeholder: string;
   type?: string;
-  arrSource: ChildrenModel[];
+  arrSource: ChildrenModel[] | TargetModel[];
   onChange: (val: any) => void;
 }
 
@@ -17,8 +18,13 @@ export default function SearchComponent(props: Props) {
     let items: any = [];
     switch (type) {
       case "searchChildren":
-        items = arrSource.filter((child) =>
+        items = (arrSource as ChildrenModel[]).filter((child) =>
           child.fullName.toLowerCase().includes(value.toLowerCase())
+        );
+        break;
+      case "searchTarget":
+        items = (arrSource as TargetModel[]).filter((target) =>
+          target.name.toLowerCase().includes(value.toLowerCase())
         );
         break;
 

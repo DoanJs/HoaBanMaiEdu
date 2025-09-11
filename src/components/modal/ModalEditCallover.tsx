@@ -13,7 +13,7 @@ export default function ModalEditCallover() {
           <div className="modal-body">
             {
               Array.from({ length: 3 }).map((_, index) =>
-                <RowComponent styles={{margin: '10px 0'}}>
+                <RowComponent styles={{margin: '10px 0'}} key={index}>
                   <select className="form-select" aria-label="Default select example">
                     <option selected>Chọn giáo viên</option>
                     <option value="1">One</option>
