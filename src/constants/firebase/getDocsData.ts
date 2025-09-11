@@ -1,4 +1,4 @@
-import { collection, getDocs, query } from "firebase/firestore";
+import { collection, getDocs, query, QueryConstraint } from "firebase/firestore";
 import { SetStateAction } from "react";
 import { db } from "../../firebase.config";
 
@@ -9,7 +9,7 @@ export const getDocsData = async ({
 }: {
   nameCollect: string;
   setData: SetStateAction<any>;
-  condition?: any;
+  condition?: QueryConstraint[];
 }) => {
   try {
     const q = condition

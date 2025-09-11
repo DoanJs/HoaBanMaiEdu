@@ -79,7 +79,7 @@ export default function App() {
             )
           }
         />
-        <Route path="home" element={<Navbar />}>
+        <Route path="home/:id" element={<Navbar />}>
           <Route path="profile" element={<ProfileScreen />} />
           <Route path="bank" element={<BankScreen />} />
           <Route path="target" element={<TargetComponent />} />

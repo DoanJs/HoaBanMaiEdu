@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { ChildrenModel } from "../models/ChildrenModel";
-import useUserStore from "../zustand/useUserStore";
 
 interface Props {
   title: string;
@@ -11,7 +10,6 @@ interface Props {
 }
 
 export default function SearchComponent(props: Props) {
-  const { user } = useUserStore();
   const { title, placeholder, type, arrSource, onChange } = props;
   const [value, setValue] = useState("");
 
@@ -19,11 +17,9 @@ export default function SearchComponent(props: Props) {
     let items: any = [];
     switch (type) {
       case "searchChildren":
-        items = arrSource
-          .filter((child) => child.teacherIds.includes(user?.id as string))
-          .filter((child) =>
-            child.fullName.toLowerCase().includes(value.toLowerCase())
-          );
+        items = arrSource.filter((child) =>
+          child.fullName.toLowerCase().includes(value.toLowerCase())
+        );
         break;
 
       default:

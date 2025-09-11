@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { where } from "firebase/firestore";
+import { useEffect } from "react";
 import {
   CardImageComponent,
   RowComponent,
@@ -9,25 +10,27 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
-import { query_children } from "../../constants/firebase/query/Index";
 import { sizes } from "../../constants/sizes";
-import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
+import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
 
 export default function ChildrenScreen() {
   const { user } = useUserStore();
-  const { children,setChildren } = useChildrenStore();
+  const { children, setChildren } = useChildrenStore();
   const { data: data_children, loading: loading_children } =
-    useFirestoreWithMeta("childrenCache", query_children, "children");
+    useFirestoreWithMetaCondition({
+      key: `${user?.id}_childrenCache`,
+      id: user?.id,
+      metaDoc: "children",
+      nameCollect: "children",
+      condition: where("teacherIds", "array-contains", user?.id),
+    });
 
-    useEffect(() => {
-      if (!loading_children) {
-        let items = (data_children as ChildrenModel[]).filter((child) =>
-          child.teacherIds.includes(user?.id as string)
-      );
-        setChildren(items);
+  useEffect(() => {
+    if (!loading_children) {
+      setChildren(data_children as ChildrenModel[]);
     }
   }, [data_children, loading_children]);
 
@@ -81,9 +84,8 @@ export default function ChildrenScreen() {
             {children.map((_, index) => (
               <CardImageComponent
                 key={index}
-                avatar={_.avatar}
-                name={_.fullName}
-                link="home"
+                childInfo={_}
+                link={`home/${_.id}`}
               />
             ))}
           </RowComponent>

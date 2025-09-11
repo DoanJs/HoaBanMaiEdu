@@ -15,7 +15,6 @@ export default function TargetComponent() {
 
   const { title, fieldId } = location.state || {};
 
-  console.log(targets);
   const handleAddTarget = () => {
     navigate("../bank");
   };

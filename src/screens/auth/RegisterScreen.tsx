@@ -53,6 +53,7 @@ export default function RegisterScreen() {
           nameCollect: "users",
           id: user.uid,
           valueUpdate: {
+            id: user.uid,
             email: form.email,
             fullName: form.name,
             shortName: form.name,

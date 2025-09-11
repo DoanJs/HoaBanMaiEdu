@@ -19,15 +19,17 @@ export default function BankScreen() {
   const { fields, setFields } = useFieldStore();
   const { setTargets } = useTargetStore();
 
-  const { data: data_fields, loading } = useFirestoreWithMeta(
-    "fieldsCache",
-    query_fields,
-    "fields"
-  );
+  const { data: data_fields, loading } = useFirestoreWithMeta({
+    key: "fieldsCache",
+    query: query_fields,
+    metaDoc: "fields",
+  });
   const { data: data_targets, loading: loading_targets } = useFirestoreWithMeta(
-    "targetsCache",
-    query_targets,
-    "targets"
+    {
+      key: "targetsCache",
+      query: query_targets,
+      metaDoc: "targets",
+    }
   );
 
   useEffect(() => {

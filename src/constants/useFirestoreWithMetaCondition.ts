@@ -1,21 +1,33 @@
-import { doc, getDoc, getDocs, Query } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  QueryConstraint,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../firebase.config";
 import localforage from "../localforage";
 
-export function useFirestoreWithMeta<T>({
+export function useFirestoreWithMetaCondition<T>({
   key,
-  query,
   metaDoc,
+  id,
+  nameCollect,
+  condition,
 }: {
   key: string;
-  query: Query;
   metaDoc: string; // ví dụ: "products" | "fields" | targets |...
+  id: string | undefined;
+  nameCollect: string;
+  condition: QueryConstraint;
 }) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!id) return;
     let mounted = true;
 
     async function loadData() {
@@ -24,7 +36,7 @@ export function useFirestoreWithMeta<T>({
       // 1. Lấy meta từ Firestore
       const metaSnap = await getDoc(doc(db, "Meta", metaDoc));
       const lastUpdated = metaSnap.exists()
-        ? metaSnap.data().lastUpdated?.toMillis() //chuyển sang minisecond để so sánh
+        ? metaSnap.data()[key]?.toMillis() //chuyển sang minisecond để so sánh
         : null;
 
       // 2. Lấy cache
@@ -43,7 +55,9 @@ export function useFirestoreWithMeta<T>({
       }
 
       // 4. Nếu Meta thay đổi → fetch Firestore mới
-      const snapshot = await getDocs(query);
+      const snapshot = await getDocs(
+        query(collection(db, nameCollect), condition)
+      );
       const freshData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),

@@ -1,7 +1,7 @@
 import { TimeAtModel } from "./TimeAtModel";
 
 export interface UserModel {
-  id: string;
+  id: string;//nhớ tự customID khi tạo user mới
   fullName: string;
   shortName: string
   email: string;

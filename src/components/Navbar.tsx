@@ -1,4 +1,6 @@
-import { Link, Outlet } from "react-router-dom";
+import { where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useParams } from "react-router-dom";
 import {
   HomeItemComponent,
   RowComponent,
@@ -7,11 +9,40 @@ import {
   TextComponent,
 } from ".";
 import { colors } from "../constants/colors";
+import { getDocData } from "../constants/firebase/getDocData";
+import { getDocsData } from "../constants/firebase/getDocsData";
 import { sizes } from "../constants/sizes";
+import { UserModel } from "../models/UserModel";
+import useChildStore from "../zustand/useChildStore";
 import useSelectTargetStore from "../zustand/useSelectTargetStore";
+import useUserStore from "../zustand/useUserStore";
 
 export default function Navbar() {
+  const { id } = useParams();
+  const { user } = useUserStore();
   const { selectTarget, setSelectTarget } = useSelectTargetStore();
+  const { child, setChild } = useChildStore();
+  const [teachers, setTeachers] = useState<UserModel[]>([]);
+
+  useEffect(() => {
+    if (id) {
+      getDocData({
+        id,
+        nameCollect: "children",
+        setData: setChild,
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (child) {
+      getDocsData({
+        nameCollect: "users",
+        condition: [where("id", "in", child.teacherIds)],
+        setData: setTeachers,
+      });
+    }
+  }, [child]);
 
   return (
     <SectionComponent
@@ -36,7 +67,7 @@ export default function Navbar() {
             <Link to={"/"}>
               <img
                 alt=""
-                src="HBMIcon.jpg"
+                src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1757600460/HoaBanMaiEdu/icons/HBMIcon_ujnyvq.jpg"
                 style={{
                   height: 60,
                   width: 60,
@@ -66,12 +97,17 @@ export default function Navbar() {
             >
               <img
                 alt=""
-                src="voi.jpg"
-                style={{ height: 36, width: 36, borderRadius: 100 }}
+                src={child?.avatar}
+                style={{
+                  height: 36,
+                  width: 36,
+                  borderRadius: 100,
+                  objectFit: "cover",
+                }}
               />
               <SpaceComponent width={10} />
               <TextComponent
-                text="Nguyễn Kim Trung"
+                text={child?.fullName as string}
                 styles={{ fontWeight: "bold" }}
                 size={sizes.bigText}
               />
@@ -83,26 +119,34 @@ export default function Navbar() {
                 styles={{ fontWeight: "bold" }}
                 size={sizes.bigText}
               />
-              <TextComponent text="1. Nguyễn Thị Lài" />
-              <TextComponent text="2. Thái Thị Miền" />
+              {teachers.length > 0 &&
+                teachers.map((teacher, index) => (
+                  <TextComponent
+                    text={`${index + 1}. ${teacher.fullName}`}
+                    key={index}
+                  />
+                ))}
             </div>
           </RowComponent>
 
           <RowComponent>
             <RowComponent styles={{ flexDirection: "column" }}>
               <TextComponent
-                text="TRẦN THỊ MY NY"
+                text={user?.fullName.toUpperCase() as string}
                 color={colors.textBold}
                 size={sizes.bigText}
                 styles={{ fontWeight: "bold" }}
               />
-              <TextComponent text="Giám đốc" color={colors.textBold} />
+              <TextComponent
+                text={user?.position as string}
+                color={colors.textBold}
+              />
             </RowComponent>
             <SpaceComponent width={6} />
-            <Link to={'profile'}>
+            <Link to={"profile"}>
               <img
                 alt=""
-                src="voi.jpg"
+                src={user?.avatar}
                 style={{
                   height: 40,
                   width: 40,
