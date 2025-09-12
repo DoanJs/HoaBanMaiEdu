@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
   Navbar,
+  PlanListComponent,
   ReportListComponent,
   SpinnerComponent,
   TargetComponent,
@@ -84,6 +85,7 @@ export default function App() {
           <Route path="bank" element={<BankScreen />} />
           <Route path="target" element={<TargetComponent />} />
           <Route path="plan" element={<PlanScreen />} />
+          <Route path="planList" element={<PlanListComponent />} />
           <Route path="report" element={<ReportScreen />} />
           <Route path="reportList" element={<ReportListComponent />} />
           <Route path="addReport" element={<AddReportScreen />} />

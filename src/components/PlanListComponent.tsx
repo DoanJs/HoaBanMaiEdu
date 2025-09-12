@@ -1,11 +1,28 @@
+import { where } from "firebase/firestore";
 import { DocumentDownload, SaveAdd, Trash } from "iconsax-react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ModalDeleteComponent, RowComponent, SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
+import { getDocsData } from "../constants/firebase/getDocsData";
+import { PlanTaskModel } from "../models/PlanTaskModel";
+import PlanItemComponent from "./PlanItemComponent";
 
-export default function ReportListComponent() {
+export default function PlanListComponent() {
   const location = useLocation();
-  const { title } = location.state || {};
+  const { title, planId } = location.state || {};
+  const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
+
+  useEffect(() => {
+    if (planId) {
+      getDocsData({
+        nameCollect: 'planTasks',
+        condition: [where('planId', '==', planId)],
+        setData: setPlanTasks
+      })
+    }
+  }, [planId])
+
 
   return (
     <div style={{ width: "100%" }}>
@@ -22,16 +39,6 @@ export default function ReportListComponent() {
         }}
       >
         <TextComponent text={`${title}`} size={32} />
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          style={{ width: "20%" }}
-        >
-          <option defaultValue=''>Chọn tháng</option>
-          <option value="1">01/2024</option>
-          <option value="2">02/2024</option>
-          <option value="3">03/2024</option>
-        </select>
       </RowComponent>
 
       <div style={{ maxHeight: '85%', overflowY: 'scroll' }}>
@@ -42,15 +49,14 @@ export default function ReportListComponent() {
               <th scope="col">Mục tiêu</th>
               <th scope="col">Mức độ hỗ trợ</th>
               <th scope="col">Nội dung</th>
-              <th scope="col">Tổng kết</th>
             </tr>
           </thead>
           <tbody style={{ textAlign: 'justify' }}>
-            {/* {
-              Array.from({ length: 20 }).map((_, index) =>
-                <ReportItemComponent type={type} key={index} />
+            {
+              planTasks.length > 0 && planTasks.map((_, index) =>
+                <PlanItemComponent planTask={_} key={index} />
               )
-            } */}
+            }
           </tbody>
         </table>
       </div>

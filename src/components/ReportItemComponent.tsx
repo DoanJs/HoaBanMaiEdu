@@ -18,10 +18,12 @@ export default function ReportItemComponent(props: Props) {
         chơi tàu hỏa, nó có màu xanh dương, nó dài có nhiều toa tàu, để
         chở hàng.
       </td>
+      <td>Mức độ hỗ trợ</td>
       <td>
         {
           type === 'KH' ?
             <textarea
+            onChange={() => {}}
               className="form-control"
               placeholder="Nhập đánh giá"
               rows={6}
@@ -38,6 +40,7 @@ export default function ReportItemComponent(props: Props) {
       {type === "BC" && (
         <td>
           <textarea
+          onChange={() => {}}
             className="form-control"
             placeholder="Nhập đánh giá"
             rows={6}

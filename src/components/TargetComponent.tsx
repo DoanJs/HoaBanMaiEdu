@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
 import { TargetModel } from "../models/TargetModel";
+import useCartStore from "../zustand/useCartStore";
 import useTargetStore from "../zustand/useTargetStore";
 import RowComponent from "./RowComponent";
 import SearchComponent from "./SearchComponent";
@@ -11,9 +12,9 @@ import TextComponent from "./TextComponent";
 
 export default function TargetComponent() {
   const location = useLocation();
-  const navigate = useNavigate();
   const { targets } = useTargetStore();
   const [targetsNew, setTargetsNew] = useState<TargetModel[]>([]);
+  const { carts, setCarts } = useCartStore()
 
   const { title, fieldId } = location.state || {};
 
@@ -23,11 +24,10 @@ export default function TargetComponent() {
     }
   }, [targets]);
 
-  const handleAddTarget = () => {
-    navigate("../bank");
+  const handleRemoveSelect = () => {
+    const items = carts.filter((cart) => cart.fieldId !== fieldId)
+    setCarts(items)
   };
-
-  const handleRemoveSelect = () => {};
   return (
     <div style={{ width: "100%" }}>
       <RowComponent justify="space-between" styles={{ paddingTop: 10 }}>
@@ -58,7 +58,7 @@ export default function TargetComponent() {
               <th scope="col">STT</th>
               <th scope="col">Tên mục tiêu</th>
               <th scope="col">Level</th>
-              <th scope="col">Handle</th>
+              <th scope="col">Chọn</th>
             </tr>
           </thead>
           <tbody>
@@ -80,13 +80,6 @@ export default function TargetComponent() {
           onClick={handleRemoveSelect}
         >
           Bỏ chọn tất cả
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={handleAddTarget}
-        >
-          Thêm vào giỏ mục tiêu
         </button>
       </div>
     </div>

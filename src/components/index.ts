@@ -7,6 +7,7 @@ import ModalDeleteComponent from "./modal/ModalDeleteComponent";
 import ModalEditCallover from "./modal/ModalEditCallover";
 import ModalEditComponent from "./modal/ModalEditComponent";
 import Navbar from "./Navbar";
+import PlanListComponent from "./PlanListComponent";
 import ProcessBar from "./ProcessBar";
 import ReportItemComponent from "./ReportItemComponent";
 import ReportListComponent from "./ReportListComponent";
@@ -22,7 +23,7 @@ import TextComponent from "./TextComponent";
 export {
   CalloverItemComponent,
   CardImageComponent,
-  CartItemComponent,
+  CartItemComponent,PlanListComponent,
   FieldItemComponent,
   HomeItemComponent,
   ModalDeleteComponent,

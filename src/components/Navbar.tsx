@@ -11,10 +11,14 @@ import {
 import { colors } from "../constants/colors";
 import { getDocData } from "../constants/firebase/getDocData";
 import { getDocsData } from "../constants/firebase/getDocsData";
+import { query_targets } from "../constants/firebase/query/Index";
 import { sizes } from "../constants/sizes";
+import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
+import { TargetModel } from "../models/TargetModel";
 import { UserModel } from "../models/UserModel";
 import useChildStore from "../zustand/useChildStore";
 import useSelectTargetStore from "../zustand/useSelectTargetStore";
+import useTargetStore from "../zustand/useTargetStore";
 import useUserStore from "../zustand/useUserStore";
 
 export default function Navbar() {
@@ -23,6 +27,21 @@ export default function Navbar() {
   const { selectTarget, setSelectTarget } = useSelectTargetStore();
   const { child, setChild } = useChildStore();
   const [teachers, setTeachers] = useState<UserModel[]>([]);
+  const { setTargets } = useTargetStore();
+  const { data: data_targets, loading: loading_targets } = useFirestoreWithMeta(
+    {
+      key: "targetsCache",
+      query: query_targets,
+      metaDoc: "targets",
+    }
+  );
+
+
+  useEffect(() => {
+    if (!loading_targets) {
+      setTargets(data_targets as TargetModel[]);
+    }
+  }, [data_targets, loading_targets]);
 
   useEffect(() => {
     if (id) {

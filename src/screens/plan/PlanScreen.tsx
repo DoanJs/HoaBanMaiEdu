@@ -1,14 +1,50 @@
+import { where } from "firebase/firestore";
 import { AddCircle } from "iconsax-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { RowComponent, SearchComponent, SpaceComponent, TextComponent } from "../../components";
+import { RowComponent, SearchComponent, SpaceComponent, SpinnerComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
+import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
+import { PlanModel } from "../../models/PlanModel";
+import usePlanStore from "../../zustand/usePlanStore";
 import useSelectTargetStore from "../../zustand/useSelectTargetStore";
+import useUserStore from "../../zustand/useUserStore";
+import useChildStore from "../../zustand/useChildStore";
 
 export default function PlanScreen() {
+  const { user } = useUserStore()
+  const {child} = useChildStore()
   const { setSelectTarget } = useSelectTargetStore();
+  const { plans, setPlans } = usePlanStore()
+  const [planNews, setPlanNews] = useState<PlanModel[]>([]);
+
+  const { data: data_plans, loading: loading_plans } = useFirestoreWithMetaCondition({
+    key: 'plansCache',
+    metaDoc: 'plans',
+    id: user?.id,
+    nameCollect: 'plans',
+    condition: where('teacherId', '==', user?.id)
+  })
+
+  useEffect(() => {
+    if (!loading_plans) {
+      const items = data_plans as PlanModel[]
+      setPlans(items.filter((plan) => plan.childId === child?.id))
+    }
+  }, [data_plans, loading_plans])
+
+
+  useEffect(() => {
+    if (plans) {
+      setPlanNews(plans)
+    }
+  }, [plans])
+
+
+  if (loading_plans) return <SpinnerComponent />
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       <RowComponent
         justify="space-between"
         styles={{
@@ -18,7 +54,8 @@ export default function PlanScreen() {
           borderBottomColor: colors.gray,
         }}
       >
-        <SearchComponent placeholder="Nhập tháng" title="Tìm tháng" onChange={() => {}} arrSource={[]}/>
+        <SearchComponent type="searchPlan" placeholder="Nhập tháng" title="Tìm tháng"
+          onChange={(val) => setPlanNews(val)} arrSource={plans} />
         <Link
           to={"../bank"}
           style={{
@@ -37,14 +74,14 @@ export default function PlanScreen() {
       </RowComponent>
 
       <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
-        {Array.from({ length: 20 }).map((_, index) => (
+        {planNews.length > 0 && planNews.map((_, index) => (
           <Link
-            to={"../reportList"}
-            state={{
-              type: "KH",
-              title: `KH ${index + 1 < 10 ? `0${index + 1}` : index + 1}/2025`,
-            }}
             key={index}
+            to={"../planList"}
+            state={{
+              title: _.title,
+              planId: _.id
+            }}
             type="button"
             className="btn "
             style={{
@@ -54,7 +91,7 @@ export default function PlanScreen() {
               margin: 10,
             }}
           >
-            KH {index + 1 < 10 ? `0${index + 1}` : index + 1}/2025
+            {_.title}
           </Link>
         ))}
       </RowComponent>

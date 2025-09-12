@@ -36,7 +36,9 @@ export function useFirestoreWithMetaCondition<T>({
       // 1. Lấy meta từ Firestore
       const metaSnap = await getDoc(doc(db, "Meta", metaDoc));
       const lastUpdated = metaSnap.exists()
-        ? metaSnap.data()[key]?.toMillis() //chuyển sang minisecond để so sánh
+        ? metaSnap.data().lastUpdated
+          ? metaSnap.data().lastUpdated.toMillis() //chuyển sang minisecond để so sánh
+          : metaSnap.data()[key]?.toMillis() //chuyển sang minisecond để so sánh
         : null;
 
       // 2. Lấy cache

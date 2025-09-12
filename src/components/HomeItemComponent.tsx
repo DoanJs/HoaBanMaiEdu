@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { sizes } from "../constants/sizes";
+import useCartStore from "../zustand/useCartStore";
 
 interface Props {
   title: string;
@@ -13,6 +14,7 @@ interface Props {
 
 export default function HomeItemComponent(props: Props) {
   const { title, icon, value, onClick } = props;
+  const {carts} = useCartStore()
 
   const showUI = () => {
     let result: any;
@@ -103,7 +105,7 @@ export default function HomeItemComponent(props: Props) {
               }}
             >
               <TextComponent
-                text="20"
+                text={`${carts.length}`}
                 size={10}
                 color={colors.bacground}
                 styles={{ fontWeight: "bold" }}
