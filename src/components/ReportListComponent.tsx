@@ -1,11 +1,59 @@
+import { serverTimestamp, where } from "firebase/firestore";
 import { DocumentDownload, SaveAdd, Trash } from "iconsax-react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ModalDeleteComponent, RowComponent, SpaceComponent, TextComponent } from ".";
+import {
+  ModalDeleteComponent,
+  ReportItemComponent,
+  RowComponent,
+  SpaceComponent,
+  SpinnerComponent,
+  TextComponent,
+} from ".";
 import { colors } from "../constants/colors";
+import { getDocsData } from "../constants/firebase/getDocsData";
+import { updateDocData } from "../constants/firebase/updateDocData";
+import { ReportTaskModel } from "../models/ReportTaskModel";
 
 export default function ReportListComponent() {
   const location = useLocation();
-  const { title } = location.state || {};
+  const { title, reportId } = location.state || {};
+  const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
+  const [disable, setDisable] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Lấy trực tiếp từ firebase
+  useEffect(() => {
+    if (reportId) {
+      getDocsData({
+        nameCollect: "reportTasks",
+        condition: [where("reportId", "==", reportId)],
+        setData: setReportTasks,
+      });
+    }
+  }, [reportId]);
+
+  const handleSaveReportTask = async () => {
+    // luu phia firestore
+    if (!disable) {
+      setIsLoading(true);
+      const promiseItems = reportTasks.map((_) =>
+        updateDocData({
+          nameCollect: "reportTasks",
+          id: _.id,
+          valueUpdate: {
+            content: _.content,
+            updateAt: serverTimestamp(),
+          },
+          metaDoc: "reports",
+        })
+      );
+      await Promise.all(promiseItems);
+
+      setIsLoading(false);
+      setDisable(true);
+    }
+  };
 
   return (
     <div style={{ width: "100%" }}>
@@ -22,19 +70,9 @@ export default function ReportListComponent() {
         }}
       >
         <TextComponent text={`${title}`} size={32} />
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          style={{ width: "20%" }}
-        >
-          <option defaultValue=''>Chọn tháng</option>
-          <option value="1">01/2024</option>
-          <option value="2">02/2024</option>
-          <option value="3">03/2024</option>
-        </select>
       </RowComponent>
 
-      <div style={{ maxHeight: '85%', overflowY: 'scroll' }}>
+      <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
         <table className="table">
           <thead>
             <tr style={{ textAlign: "center" }}>
@@ -45,18 +83,24 @@ export default function ReportListComponent() {
               <th scope="col">Tổng kết</th>
             </tr>
           </thead>
-          <tbody style={{ textAlign: 'justify' }}>
-            {/* {
-              Array.from({ length: 20 }).map((_, index) =>
-                <ReportItemComponent type={type} key={index} />
-              )
-            } */}
+          <tbody style={{ textAlign: "justify" }}>
+            {reportTasks &&
+              reportTasks.map((_, index) => (
+                <ReportItemComponent
+                  key={index}
+                  reportTask={_}
+                  setDisable={setDisable}
+                  reportTasks={reportTasks}
+                  onSetReportTasks={setReportTasks}
+                />
+              ))}
           </tbody>
         </table>
       </div>
 
       <RowComponent justify="flex-end">
         <button
+          onClick={disable ? undefined : handleSaveReportTask}
           type="button"
           className="btn btn-success"
           data-bs-dismiss="modal"
@@ -65,11 +109,19 @@ export default function ReportListComponent() {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
+            background: disable ? colors.gray : undefined,
+            borderColor: disable ? colors.gray : undefined,
           }}
         >
-          <SaveAdd size={20} color={colors.bacground} />
-          <SpaceComponent width={6} />
-          <TextComponent text="Lưu" color={colors.bacground} />
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <>
+              <SaveAdd size={20} color={colors.bacground} />
+              <SpaceComponent width={6} />
+              <TextComponent text="Lưu" color={colors.bacground} />
+            </>
+          )}
         </button>
         <SpaceComponent width={10} />
         <button
@@ -108,7 +160,7 @@ export default function ReportListComponent() {
         </button>
       </RowComponent>
 
-      <ModalDeleteComponent data={{id:''}}/>
+      <ModalDeleteComponent data={{ id: reportId, nameCollect: "reports" }} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase/firestore";
 import { TimeAtModel } from "./TimeAtModel";
 
 export interface ReportModel {
@@ -6,6 +7,6 @@ export interface ReportModel {
   childId: string
   teacherId: string
 
-  createAt: TimeAtModel;
-  updateAt: TimeAtModel;
+  createAt: TimeAtModel | FieldValue;
+  updateAt: TimeAtModel | FieldValue;
 }

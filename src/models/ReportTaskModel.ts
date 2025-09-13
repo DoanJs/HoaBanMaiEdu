@@ -5,6 +5,7 @@ export interface ReportTaskModel {
   planTaskId: string;
   content: string;
   reportId: string
+  isEdit: boolean
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

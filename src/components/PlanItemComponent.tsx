@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { colors } from "../constants/colors";
 import { PlanTaskModel } from "../models/PlanTaskModel";
+import useFieldStore from "../zustand/useFieldStore";
 import useTargetStore from "../zustand/useTargetStore";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 export default function PlanItemComponent(props: Props) {
   const { planTask, onSetPlanTasks, planTasks, setDisable } = props;
   const { targets } = useTargetStore();
+  const { fields } = useFieldStore();
   const [contentSource, setContentSource] = useState("");
   const [content, setContent] = useState("");
 
@@ -38,21 +40,26 @@ export default function PlanItemComponent(props: Props) {
   }, [content]);
 
   const showTarget = () => {
-    let result: string = "";
+    let field: string = "";
+    let name: string = "";
     const index = targets.findIndex(
       (target) => target.id === planTask.targetId
     );
     if (index !== -1) {
-      result = targets[index].name;
+      const indexField = fields.findIndex(
+        (_) => _.id === targets[index].fieldId
+      );
+      field = fields[indexField].name;
+      name = targets[index].name;
     }
 
-    return result;
+    return { name, field };
   };
 
   return (
     <tr>
-      <th scope="row">Ngôn ngữ hiểu</th>
-      <td>{showTarget()}</td>
+      <th scope="row">{showTarget().field}</th>
+      <td>{showTarget().name}</td>
       <td>{planTask?.intervention}</td>
       <td>
         <textarea

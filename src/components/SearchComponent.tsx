@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { ChildrenModel } from "../models/ChildrenModel";
 import { TargetModel } from "../models/TargetModel";
 import { PlanModel } from "../models/PlanModel";
+import { ReportModel } from "../models/ReportModel";
 
 interface Props {
   title: string;
   placeholder: string;
   type?: string;
-  arrSource: ChildrenModel[] | TargetModel[] | PlanModel[];
+  arrSource: ChildrenModel[] | TargetModel[] | PlanModel[] | ReportModel[];
   onChange: (val: any) => void;
 }
 
@@ -31,6 +32,11 @@ export default function SearchComponent(props: Props) {
       case "searchPlan":
         items = (arrSource as PlanModel[]).filter((plan) =>
           plan.title.toLowerCase().includes(value.toLowerCase())
+        );
+        break;
+      case "searchReport":
+        items = (arrSource as ReportModel[]).filter((report) =>
+          report.title.toLowerCase().includes(value.toLowerCase())
         );
         break;
 

@@ -38,7 +38,7 @@ export default function CartScreen() {
     } else {
       setDisable(true)
     }
-  }, [carts])
+  }, [carts, title])
 
   useEffect(() => {
     if (!loading) {

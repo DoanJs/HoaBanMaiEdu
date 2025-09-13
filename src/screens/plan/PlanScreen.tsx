@@ -1,4 +1,3 @@
-import { where } from "firebase/firestore";
 import { AddCircle } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,35 +10,14 @@ import {
 } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import { PlanModel } from "../../models/PlanModel";
 import usePlanStore from "../../zustand/usePlanStore";
 import useSelectTargetStore from "../../zustand/useSelectTargetStore";
-import useUserStore from "../../zustand/useUserStore";
-import useChildStore from "../../zustand/useChildStore";
 
 export default function PlanScreen() {
-  const { user } = useUserStore();
-  const { child } = useChildStore();
   const { setSelectTarget } = useSelectTargetStore();
-  const { plans, setPlans } = usePlanStore();
+  const { plans } = usePlanStore();
   const [planNews, setPlanNews] = useState<PlanModel[]>([]);
-
-  const { data: data_plans, loading: loading_plans } =
-    useFirestoreWithMetaCondition({
-      key: "plansCache",
-      metaDoc: "plans",
-      id: user?.id,
-      nameCollect: "plans",
-      condition: [where("teacherId", "==", user?.id)],
-    });
-
-  useEffect(() => {
-    if (!loading_plans) {
-      const items = data_plans as PlanModel[];
-      setPlans(items.filter((plan) => plan.childId === child?.id));
-    }
-  }, [data_plans, loading_plans]);
 
   useEffect(() => {
     if (plans) {
@@ -47,7 +25,7 @@ export default function PlanScreen() {
     }
   }, [plans]);
 
-  if (loading_plans) return <SpinnerComponent />;
+  if (!plans) return <SpinnerComponent />;
   return (
     <div style={{ width: "100%" }}>
       <RowComponent

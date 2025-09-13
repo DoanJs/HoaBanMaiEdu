@@ -83,7 +83,7 @@ export function useFirestoreWithMetaCondition<T>({
     return () => {
       mounted = false;
     };
-  }, [key, metaDoc]);
+  }, [key, metaDoc, id]);
 
   return { data, loading };
 }

@@ -1,15 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import usePlanStore from "../../zustand/usePlanStore";
+import useReportStore from "../../zustand/useReportStore";
 
+interface DataModel {
+  id: string;
+  nameCollect: string;
+}
 interface Props {
-  data: any;
+  data: DataModel;
 }
 
 export default function ModalDeleteComponent(props: Props) {
   const { data } = props;
   const navigate = useNavigate();
   const { removePlan } = usePlanStore();
+  const { removeReport } = useReportStore();
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -22,6 +28,16 @@ export default function ModalDeleteComponent(props: Props) {
         });
 
         navigate("../plan");
+        break;
+      case "reports":
+        removeReport(data.id);
+        await deleteDocData({
+          nameCollect: "reports",
+          id: data.id,
+          metaDoc: "reports",
+        });
+
+        navigate("../report");
         break;
 
       default:
