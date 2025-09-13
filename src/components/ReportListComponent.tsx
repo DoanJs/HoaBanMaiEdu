@@ -108,7 +108,7 @@ export default function ReportListComponent() {
         </button>
       </RowComponent>
 
-      <ModalDeleteComponent />
+      <ModalDeleteComponent data={{id:''}}/>
     </div>
   );
 }

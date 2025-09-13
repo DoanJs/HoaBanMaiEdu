@@ -11,12 +11,14 @@ import {
 import { colors } from "../constants/colors";
 import { getDocData } from "../constants/firebase/getDocData";
 import { getDocsData } from "../constants/firebase/getDocsData";
-import { query_targets } from "../constants/firebase/query/Index";
+import { query_fields, query_targets } from "../constants/firebase/query/Index";
 import { sizes } from "../constants/sizes";
 import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
+import { FieldModel } from "../models/FieldModel";
 import { TargetModel } from "../models/TargetModel";
 import { UserModel } from "../models/UserModel";
 import useChildStore from "../zustand/useChildStore";
+import useFieldStore from "../zustand/useFieldStore";
 import useSelectTargetStore from "../zustand/useSelectTargetStore";
 import useTargetStore from "../zustand/useTargetStore";
 import useUserStore from "../zustand/useUserStore";
@@ -28,6 +30,13 @@ export default function Navbar() {
   const { child, setChild } = useChildStore();
   const [teachers, setTeachers] = useState<UserModel[]>([]);
   const { setTargets } = useTargetStore();
+  const { setFields } = useFieldStore();
+
+  const { data: data_fields, loading } = useFirestoreWithMeta({
+    key: "fieldsCache",
+    query: query_fields,
+    metaDoc: "fields",
+  });
   const { data: data_targets, loading: loading_targets } = useFirestoreWithMeta(
     {
       key: "targetsCache",
@@ -36,6 +45,11 @@ export default function Navbar() {
     }
   );
 
+  useEffect(() => {
+    if (!loading) {
+      setFields(data_fields as FieldModel[]);
+    }
+  }, [data_fields, loading]);
 
   useEffect(() => {
     if (!loading_targets) {

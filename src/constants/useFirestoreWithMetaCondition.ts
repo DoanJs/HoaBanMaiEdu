@@ -21,7 +21,7 @@ export function useFirestoreWithMetaCondition<T>({
   metaDoc: string; // ví dụ: "products" | "fields" | targets |...
   id: string | undefined;
   nameCollect: string;
-  condition: QueryConstraint;
+  condition: QueryConstraint[];
 }) {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export function useFirestoreWithMetaCondition<T>({
 
       // 4. Nếu Meta thay đổi → fetch Firestore mới
       const snapshot = await getDocs(
-        query(collection(db, nameCollect), condition)
+        query(collection(db, nameCollect), ...condition)
       );
       const freshData = snapshot.docs.map((doc) => ({
         id: doc.id,

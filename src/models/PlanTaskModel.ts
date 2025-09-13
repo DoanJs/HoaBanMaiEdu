@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase/firestore";
 import { TimeAtModel } from "./TimeAtModel";
 
 export interface PlanTaskModel {
@@ -6,7 +7,8 @@ export interface PlanTaskModel {
   planId: string
   content: string;
   intervention: string
+  isEdit: boolean
 
-  createAt: TimeAtModel;
-  updateAt: TimeAtModel;
+  createAt: TimeAtModel | FieldValue;
+  updateAt: TimeAtModel | FieldValue;
 }

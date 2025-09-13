@@ -25,7 +25,7 @@ export default function ChildrenScreen() {
       id: user?.id,
       metaDoc: "children",
       nameCollect: "children",
-      condition: where("teacherIds", "array-contains", user?.id),
+      condition: [where("teacherIds", "array-contains", user?.id)],
     });
 
   useEffect(() => {

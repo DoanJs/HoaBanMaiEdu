@@ -1,33 +1,15 @@
-import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import {
   FieldItemComponent,
   RowComponent,
   SpinnerComponent,
 } from "../../components";
-import {
-  query_fields
-} from "../../constants/firebase/query/Index";
-import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
-import { FieldModel } from "../../models/FieldModel";
 import useFieldStore from "../../zustand/useFieldStore";
 
 export default function BankScreen() {
-  const { fields, setFields } = useFieldStore();
-  const { data: data_fields, loading } = useFirestoreWithMeta({
-    key: "fieldsCache",
-    query: query_fields,
-    metaDoc: "fields",
-  });
+  const { fields } = useFieldStore();
 
-
-  useEffect(() => {
-    if (!loading) {
-      setFields(data_fields as FieldModel[]);
-    }
-  }, [data_fields, loading]);
-
-  if (loading) return <SpinnerComponent />;
+  if (!fields) return <SpinnerComponent />;
   return (
     <RowComponent
       styles={{

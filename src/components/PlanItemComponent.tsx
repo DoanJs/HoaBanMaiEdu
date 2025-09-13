@@ -1,42 +1,70 @@
+import { useEffect, useState } from "react";
 import { colors } from "../constants/colors";
 import { PlanTaskModel } from "../models/PlanTaskModel";
 import useTargetStore from "../zustand/useTargetStore";
 
 interface Props {
-  planTask: PlanTaskModel
+  planTask: PlanTaskModel;
+  setDisable: any;
+  planTasks: PlanTaskModel[];
+  onSetPlanTasks: any;
 }
 
 export default function PlanItemComponent(props: Props) {
-  const { planTask } = props
-  const { targets } = useTargetStore()
+  const { planTask, onSetPlanTasks, planTasks, setDisable } = props;
+  const { targets } = useTargetStore();
+  const [contentSource, setContentSource] = useState("");
+  const [content, setContent] = useState("");
 
-  const showTarget = () => {
-    let result: string = ''
-    const index = targets.findIndex((target) => target.id === planTask.targetId)
-    if (index !== -1) {
-      result = targets[index].name
+  useEffect(() => {
+    if (planTask) {
+      setContent(planTask.content);
+      setContentSource(planTask.content);
+    }
+  }, [planTask]);
+
+  useEffect(() => {
+    const index = planTasks.findIndex((_) => _.id === planTask.id);
+    if (content && content !== contentSource) {
+      planTasks[index].content = content;
+      planTasks[index].isEdit = true;
+      onSetPlanTasks(planTasks);
+    } else {
+      planTasks[index].isEdit = false;
     }
 
-    return result
-  }
+    const isEdit = planTasks.some((plan) => plan.isEdit);
+    setDisable(!isEdit);
+  }, [content]);
+
+  const showTarget = () => {
+    let result: string = "";
+    const index = targets.findIndex(
+      (target) => target.id === planTask.targetId
+    );
+    if (index !== -1) {
+      result = targets[index].name;
+    }
+
+    return result;
+  };
 
   return (
     <tr>
-      <td scope="row">Ngôn ngữ hiểu</td>
-      <td>
-        {showTarget()}
-      </td>
+      <th scope="row">Ngôn ngữ hiểu</th>
+      <td>{showTarget()}</td>
       <td>{planTask?.intervention}</td>
       <td>
         <textarea
-          onChange={() => { }}
+          onChange={(e) => setContent(e.target.value)}
           className="form-control"
           placeholder="Nhập đánh giá"
           rows={6}
-          cols={200}
+          cols={150}
           style={{ borderColor: colors.primary }}
           id="floatingTextarea2"
-          value={`Các hoạt động vui chơi tương tác với bạn, cô hỗ trợ tạo tình huống dẫn đến các sự việc giúp con hứng thú và ghi nhớ, kết thúc hoạt động cô hỏi- đáp và gợi ý để con kể lại.`}></textarea>
+          value={content}
+        ></textarea>
       </td>
     </tr>
   );

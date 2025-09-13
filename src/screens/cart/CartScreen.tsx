@@ -33,7 +33,7 @@ export default function CartScreen() {
   })
 
   useEffect(() => {
-    if (carts.length > 0) {
+    if (carts.length > 0 && title!=='') {
       setDisable(false)
     } else {
       setDisable(true)
@@ -52,13 +52,15 @@ export default function CartScreen() {
     if (title && user && child) {
       setIsLoading(true)
       addDocData({
-        nameCollect: 'plans', value: {
+        nameCollect: 'plans', 
+        value: {
           title,
           childId: child.id,
           teacherId: user.id,
           createAt: serverTimestamp(),
           updateAt: serverTimestamp(),
-        }
+        },
+        metaDoc:'plans'
       }).then(async result => {
         setIsLoading(false)
         addPlan({
@@ -79,7 +81,8 @@ export default function CartScreen() {
 
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
-          }
+          },
+          metaDoc: 'plans'
         }))
 
         await Promise.all(promiseItems)
