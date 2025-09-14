@@ -1,7 +1,12 @@
 import { signOut } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SectionComponent, SpinnerComponent } from "../../components";
+import {
+  RowComponent,
+  SectionComponent,
+  SpaceComponent,
+  SpinnerComponent,
+} from "../../components";
 import { auth } from "../../firebase.config";
 
 export default function ProfileScreen() {
@@ -19,11 +24,26 @@ export default function ProfileScreen() {
       console.error("Error signing out:", error);
     }
   };
+  const handleChangePassword = () => {};
   return (
-    <SectionComponent styles={{ marginTop: 10 }}>
-      <button type="button" className="btn btn-warning" onClick={handleLogout}>
-        {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
-      </button>
-    </SectionComponent>
+    <div style={{width:'100%'}}>
+      <SpaceComponent height={10}/>
+      <RowComponent justify="space-between">
+        <button
+          type="button"
+          className="btn btn-warning"
+          onClick={handleLogout}
+        >
+          {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
+        </button>
+        <button
+          type="button"
+          className="btn btn-warning"
+          onClick={handleChangePassword}
+        >
+          {isLoading ? <SpinnerComponent /> : <>Đổi mật khẩu</>}
+        </button>
+      </RowComponent>
+    </div>
   );
 }

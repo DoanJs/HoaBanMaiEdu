@@ -178,6 +178,7 @@ export default function LoginScreen() {
             width: "100%",
             justifyContent: "flex-start",
             alignItems: "flex-start",
+            borderRadius: 10
           }}
         >
           <img
@@ -185,7 +186,7 @@ export default function LoginScreen() {
             alt=""
             style={{
               borderRadius: 10,
-              objectFit: "contain",
+              objectFit: "cover",
               height: "100%",
               width: "100%",
             }}

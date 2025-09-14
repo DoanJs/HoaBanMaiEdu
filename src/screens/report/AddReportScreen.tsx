@@ -1,5 +1,6 @@
 import { serverTimestamp, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   RowComponent,
   SpaceComponent,
@@ -7,32 +8,31 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
+import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { sizes } from "../../constants/sizes";
+import { PlanModel } from "../../models/PlanModel";
 import { PlanTaskModel } from "../../models/PlanTaskModel";
+import useChildStore from "../../zustand/useChildStore";
 import useFieldStore from "../../zustand/useFieldStore";
 import usePlanStore from "../../zustand/usePlanStore";
+import useReportStore from "../../zustand/useReportStore";
 import useTargetStore from "../../zustand/useTargetStore";
 import useUserStore from "../../zustand/useUserStore";
-import useChildStore from "../../zustand/useChildStore";
-import { addDocData } from "../../constants/firebase/addDocData";
-import useReportStore from "../../zustand/useReportStore";
-import { PlanModel } from "../../models/PlanModel";
-import { useNavigate } from "react-router-dom";
 
 export default function AddReportScreen() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { plans } = usePlanStore();
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
   const [addReports, setAddReports] = useState<any[]>([]);
   const { targets } = useTargetStore();
   const { fields } = useFieldStore();
-  const {user} = useUserStore()
-  const {child} = useChildStore()
+  const { user } = useUserStore();
+  const { child } = useChildStore();
   const [disable, setDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
-  const {addReport} = useReportStore()
+  const { addReport } = useReportStore();
 
   useEffect(() => {
     if (addReports.length > 0) {
@@ -49,13 +49,15 @@ export default function AddReportScreen() {
 
   const handleSelectPlan = (planId: string) => {
     if (planId !== "") {
-      const index = plans.findIndex((_) => _.id === planId)
-      setPlan(plans[index])
+      const index = plans.findIndex((_) => _.id === planId);
+      setPlan(plans[index]);
       getDocsData({
         nameCollect: "planTasks",
         condition: [where("planId", "==", planId)],
         setData: setPlanTasks,
       });
+    } else {
+      setDisable(true);
     }
   };
   const handleChangeValue = (data: { val: string; planTaskId: string }) => {
@@ -83,9 +85,10 @@ export default function AddReportScreen() {
       addDocData({
         nameCollect: "reports",
         value: {
-          title: plan?.title.replace('KH', 'BC') ,
+          title: plan?.title.replace("KH", "BC"),
           childId: child.id,
           teacherId: user.id,
+          planId: plan?.id,
           createAt: serverTimestamp(),
           updateAt: serverTimestamp(),
         },
@@ -95,9 +98,10 @@ export default function AddReportScreen() {
           setIsLoading(false);
           addReport({
             id: result.id,
-            title: plan?.title.replace('KH', 'BC') as string,
+            title: plan?.title.replace("KH", "BC") as string,
             childId: child.id,
             teacherId: user.id,
+            planId: plan?.id as string,
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
           });
@@ -119,8 +123,8 @@ export default function AddReportScreen() {
           await Promise.all(promiseItems);
         })
         .catch((error) => {
-          setIsLoading(false)
-          console.log(error)
+          setIsLoading(false);
+          console.log(error);
         });
     }
     navigate(`/home/${user?.id}/report`);
@@ -216,7 +220,7 @@ export default function AddReportScreen() {
             background: disable ? colors.gray : undefined,
             borderColor: disable ? colors.gray : undefined,
           }}
-          onClick={handleAddReport}
+          onClick={disable ? undefined : handleAddReport}
         >
           {isLoading ? <SpinnerComponent /> : <>Tạo mới</>}
         </button>

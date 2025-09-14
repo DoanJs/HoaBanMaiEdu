@@ -5,6 +5,7 @@ import CalloverScreen from "./callover/CalloverScreen";
 import CartScreen from "./cart/CartScreen";
 import ChildrenScreen from "./children/ChildrenScreen";
 import MediaScreen from "./media/MediaScreen";
+import PendingScreen from "./pending/PendingScreen";
 import PlanScreen from "./plan/PlanScreen";
 import ProfileScreen from "./profile/ProfileScreen";
 import AddReportScreen from "./report/AddReportScreen";
@@ -19,6 +20,7 @@ export {
   ChildrenScreen,
   LoginScreen,
   MediaScreen,
+  PendingScreen,
   PlanScreen,
   ProfileScreen,
   RegisterScreen,

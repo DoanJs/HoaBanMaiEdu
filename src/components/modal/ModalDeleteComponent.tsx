@@ -1,11 +1,16 @@
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
+import { db } from "../../firebase.config";
+import { PlanTaskModel } from "../../models/PlanTaskModel";
+import { ReportTaskModel } from "../../models/ReportTaskModel";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
 
 interface DataModel {
   id: string;
   nameCollect: string;
+  itemTasks: ReportTaskModel[] | PlanTaskModel[];
 }
 interface Props {
   data: DataModel;
@@ -17,26 +22,64 @@ export default function ModalDeleteComponent(props: Props) {
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
 
+  const deleteReport = async (reportId: string) => {
+    removeReport(reportId);
+
+    await deleteDocData({
+      nameCollect: "reports",
+      id: reportId,
+      metaDoc: "reports",
+    });
+
+    const reportTasks = await getDocs(
+      query(collection(db, "reportTasks"), where("reportId", "==", reportId))
+    );
+
+    if (!reportTasks.empty) {
+      const promiseReportTasks = reportTasks.docs.map((_) =>
+        deleteDocData({
+          nameCollect: "reportTasks",
+          id: _.id,
+          metaDoc: "reports",
+        })
+      );
+      await Promise.all(promiseReportTasks)
+    }
+  };
+
   const handleDelete = async () => {
     switch (data.nameCollect) {
       case "plans":
         removePlan(data.id);
+
         await deleteDocData({
           nameCollect: "plans",
           id: data.id,
           metaDoc: "plans",
         });
+        const promisePlanTasks = data.itemTasks.map((_) =>
+          deleteDocData({
+            nameCollect: "planTasks",
+            id: _.id,
+            metaDoc: "plans",
+          })
+        );
+        await Promise.all(promisePlanTasks);
 
+        const querySnapshot = await getDocs(query(
+          collection(db, "reports"),
+          where("planId", "==", data.id)
+        ));
+        if(!querySnapshot.empty){
+          const promiseReports = querySnapshot.docs.map((_)=>deleteReport(_.id))
+          await Promise.all(promiseReports)
+        }
+      
         navigate("../plan");
         break;
-      case "reports":
-        removeReport(data.id);
-        await deleteDocData({
-          nameCollect: "reports",
-          id: data.id,
-          metaDoc: "reports",
-        });
 
+      case "reports":
+       await deleteReport(data.id);
         navigate("../report");
         break;
 

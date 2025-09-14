@@ -19,6 +19,7 @@ import {
   ChildrenScreen,
   LoginScreen,
   MediaScreen,
+  PendingScreen,
   PlanScreen,
   ProfileScreen,
   RegisterScreen,
@@ -90,6 +91,7 @@ export default function App() {
           <Route path="report" element={<ReportScreen />} />
           <Route path="reportList" element={<ReportListComponent />} />
           <Route path="addReport" element={<AddReportScreen />} />
+          <Route path="pending" element={<PendingScreen />} />
           <Route path="callover" element={<CalloverScreen />} />
           <Route path="media" element={<MediaScreen />} />
           <Route path="setting" element={<SettingScreen />} />

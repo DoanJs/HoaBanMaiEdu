@@ -6,6 +6,7 @@ export interface ReportModel {
   title: string;
   childId: string
   teacherId: string
+  planId: string
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

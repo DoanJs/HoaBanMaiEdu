@@ -159,7 +159,7 @@ export default function PlanListComponent() {
         </button>
       </RowComponent>
 
-      <ModalDeleteComponent data={{ id: planId, nameCollect: "plans" }} />
+      <ModalDeleteComponent data={{ id: planId, nameCollect: "plans" , itemTasks: planTasks}} />
     </div>
   );
 }

@@ -14,7 +14,7 @@ export default function TargetComponent() {
   const location = useLocation();
   const { targets } = useTargetStore();
   const [targetsNew, setTargetsNew] = useState<TargetModel[]>([]);
-  const { carts, setCarts } = useCartStore()
+  const { carts, setCarts } = useCartStore();
 
   const { title, fieldId } = location.state || {};
 
@@ -25,8 +25,8 @@ export default function TargetComponent() {
   }, [targets]);
 
   const handleRemoveSelect = () => {
-    const items = carts.filter((cart) => cart.fieldId !== fieldId)
-    setCarts(items)
+    const items = carts.filter((cart) => cart.fieldId !== fieldId);
+    setCarts(items);
   };
   return (
     <div style={{ width: "100%" }}>
@@ -43,6 +43,15 @@ export default function TargetComponent() {
           type="searchTarget"
           arrSource={targets}
         />
+
+        <button
+          type="button"
+          className="btn btn-danger"
+          data-bs-dismiss="modal"
+          onClick={handleRemoveSelect}
+        >
+          Bỏ chọn tất cả
+        </button>
       </RowComponent>
 
       <div
@@ -70,17 +79,6 @@ export default function TargetComponent() {
                 ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="modal-footer">
-        <button
-          type="button"
-          className="btn btn-danger"
-          data-bs-dismiss="modal"
-          onClick={handleRemoveSelect}
-        >
-          Bỏ chọn tất cả
-        </button>
       </div>
     </div>
   );

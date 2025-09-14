@@ -15,6 +15,7 @@ import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithM
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
+import { Light } from "../../assets/icons";
 
 export default function ChildrenScreen() {
   const { user } = useUserStore();
@@ -57,7 +58,7 @@ export default function ChildrenScreen() {
           }}
         >
           <TextComponent
-            text={`Cô ${user?.fullName} _ ${user?.position}`}
+            text={`Cô ${user.fullName} _ ${user.position}`}
             size={32}
             styles={{ fontWeight: "bold" }}
           />
@@ -76,18 +77,19 @@ export default function ChildrenScreen() {
               justifyContent: "center",
               height: "90%",
               width: "70%",
-              overflow: 10 > 11 ? "scroll" : "hidden",
+              overflow: children.length > 10 ? "scroll" : "hidden",
               alignItems: "flex-start",
               overflowY: 3 > 4 ? "scroll" : undefined,
             }}
           >
-            {children.map((_, index) => (
-              <CardImageComponent
-                key={index}
-                childInfo={_}
-                link={`home/${_.id}`}
-              />
-            ))}
+            {children.length > 0 &&
+              children.map((_, index) => (
+                <CardImageComponent
+                  key={index}
+                  childInfo={_}
+                  link={`home/${_.id}`}
+                />
+              ))}
           </RowComponent>
         </RowComponent>
       </SectionComponent>

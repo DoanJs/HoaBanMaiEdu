@@ -91,7 +91,6 @@ export default function Navbar() {
       setTargets(data_targets as TargetModel[]);
     }
   }, [data_targets, loading_targets]);
-  
   useEffect(() => {
     if (id) {
       getDocData({
@@ -190,8 +189,8 @@ export default function Navbar() {
               {teachers.length > 0 &&
                 teachers.map((teacher, index) => (
                   <TextComponent
-                    text={`${index + 1}. ${teacher.fullName}`}
                     key={index}
+                    text={`${index + 1}. ${teacher.fullName}`}
                   />
                 ))}
             </div>
@@ -211,7 +210,7 @@ export default function Navbar() {
               />
             </RowComponent>
             <SpaceComponent width={6} />
-            <Link to={"profile"}>
+            <Link to={"profile"} onClick={() => setSelectTarget("")}>
               <img
                 alt=""
                 src={user?.avatar}
@@ -271,6 +270,12 @@ export default function Navbar() {
                 <HomeItemComponent
                   title="BÁO CÁO"
                   icon="chart"
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
+                />
+                <HomeItemComponent
+                  title="CHỜ DUYỆT"
+                  icon="pending"
                   value={selectTarget}
                   onClick={(val) => setSelectTarget(val)}
                 />
