@@ -25,11 +25,13 @@ export default function CartItemComponent(props: Props) {
     if (cart) {
       setContent(cart.content);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart]);
   useEffect(() => {
     if (type === "Ý khác" && content) {
       editCart(cart.id, { ...cart, content: content });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, content]);
 
   const showTarget = (targetId: string) => {
@@ -52,10 +54,10 @@ export default function CartItemComponent(props: Props) {
 
   return (
     <tr>
-      <td scope="row">{index + 1}</td>
+      <td>{index + 1}</td>
       <td>{showTarget(cart.id).field}</td>
       <td>{showTarget(cart.id).name}</td>
-      <td style={{ width: "15%" }}>
+      <td style={{ width: "20%" }}>
         <select
           value={cart.intervention}
           className="form-select"
@@ -71,7 +73,7 @@ export default function CartItemComponent(props: Props) {
             ))}
         </select>
       </td>
-      <td style={{ width: "45%" }}>
+      <td style={{ width: "40%" }}>
         <RowComponent>
           <button
             type="button"

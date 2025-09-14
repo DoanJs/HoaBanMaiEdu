@@ -86,28 +86,33 @@ export default function Navbar() {
     if (!loading_interventions) {
       setInterventions(data_interventions as InterventionModel[]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_interventions, loading_interventions]);
   useEffect(() => {
     if (!loading_reports) {
       const items = data_reports as ReportModel[];
       setReports(items.filter((plan) => plan.childId === child?.id));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_reports, loading_reports]);
   useEffect(() => {
     if (!loading_plans) {
       const items = data_plans as PlanModel[];
       setPlans(items.filter((plan) => plan.childId === child?.id));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_plans, loading_plans]);
   useEffect(() => {
     if (!loading) {
       setFields(data_fields as FieldModel[]);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_fields, loading]);
   useEffect(() => {
     if (!loading_targets) {
       setTargets(data_targets as TargetModel[]);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_targets, loading_targets]);
   useEffect(() => {
     if (id) {
@@ -117,6 +122,7 @@ export default function Navbar() {
         setData: setChild,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   useEffect(() => {
     if (child) {
@@ -126,6 +132,7 @@ export default function Navbar() {
         setData: setTeachers,
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [child]);
 
   if (!user) return <SpinnerComponent />;

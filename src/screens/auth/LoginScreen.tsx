@@ -12,8 +12,6 @@ import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
 import { validateEmail } from "../../constants/validateEmailPhone";
 import { auth } from "../../firebase.config";
-import localforage from "../../localforage";
-import useUserStore from "../../zustand/useUserStore";
 
 export default function LoginScreen() {
   const [disable, setDisable] = useState(false);
@@ -22,7 +20,7 @@ export default function LoginScreen() {
     email: "",
     password: "",
   });
-  const [remember, setRemember] = useState(false);
+  // const [remember, setRemember] = useState(false);
 
   useEffect(() => {
     if (form.email && validateEmail(form.email) && form.password) {
@@ -38,10 +36,10 @@ export default function LoginScreen() {
       .then(async (userCredential) => {
         // Signed in
         setIsLoading(false);
-        const user = userCredential.user;
-        if (remember) {
-          await localforage.setItem("user", user.email as string);
-        }
+        // const user = userCredential.user;
+        // if (remember) {
+        //   await localforage.setItem("user", user.email as string);
+        // }
       })
       .catch((error: any) => {
         console.log(error);
@@ -178,7 +176,7 @@ export default function LoginScreen() {
             width: "100%",
             justifyContent: "flex-start",
             alignItems: "flex-start",
-            borderRadius: 10
+            borderRadius: 10,
           }}
         >
           <img

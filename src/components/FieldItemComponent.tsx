@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  ProcessBar,
-  RowComponent,
-  SpaceComponent,
-  TextComponent
-} from ".";
+import { RowComponent, SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
 import { sizes } from "../constants/sizes";
@@ -23,17 +18,17 @@ export default function FieldItemComponent(props: Props) {
         to={"../target"}
         state={{
           title,
-          fieldId
+          fieldId,
         }}
         style={{
           textDecoration: "none",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
+          justifyContent: "center",
+          alignItems: "center",
           background: colors.primaryLightOpacity,
-          width: 180,
-          height: 180,
+          width: 240,
+          height: 240,
           padding: 16,
           borderRadius: 10,
           margin: 10,
@@ -41,6 +36,7 @@ export default function FieldItemComponent(props: Props) {
           cursor: "pointer",
         }}
       >
+        <div>{showUIIconTarget(title)}</div>
         <RowComponent
           styles={{
             display: "flex",
@@ -49,7 +45,6 @@ export default function FieldItemComponent(props: Props) {
             alignItems: "center",
           }}
         >
-          <div>{showUIIconTarget(title)}</div>
           <SpaceComponent width={6} />
           <TextComponent
             text={title}
@@ -59,7 +54,7 @@ export default function FieldItemComponent(props: Props) {
           />
         </RowComponent>
 
-        <ProcessBar />
+        {/* <ProcessBar /> */}
       </Link>
     </div>
   );

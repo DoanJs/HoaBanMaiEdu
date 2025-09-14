@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   RowComponent,
-  SectionComponent,
   SpaceComponent,
   SpinnerComponent,
 } from "../../components";
@@ -26,8 +25,8 @@ export default function ProfileScreen() {
   };
   const handleChangePassword = () => {};
   return (
-    <div style={{width:'100%'}}>
-      <SpaceComponent height={10}/>
+    <div style={{ width: "100%" }}>
+      <SpaceComponent height={10} />
       <RowComponent justify="space-between">
         <button
           type="button"

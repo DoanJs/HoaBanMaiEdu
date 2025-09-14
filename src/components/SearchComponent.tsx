@@ -45,6 +45,7 @@ export default function SearchComponent(props: Props) {
     }
 
     onChange(items);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   return (

@@ -58,7 +58,7 @@ export default function App() {
       }
     });
     return () => unsub();
-  }, []);
+  }, [setUser]);
 
   if (authState.isLoading) {
     return <SpinnerComponent />;

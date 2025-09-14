@@ -22,7 +22,8 @@ export default function ReportItemComponent(props: Props) {
   const { fields } = useFieldStore();
   const [content, setContent] = useState("");
   const [contentSource, setContentSource] = useState("");
-  console.log(planTask);
+
+
   useEffect(() => {
     if (reportTask) {
       getDocData({
@@ -33,6 +34,7 @@ export default function ReportItemComponent(props: Props) {
       setContent(reportTask.content);
       setContentSource(reportTask.content);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportTask]);
 
   useEffect(() => {
@@ -47,6 +49,7 @@ export default function ReportItemComponent(props: Props) {
 
     const isEdit = reportTasks.some((reportTask) => reportTask.isEdit);
     setDisable(!isEdit);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
 
   const showTarget = () => {
@@ -73,7 +76,7 @@ export default function ReportItemComponent(props: Props) {
       <td>{planTask?.intervention}</td>
       <td>{planTask?.content}</td>
 
-      <td  style={{width:'30%'}}>
+      <td  style={{width:'50%'}}>
         {status === "pending" ? (
           <textarea
             onChange={(e) => setContent(e.target.value)}

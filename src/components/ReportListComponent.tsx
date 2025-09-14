@@ -1,4 +1,4 @@
-import { serverTimestamp, where } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, where } from "firebase/firestore";
 import { DocumentDownload, SaveAdd, Trash } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -13,7 +13,14 @@ import {
 import { colors } from "../constants/colors";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
+import { showTargetAndField } from "../constants/showTargetAndField";
+import { exportWord } from "../exportFile/WordExport";
+import { db } from "../firebase.config";
 import { ReportTaskModel } from "../models/ReportTaskModel";
+import useChildStore from "../zustand/useChildStore";
+import useFieldStore from "../zustand/useFieldStore";
+import useTargetStore from "../zustand/useTargetStore";
+import useUserStore from "../zustand/useUserStore";
 
 export default function ReportListComponent() {
   const location = useLocation();
@@ -21,6 +28,10 @@ export default function ReportListComponent() {
   const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
   const [disable, setDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const { targets } = useTargetStore();
+  const { fields } = useFieldStore();
+  const { child } = useChildStore();
+  const { user } = useUserStore();
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
@@ -55,6 +66,38 @@ export default function ReportListComponent() {
     }
   };
 
+  const handleExportWordBC = async () => {
+    setIsLoading(true);
+    const promiseItems = reportTasks.map(async (reportTask) => {
+      const docSnap = await getDoc(doc(db, "planTasks", reportTask.planTaskId));
+      if (docSnap.exists()) {
+        return {
+          intervention: docSnap.data().intervention,
+          content: docSnap.data().content,
+          field: showTargetAndField(targets, docSnap.data().targetId, fields)
+            .field,
+          target: showTargetAndField(targets, docSnap.data().targetId, fields)
+            .name,
+          total: reportTask.content,
+        };
+      } else {
+        console.log(`getDoc data error`);
+      }
+    });
+    const result = await Promise.all(promiseItems);
+
+    exportWord(
+      {
+        rows: result,
+        title: title.substring(2).trim(),
+        child: child?.fullName,
+        teacher: user?.fullName,
+      },
+      "/template_BC.docx"
+    );
+    setIsLoading(false);
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -73,7 +116,7 @@ export default function ReportListComponent() {
       </RowComponent>
 
       <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -156,6 +199,7 @@ export default function ReportListComponent() {
       ) : (
         <RowComponent justify="flex-end">
           <button
+            onClick={handleExportWordBC}
             type="button"
             className="btn btn-primary"
             style={{
@@ -165,9 +209,15 @@ export default function ReportListComponent() {
               alignItems: "center",
             }}
           >
-            <DocumentDownload size={20} color={colors.bacground} />
-            <SpaceComponent width={6} />
-            <TextComponent text="Xuất File" color={colors.bacground} />
+            {isLoading ? (
+              <SpinnerComponent />
+            ) : (
+              <>
+                <DocumentDownload size={20} color={colors.bacground} />
+                <SpaceComponent width={6} />
+                <TextComponent text="Xuất File" color={colors.bacground} />
+              </>
+            )}
           </button>
         </RowComponent>
       )}

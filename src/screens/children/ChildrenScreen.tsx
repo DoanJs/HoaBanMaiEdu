@@ -15,7 +15,6 @@ import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithM
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
-import { Light } from "../../assets/icons";
 
 export default function ChildrenScreen() {
   const { user } = useUserStore();
@@ -33,7 +32,7 @@ export default function ChildrenScreen() {
     if (!loading_children) {
       setChildren(data_children as ChildrenModel[]);
     }
-  }, [data_children, loading_children]);
+  }, [data_children, loading_children, setChildren]);
 
   if (loading_children) return <SpinnerComponent />;
   return (

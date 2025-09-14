@@ -5,7 +5,6 @@ import FieldItemComponent from "./FieldItemComponent";
 import HomeItemComponent from "./HomeItemComponent";
 import ModalDeleteComponent from "./modal/ModalDeleteComponent";
 import ModalEditCallover from "./modal/ModalEditCallover";
-import ModalEditComponent from "./modal/ModalEditComponent";
 import Navbar from "./Navbar";
 import PendingItemComponent from "./PendingItemComponent";
 import PendingListComponent from "./PendingListComponent";
@@ -30,7 +29,6 @@ export {
   HomeItemComponent,
   ModalDeleteComponent,
   ModalEditCallover,
-  ModalEditComponent,
   Navbar,
   PendingItemComponent,
   PendingListComponent,

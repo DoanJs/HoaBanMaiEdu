@@ -33,7 +33,7 @@ export default function PlanItemComponent(props: Props) {
       <th scope="row">{showTarget().field}</th>
       <td>{showTarget().name}</td>
       <td>{planTask?.intervention}</td>
-      <td style={{width:'30%'}}>{planTask?.content}</td>
+      <td style={{width:'40%'}}>{planTask?.content}</td>
     </tr>
   );
 }

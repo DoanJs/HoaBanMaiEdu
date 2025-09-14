@@ -17,7 +17,7 @@ export default function BankScreen() {
         alignItems: "flex-start",
       }}
     >
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent:'center' }}>
         {fields.map((_, index) => (
           <FieldItemComponent key={index} title={_.name} fieldId={_.id} />
         ))}

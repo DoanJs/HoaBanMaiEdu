@@ -14,7 +14,6 @@ import { getDocsData } from "../constants/firebase/getDocsData";
 import { PlanTaskModel } from "../models/PlanTaskModel";
 import useCartEditStore from "../zustand/useCartEditStore";
 import useCartStore from "../zustand/useCartStore";
-import useFieldStore from "../zustand/useFieldStore";
 import useSelectTargetStore from "../zustand/useSelectTargetStore";
 import useTargetStore from "../zustand/useTargetStore";
 
@@ -25,7 +24,6 @@ export default function PendingListComponent() {
   const { setSelectTarget } = useSelectTargetStore();
   const { setCarts } = useCartStore();
   const { setCartEdit } = useCartEditStore();
-  const { fields } = useFieldStore();
   const { targets } = useTargetStore();
 
   // Lấy trực tiếp từ firebase

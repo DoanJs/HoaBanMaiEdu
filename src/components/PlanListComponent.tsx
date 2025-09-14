@@ -5,12 +5,22 @@ import { useLocation } from "react-router-dom";
 import { RowComponent, SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { getDocsData } from "../constants/firebase/getDocsData";
+import { showTargetAndField } from "../constants/showTargetAndField";
+import { exportWord } from "../exportFile/WordExport";
 import { PlanTaskModel } from "../models/PlanTaskModel";
+import useChildStore from "../zustand/useChildStore";
+import useFieldStore from "../zustand/useFieldStore";
+import useTargetStore from "../zustand/useTargetStore";
+import useUserStore from "../zustand/useUserStore";
 import PlanItemComponent from "./PlanItemComponent";
 
 export default function PlanListComponent() {
   const location = useLocation();
   const { title, planId } = location.state || {};
+  const { targets } = useTargetStore();
+  const { fields } = useFieldStore();
+  const { child } = useChildStore();
+  const { user } = useUserStore();
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
 
   // Lấy trực tiếp từ firebase
@@ -23,6 +33,23 @@ export default function PlanListComponent() {
       });
     }
   }, [planId]);
+
+  const handleExportWordKH = () => {
+    const items = planTasks.map((planTask) => {
+      return {
+        field: showTargetAndField(targets, planTask.targetId, fields).field,
+        target: showTargetAndField(targets, planTask.targetId, fields).name,
+        intervention: planTask.intervention,
+        content: planTask.content,
+      };
+    });
+    exportWord({
+      rows: items,
+      title: title.substring(2).trim(),
+      child: child?.fullName,
+      teacher: user?.fullName,
+    }, "/template_KH.docx");
+  };
 
   return (
     <div style={{ width: "100%" }}>
@@ -42,7 +69,7 @@ export default function PlanListComponent() {
       </RowComponent>
 
       <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -62,6 +89,7 @@ export default function PlanListComponent() {
 
       <RowComponent justify="flex-end">
         <button
+          onClick={handleExportWordKH}
           type="button"
           className="btn btn-primary"
           style={{
