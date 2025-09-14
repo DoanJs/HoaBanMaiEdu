@@ -11,16 +11,18 @@ interface Props {
   reportTasks: ReportTaskModel[];
   onSetReportTasks: any;
   setDisable: any;
+  status: string;
 }
 
 export default function ReportItemComponent(props: Props) {
-  const { reportTask, reportTasks, onSetReportTasks, setDisable } = props;
+  const { reportTask, reportTasks, onSetReportTasks, setDisable, status } =
+    props;
   const { targets } = useTargetStore();
   const [planTask, setPlanTask] = useState<PlanTaskModel>();
   const { fields } = useFieldStore();
   const [content, setContent] = useState("");
   const [contentSource, setContentSource] = useState("");
-
+  console.log(planTask);
   useEffect(() => {
     if (reportTask) {
       getDocData({
@@ -70,17 +72,22 @@ export default function ReportItemComponent(props: Props) {
       <td>{showTarget()?.target.name}</td>
       <td>{planTask?.intervention}</td>
       <td>{planTask?.content}</td>
-      <td>
-        <textarea
-          onChange={(e) => setContent(e.target.value)}
-          className="form-control"
-          placeholder="Nhập đánh giá"
-          rows={6}
-          cols={100}
-          style={{ borderColor: colors.primary }}
-          id="floatingTextarea2"
-          value={content}
-        ></textarea>
+
+      <td  style={{width:'30%'}}>
+        {status === "pending" ? (
+          <textarea
+            onChange={(e) => setContent(e.target.value)}
+            className="form-control"
+            placeholder="Nhập đánh giá"
+            rows={6}
+            cols={100}
+            style={{ borderColor: colors.primary }}
+            id="floatingTextarea2"
+            value={content}
+          ></textarea>
+        ) : (
+          content
+        )}
       </td>
     </tr>
   );

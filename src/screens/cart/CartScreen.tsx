@@ -1,118 +1,197 @@
+import {
+  collection,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
+import { AddCircle } from "iconsax-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CartItemComponent, RowComponent, SpaceComponent, SpinnerComponent } from "../../components";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  CartItemComponent,
+  RowComponent,
+  SpaceComponent,
+  SpinnerComponent,
+  TextComponent,
+} from "../../components";
 import { colors } from "../../constants/colors";
-import { query_interventions } from "../../constants/firebase/query/Index";
-import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
-import { InterventionModel } from "../../models/InterventionModel";
+import { addDocData } from "../../constants/firebase/addDocData";
+import { deleteDocData } from "../../constants/firebase/deleteDocData";
+import { getDocData } from "../../constants/firebase/getDocData";
+import { sizes } from "../../constants/sizes";
+import { db } from "../../firebase.config";
+import { PlanModel } from "../../models/PlanModel";
+import useCartEditStore from "../../zustand/useCartEditStore";
 import useCartStore from "../../zustand/useCartStore";
 import useChildStore from "../../zustand/useChildStore";
-import useInterventionStore from "../../zustand/useInterventionStore";
+import usePlanStore from "../../zustand/usePlanStore";
 import useSelectTargetStore from "../../zustand/useSelectTargetStore";
 import useUserStore from "../../zustand/useUserStore";
-import { addDocData } from "../../constants/firebase/addDocData";
-import { serverTimestamp } from "firebase/firestore";
-import usePlanStore from "../../zustand/usePlanStore";
 
 export default function CartScreen() {
-  const navigate = useNavigate()
-  const { setSelectTarget } = useSelectTargetStore()
-  const { carts, setCarts } = useCartStore()
-  const { child } = useChildStore()
-  const { user } = useUserStore()
-  const [title, setTitle] = useState('');
-  const {addPlan} = usePlanStore()
+  const navigate = useNavigate();
+  const { setSelectTarget } = useSelectTargetStore();
+  const { carts, setCarts } = useCartStore();
+  const { child } = useChildStore();
+  const { user } = useUserStore();
+  const [title, setTitle] = useState("");
+  const { addPlan } = usePlanStore();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
-  const { setInterventions } = useInterventionStore()
-
-  const { data: data_interventions, loading } = useFirestoreWithMeta({
-    key: 'interventions',
-    query: query_interventions,
-    metaDoc: 'interventions'
-  })
+  const [plan, setPlan] = useState<PlanModel>();
+  const { cartEdit } = useCartEditStore();
 
   useEffect(() => {
-    if (carts.length > 0 && title!=='') {
-      setDisable(false)
+    if (carts.length > 0 && title !== "") {
+      setDisable(false);
     } else {
-      setDisable(true)
+      setDisable(true);
     }
-  }, [carts, title])
+  }, [carts, title]);
 
   useEffect(() => {
-    if (!loading) {
-      setInterventions(data_interventions as InterventionModel[])
+    if (cartEdit) {
+      getDocData({ id: cartEdit, nameCollect: "plans", setData: setPlan });
     }
-  }, [data_interventions, loading])
+  }, [cartEdit]);
 
+  useEffect(() => {
+    if (plan) {
+      setTitle(plan.title);
+    }
+  }, [plan]);
 
-  const handleAddPlan = () => {
-    if (!title) return alert('Thêm tháng kế hoạch')
-    if (title && user && child) {
-      setIsLoading(true)
-      addDocData({
-        nameCollect: 'plans', 
-        value: {
-          title,
-          childId: child.id,
-          teacherId: user.id,
-          createAt: serverTimestamp(),
-          updateAt: serverTimestamp(),
-        },
-        metaDoc:'plans'
-      }).then(async result => {
-        setIsLoading(false)
-        addPlan({
-          id: result.id,
-          title,
-          childId: child.id,
-          teacherId: user.id,
-          createAt: serverTimestamp(),
-          updateAt: serverTimestamp(),
-        })
-        const promiseItems = carts.map((cart) => addDocData({
-          nameCollect: 'planTasks',
+  const handleAddEditPlan = async () => {
+    if (user && child) {
+      setIsLoading(true);
+      if (!cartEdit) {
+        addDocData({
+          nameCollect: "plans",
           value: {
-            planId: result.id,
-            targetId: cart.id,
-            content: cart.content,
-            intervention: cart.intervention,
-
+            type: "KH",
+            title,
+            childId: child.id,
+            teacherId: user.id,
+            status: "pending",
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
           },
-          metaDoc: 'plans'
-        }))
+          metaDoc: "plans",
+        })
+          .then(async (result) => {
+            setIsLoading(false);
+            addPlan({
+              id: result.id,
+              type: "KH",
+              title,
+              childId: child.id,
+              teacherId: user.id,
+              status: "pending",
+              createAt: serverTimestamp(),
+              updateAt: serverTimestamp(),
+            });
+            const promiseItems = carts.map((cart) =>
+              addDocData({
+                nameCollect: "planTasks",
+                value: {
+                  planId: result.id,
+                  targetId: cart.id,
+                  content: cart.content,
+                  intervention: cart.intervention,
 
-        await Promise.all(promiseItems)
-        setCarts([])
-        setTitle('')
-      }).catch(error => console.log(error))
+                  createAt: serverTimestamp(),
+                  updateAt: serverTimestamp(),
+                },
+                metaDoc: "plans",
+              })
+            );
+
+            await Promise.all(promiseItems);
+            setCarts([]);
+            setTitle("");
+          })
+          .catch((error) => {
+            setIsLoading(false);
+            console.log(error);
+          });
+      } else {
+        // xoa het cai cu
+        const snapShot = await getDocs(
+          query(collection(db, "planTasks"), where("planId", "==", cartEdit))
+        );
+        if (!snapShot.empty) {
+          const promisePlanTasksOld = snapShot.docs.map((_) =>
+            deleteDocData({
+              nameCollect: "planTasks",
+              id: _.id,
+              metaDoc: "plans",
+            })
+          );
+
+          await Promise.all(promisePlanTasksOld);
+        }
+
+        // tao lai cai moi
+        const promisePlanTasksNew = carts.map((cart) =>
+          addDocData({
+            nameCollect: "planTasks",
+            value: {
+              planId: cartEdit,
+              targetId: cart.targetId || cart.id,
+              content: cart.content,
+              intervention: cart.intervention,
+
+              createAt: serverTimestamp(),
+              updateAt: serverTimestamp(),
+            },
+            metaDoc: "plans",
+          })
+        );
+
+        await Promise.all(promisePlanTasksNew);
+        setCarts([]);
+        setTitle("");
+      }
+      navigate(`/home/${user?.id}/pending`);
+      setSelectTarget("CHỜ DUYỆT");
     }
+  };
 
-    navigate(`/home/${user?.id}/plan`)
-    setSelectTarget('KẾ HOẠCH')
-  }
-
-  if (loading) return <SpinnerComponent />
   return (
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
-      <div className="input-group" style={{ width: "40%" }}>
-        <span className="input-group-text" id="basic-addon1">
-          Tạo kế hoạch tháng
-        </span>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          type="text"
-          className="form-control"
-          placeholder='VD: KH 09/2022'
-          aria-label="Username"
-          aria-describedby="basic-addon1"
-        />
-      </div>
+      <RowComponent justify="space-between">
+        <div className="input-group" style={{ width: "30%" }}>
+          <span className="input-group-text" id="basic-addon1">
+            Tạo kế hoạch tháng
+          </span>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            type="text"
+            className="form-control"
+            placeholder="VD: KH 09/2022"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <Link
+          to={"../bank"}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            textDecoration: "none",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onClick={() => setSelectTarget("NGÂN HÀNG MỤC TIÊU")}
+        >
+          <AddCircle size={30} color={colors.primary} variant="Bold" />
+          <SpaceComponent width={4} />
+          <TextComponent text="Thêm mục tiêu" size={sizes.bigText} />
+        </Link>
+      </RowComponent>
       <div style={{ height: "85%", overflowY: "scroll" }}>
         <table className="table">
           <thead>
@@ -126,9 +205,14 @@ export default function CartScreen() {
             </tr>
           </thead>
           <tbody>
-            {carts.length > 0 && carts.map((_, index) => (
-              <CartItemComponent key={index} index={index} cart={_} />
-            ))}
+            {carts.length > 0 &&
+              carts.map((_, index) => (
+                <CartItemComponent
+                  key={index}
+                  index={index}
+                  cart={_}
+                />
+              ))}
           </tbody>
         </table>
       </div>
@@ -142,11 +226,19 @@ export default function CartScreen() {
         <button
           style={{
             background: disable ? colors.gray : undefined,
-            borderColor: disable ? colors.gray : undefined
+            borderColor: disable ? colors.gray : undefined,
           }}
-          onClick={disable ? undefined : handleAddPlan}
-          type="button" className="btn btn-primary">
-          {isLoading ? <SpinnerComponent /> : <>Tạo mới</>}
+          onClick={disable ? undefined : handleAddEditPlan}
+          type="button"
+          className="btn btn-primary"
+        >
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : cartEdit ? (
+            <>Lưu</>
+          ) : (
+            <>Tạo mới</>
+          )}
         </button>
       </RowComponent>
     </div>

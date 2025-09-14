@@ -6,16 +6,17 @@ interface Props {
   planTask: PlanTaskModel;
 }
 
-export default function PlanItemComponent(props: Props) {
+
+export default function PendingItemComponent(props: Props) {
   const { planTask } = props;
   const { targets } = useTargetStore();
   const { fields } = useFieldStore();
 
-  const showTarget = () => {
+  const showTarget = (targetId: string) => {
     let field: string = "";
     let name: string = "";
     const index = targets.findIndex(
-      (target) => target.id === planTask.targetId
+      (target) => target.id === targetId
     );
     if (index !== -1) {
       const indexField = fields.findIndex(
@@ -28,12 +29,13 @@ export default function PlanItemComponent(props: Props) {
     return { name, field };
   };
 
+
   return (
     <tr>
-      <th scope="row">{showTarget().field}</th>
-      <td>{showTarget().name}</td>
+      <th scope="row">{showTarget(planTask.targetId).field}</th>
+      <td>{showTarget(planTask.targetId).name}</td>
       <td>{planTask?.intervention}</td>
-      <td style={{width:'30%'}}>{planTask?.content}</td>
+      <td style={{ width: "40%" }}>{planTask?.content}</td>
     </tr>
   );
 }

@@ -7,6 +7,8 @@ import ModalDeleteComponent from "./modal/ModalDeleteComponent";
 import ModalEditCallover from "./modal/ModalEditCallover";
 import ModalEditComponent from "./modal/ModalEditComponent";
 import Navbar from "./Navbar";
+import PendingItemComponent from "./PendingItemComponent";
+import PendingListComponent from "./PendingListComponent";
 import PlanListComponent from "./PlanListComponent";
 import ProcessBar from "./ProcessBar";
 import ReportItemComponent from "./ReportItemComponent";
@@ -23,13 +25,16 @@ import TextComponent from "./TextComponent";
 export {
   CalloverItemComponent,
   CardImageComponent,
-  CartItemComponent,PlanListComponent,
+  CartItemComponent,
   FieldItemComponent,
   HomeItemComponent,
   ModalDeleteComponent,
   ModalEditCallover,
   ModalEditComponent,
   Navbar,
+  PendingItemComponent,
+  PendingListComponent,
+  PlanListComponent,
   ProcessBar,
   ReportItemComponent,
   ReportListComponent,

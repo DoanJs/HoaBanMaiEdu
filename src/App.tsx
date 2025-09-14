@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import {
   Navbar,
+  PendingListComponent,
   PlanListComponent,
   ReportListComponent,
   SpinnerComponent,
@@ -92,6 +93,7 @@ export default function App() {
           <Route path="reportList" element={<ReportListComponent />} />
           <Route path="addReport" element={<AddReportScreen />} />
           <Route path="pending" element={<PendingScreen />} />
+          <Route path="pendingList" element={<PendingListComponent />} />
           <Route path="callover" element={<CalloverScreen />} />
           <Route path="media" element={<MediaScreen />} />
           <Route path="setting" element={<SettingScreen />} />

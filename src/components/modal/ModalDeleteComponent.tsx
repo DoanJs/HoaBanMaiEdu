@@ -22,7 +22,7 @@ export default function ModalDeleteComponent(props: Props) {
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
 
-  const deleteReport = async (reportId: string) => {
+  const deleteReportPending = async (reportId: string) => {
     removeReport(reportId);
 
     await deleteDocData({
@@ -43,44 +43,39 @@ export default function ModalDeleteComponent(props: Props) {
           metaDoc: "reports",
         })
       );
-      await Promise.all(promiseReportTasks)
+      await Promise.all(promiseReportTasks);
     }
+    navigate("../pending");
+  };
+  const deletePlanPending = async (planId: string) => {
+    removePlan(planId);
+
+    await deleteDocData({
+      nameCollect: "plans",
+      id: planId,
+      metaDoc: "plans",
+    });
+    const promisePlanTasks = data.itemTasks.map((_) =>
+      deleteDocData({
+        nameCollect: "planTasks",
+        id: _.id,
+        metaDoc: "plans",
+      })
+    );
+    await Promise.all(promisePlanTasks);
+
+    navigate("../pending");
   };
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
       case "plans":
-        removePlan(data.id);
-
-        await deleteDocData({
-          nameCollect: "plans",
-          id: data.id,
-          metaDoc: "plans",
-        });
-        const promisePlanTasks = data.itemTasks.map((_) =>
-          deleteDocData({
-            nameCollect: "planTasks",
-            id: _.id,
-            metaDoc: "plans",
-          })
-        );
-        await Promise.all(promisePlanTasks);
-
-        const querySnapshot = await getDocs(query(
-          collection(db, "reports"),
-          where("planId", "==", data.id)
-        ));
-        if(!querySnapshot.empty){
-          const promiseReports = querySnapshot.docs.map((_)=>deleteReport(_.id))
-          await Promise.all(promiseReports)
-        }
-      
-        navigate("../plan");
+        deletePlanPending(data.id);
         break;
 
       case "reports":
-       await deleteReport(data.id);
-        navigate("../report");
+        deleteReportPending(data.id);
+
         break;
 
       default:

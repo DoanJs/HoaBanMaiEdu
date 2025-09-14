@@ -26,6 +26,7 @@ export default function TargetItemComponent(props: Props) {
   const handleSelected = () => {
     const index = carts.findIndex((cart) => cart.id === target.id)
     if (index !== -1) {
+      console.log(target.id)
       removeCart(target.id)
     } else {
       addCart(target)

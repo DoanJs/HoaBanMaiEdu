@@ -12,17 +12,23 @@ import {
 import { colors } from "../constants/colors";
 import { getDocData } from "../constants/firebase/getDocData";
 import { getDocsData } from "../constants/firebase/getDocsData";
-import { query_fields, query_targets } from "../constants/firebase/query/Index";
+import {
+  query_fields,
+  query_interventions,
+  query_targets,
+} from "../constants/firebase/query/Index";
 import { sizes } from "../constants/sizes";
 import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../constants/useFirestoreWithMetaCondition";
 import { FieldModel } from "../models/FieldModel";
+import { InterventionModel } from "../models/InterventionModel";
 import { PlanModel } from "../models/PlanModel";
 import { ReportModel } from "../models/ReportModel";
 import { TargetModel } from "../models/TargetModel";
 import { UserModel } from "../models/UserModel";
 import useChildStore from "../zustand/useChildStore";
 import useFieldStore from "../zustand/useFieldStore";
+import useInterventionStore from "../zustand/useInterventionStore";
 import usePlanStore from "../zustand/usePlanStore";
 import useReportStore from "../zustand/useReportStore";
 import useSelectTargetStore from "../zustand/useSelectTargetStore";
@@ -39,6 +45,7 @@ export default function Navbar() {
   const { setFields } = useFieldStore();
   const { setPlans } = usePlanStore();
   const { setReports } = useReportStore();
+  const { setInterventions } = useInterventionStore();
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -68,7 +75,18 @@ export default function Navbar() {
       nameCollect: "reports",
       condition: [where("teacherId", "==", user?.id)],
     });
+  const { data: data_interventions, loading: loading_interventions } =
+    useFirestoreWithMeta({
+      key: "interventions",
+      query: query_interventions,
+      metaDoc: "interventions",
+    });
 
+  useEffect(() => {
+    if (!loading_interventions) {
+      setInterventions(data_interventions as InterventionModel[]);
+    }
+  }, [data_interventions, loading_interventions]);
   useEffect(() => {
     if (!loading_reports) {
       const items = data_reports as ReportModel[];

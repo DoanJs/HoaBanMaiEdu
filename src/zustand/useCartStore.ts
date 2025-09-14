@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { TargetModel } from '../models/TargetModel';
 
 
 interface CartState {

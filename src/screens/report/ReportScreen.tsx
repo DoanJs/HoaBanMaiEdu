@@ -19,7 +19,8 @@ export default function ReportScreen() {
 
   useEffect(() => {
     if (reports) {
-      setReportNews(reports);
+      const items = reports.filter((report) => report.status === 'approval')
+      setReportNews(items);
     }
   }, [reports]);
 
@@ -44,7 +45,7 @@ export default function ReportScreen() {
           placeholder="Nhập tháng"
           title="Tìm tháng"
           onChange={(val) => setReportNews(val)}
-          arrSource={reports}
+          arrSource={reports.filter((report) => report.status === 'approval')}
         />
         <Link
           to={"../addReport"}

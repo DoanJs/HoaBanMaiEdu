@@ -5,60 +5,70 @@ import { colors } from "../constants/colors";
 import useCartStore from "../zustand/useCartStore";
 import useFieldStore from "../zustand/useFieldStore";
 import useInterventionStore from "../zustand/useInterventionStore";
+import useTargetStore from "../zustand/useTargetStore";
 
 interface Props {
-  index: number
-  cart: any
+  index: number;
+  cart: any;
 }
 
 export default function CartItemComponent(props: Props) {
-  const { index, cart } = props
-  const { fields } = useFieldStore()
-  const { removeCart, editCart } = useCartStore()
+  const { index, cart } = props;
+  const { fields } = useFieldStore();
+  const { removeCart, editCart } = useCartStore();
   const [type, setType] = useState("");
-  const [content, setContent] = useState('');
-  const { interventions } = useInterventionStore()
+  const [content, setContent] = useState("");
+  const { interventions } = useInterventionStore();
+  const { targets } = useTargetStore();
 
   useEffect(() => {
     if (cart) {
-      setContent(cart.content)
+      setContent(cart.content);
     }
-  }, [cart])
-
+  }, [cart]);
   useEffect(() => {
-    if (type === 'Ý khác' && content) {
-      editCart(cart.id, { ...cart, content: content })
+    if (type === "Ý khác" && content) {
+      editCart(cart.id, { ...cart, content: content });
     }
-  }, [type, content])
+  }, [type, content]);
 
-
-  const showField = () => {
-    let title: string
-    const index = fields.findIndex((field) => field.id === cart.fieldId)
+  const showTarget = (targetId: string) => {
+    let field: string = "";
+    let name: string = "";
+    const index = targets.findIndex((target) => target.id === targetId);
     if (index !== -1) {
-      title = fields[index].name
-    } else {
-      title = ''
+      const indexField = fields.findIndex(
+        (_) => _.id === targets[index].fieldId
+      );
+      field = fields[indexField].name;
+      name = targets[index].name;
     }
-    return title
-  }
-  const handleSelectIntervention = (val: string) => {
-    editCart(cart.id, { ...cart, intervention: val })
-  }
 
+    return { name, field };
+  };
+  const handleSelectIntervention = (val: string) => {
+    editCart(cart.id, { ...cart, intervention: val });
+  };
 
   return (
     <tr>
       <td scope="row">{index + 1}</td>
-      <td>{showField()}</td>
-      <td>{cart.name}</td>
-      <td style={{ width: '15%' }}>
-        <select className="form-select" aria-label="Default select example" onChange={(val) => handleSelectIntervention(val.target.value)}>
-          <option defaultValue={''}>Chọn</option>
-          {
-            interventions.length > 0 && 
-            interventions.map((_, index) => <option key={index} value={_.name}>{_.name}</option>)
-          }
+      <td>{showTarget(cart.id).field}</td>
+      <td>{showTarget(cart.id).name}</td>
+      <td style={{ width: "15%" }}>
+        <select
+          value={cart.intervention}
+          className="form-select"
+          aria-label="Default select example"
+          onChange={(val) => handleSelectIntervention(val.target.value)}
+        >
+          <option defaultValue={""}>Chọn</option>
+          {interventions.length > 0 &&
+            interventions.map((_, index) => (
+              <option key={index} value={_.name}>
+                {_.name}
+              </option>
+            ))}
         </select>
       </td>
       <td style={{ width: "45%" }}>
@@ -103,7 +113,7 @@ export default function CartItemComponent(props: Props) {
                   }}
                 >
                   <input
-                    onChange={() => { }}
+                    onChange={() => {}}
                     className="form-check-input"
                     type="checkbox"
                     value=""
@@ -136,7 +146,12 @@ export default function CartItemComponent(props: Props) {
           style={{ textAlign: "center", cursor: "pointer" }}
           onClick={() => removeCart(cart.id)}
         >
-          <Trash size={20} color={colors.red} variant="Bold" style={{ cursor: 'pointer' }} />
+          <Trash
+            size={20}
+            color={colors.red}
+            variant="Bold"
+            style={{ cursor: "pointer" }}
+          />
         </div>
       </td>
     </tr>

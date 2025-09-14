@@ -17,7 +17,7 @@ import { ReportTaskModel } from "../models/ReportTaskModel";
 
 export default function ReportListComponent() {
   const location = useLocation();
-  const { title, reportId } = location.state || {};
+  const { title, reportId, status } = location.state || {};
   const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
   const [disable, setDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,75 +92,85 @@ export default function ReportListComponent() {
                   setDisable={setDisable}
                   reportTasks={reportTasks}
                   onSetReportTasks={setReportTasks}
+                  status={status}
                 />
               ))}
           </tbody>
         </table>
       </div>
-
-      <RowComponent justify="flex-end">
-        <button
-          onClick={disable ? undefined : handleSaveReportTask}
-          type="button"
-          className="btn btn-success"
-          data-bs-dismiss="modal"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            background: disable ? colors.gray : undefined,
-            borderColor: disable ? colors.gray : undefined,
-          }}
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : (
-            <>
-              <SaveAdd size={20} color={colors.bacground} />
+      {status === "pending" ? (
+        <>
+          <RowComponent justify="flex-end">
+            <button
+              onClick={disable ? undefined : handleSaveReportTask}
+              type="button"
+              className="btn btn-success"
+              data-bs-dismiss="modal"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                background: disable ? colors.gray : undefined,
+                borderColor: disable ? colors.gray : undefined,
+              }}
+            >
+              {isLoading ? (
+                <SpinnerComponent />
+              ) : (
+                <>
+                  <SaveAdd size={20} color={colors.bacground} />
+                  <SpaceComponent width={6} />
+                  <TextComponent text="Lưu" color={colors.bacground} />
+                </>
+              )}
+            </button>
+            <SpaceComponent width={10} />
+            <button
+              type="button"
+              className="btn btn-danger"
+              data-bs-dismiss="modal"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Trash size={20} color={colors.bacground} />
               <SpaceComponent width={6} />
-              <TextComponent text="Lưu" color={colors.bacground} />
-            </>
-          )}
-        </button>
-        <SpaceComponent width={10} />
-        <button
-          type="button"
-          className="btn btn-danger"
-          data-bs-dismiss="modal"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Trash size={20} color={colors.bacground} />
-          <SpaceComponent width={6} />
-          <TextComponent text="Xóa" color={colors.bacground} />
-        </button>
+              <TextComponent text="Xóa" color={colors.bacground} />
+            </button>
+          </RowComponent>
 
-        <SpaceComponent width={10} />
-
-        <button
-          type="button"
-          className="btn btn-primary"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <DocumentDownload size={20} color={colors.bacground} />
-          <SpaceComponent width={6} />
-          <TextComponent text="Xuất File" color={colors.bacground} />
-        </button>
-      </RowComponent>
-
-      <ModalDeleteComponent data={{ id: reportId, nameCollect: "reports", itemTasks: reportTasks }} />
+          <ModalDeleteComponent
+            data={{
+              id: reportId,
+              nameCollect: "reports",
+              itemTasks: reportTasks,
+            }}
+          />
+        </>
+      ) : (
+        <RowComponent justify="flex-end">
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <DocumentDownload size={20} color={colors.bacground} />
+            <SpaceComponent width={6} />
+            <TextComponent text="Xuất File" color={colors.bacground} />
+          </button>
+        </RowComponent>
+      )}
     </div>
   );
 }

@@ -17,6 +17,7 @@ import useChildStore from "../../zustand/useChildStore";
 import useFieldStore from "../../zustand/useFieldStore";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
+import useSelectTargetStore from "../../zustand/useSelectTargetStore";
 import useTargetStore from "../../zustand/useTargetStore";
 import useUserStore from "../../zustand/useUserStore";
 
@@ -33,6 +34,15 @@ export default function AddReportScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
   const { addReport } = useReportStore();
+  const [planApprovals, setPlanApprovals] = useState<PlanModel[]>([]);
+  const { setSelectTarget } = useSelectTargetStore();
+
+  useEffect(() => {
+    if (plans) {
+      const items = plans.filter((plan) => plan.status === "approval");
+      setPlanApprovals(items);
+    }
+  }, [plans]);
 
   useEffect(() => {
     if (addReports.length > 0) {
@@ -41,6 +51,7 @@ export default function AddReportScreen() {
       setDisable(true);
     }
   }, [addReports]);
+
   useEffect(() => {
     if (planTasks) {
       setAddReports(planTasks);
@@ -49,8 +60,8 @@ export default function AddReportScreen() {
 
   const handleSelectPlan = (planId: string) => {
     if (planId !== "") {
-      const index = plans.findIndex((_) => _.id === planId);
-      setPlan(plans[index]);
+      const index = planApprovals.findIndex((_) => _.id === planId);
+      setPlan(planApprovals[index]);
       getDocsData({
         nameCollect: "planTasks",
         condition: [where("planId", "==", planId)],
@@ -85,10 +96,13 @@ export default function AddReportScreen() {
       addDocData({
         nameCollect: "reports",
         value: {
+          type: "BC",
           title: plan?.title.replace("KH", "BC"),
           childId: child.id,
           teacherId: user.id,
           planId: plan?.id,
+          status: "pending",
+
           createAt: serverTimestamp(),
           updateAt: serverTimestamp(),
         },
@@ -98,10 +112,13 @@ export default function AddReportScreen() {
           setIsLoading(false);
           addReport({
             id: result.id,
+            type: "BC",
             title: plan?.title.replace("KH", "BC") as string,
             childId: child.id,
             teacherId: user.id,
             planId: plan?.id as string,
+            status: "pending",
+
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
           });
@@ -127,7 +144,8 @@ export default function AddReportScreen() {
           console.log(error);
         });
     }
-    navigate(`/home/${user?.id}/report`);
+    navigate(`/home/${user?.id}/pending`);
+    setSelectTarget("CHỜ DUYỆT");
   };
   return (
     <div
@@ -164,11 +182,13 @@ export default function AddReportScreen() {
         >
           <option value={""}>Chọn kế hoạch tháng</option>
           {plans &&
-            plans.map((plan, index) => (
-              <option key={index} value={plan.id}>
-                {plan.title}
-              </option>
-            ))}
+            plans
+              .filter((plan) => plan.status === "approval")
+              .map((plan, index) => (
+                <option key={index} value={plan.id}>
+                  {plan.title}
+                </option>
+              ))}
         </select>
       </RowComponent>
 
