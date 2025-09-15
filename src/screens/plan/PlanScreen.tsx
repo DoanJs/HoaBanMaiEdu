@@ -21,7 +21,7 @@ export default function PlanScreen() {
 
   useEffect(() => {
     if (plans) {
-      const items = plans.filter((plan) => plan.status === 'approval')
+      const items = plans.filter((plan) => plan.status === 'approved')
       setPlanNews(items);
     }
   }, [plans]);
@@ -43,7 +43,7 @@ export default function PlanScreen() {
           placeholder="Nhập tháng"
           title="Tìm tháng"
           onChange={(val) => setPlanNews(val)}
-          arrSource={plans.filter((plan) => plan.status === 'approval')}
+          arrSource={plans.filter((plan) => plan.status === 'approved')}
         />
         <Link
           to={"../bank"}

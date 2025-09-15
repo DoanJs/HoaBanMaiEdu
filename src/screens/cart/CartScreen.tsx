@@ -40,7 +40,7 @@ export default function CartScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
-  const { cartEdit } = useCartEditStore();
+  const { cartEdit, setCartEdit } = useCartEditStore();
 
   useEffect(() => {
     if (carts.length > 0 && title !== "") {
@@ -150,6 +150,7 @@ export default function CartScreen() {
         );
 
         await Promise.all(promisePlanTasksNew);
+        setCartEdit(null)
         setCarts([]);
         setTitle("");
       }

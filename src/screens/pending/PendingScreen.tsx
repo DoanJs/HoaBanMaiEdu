@@ -35,7 +35,6 @@ export default function PendingScreen() {
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
-        justify="space-around"
         styles={{
           borderBottom: "1px solid",
           borderBottomColor: colors.primaryBold,
@@ -44,12 +43,12 @@ export default function PendingScreen() {
         <TextComponent
           text="Kế hoạch"
           size={26}
-          styles={{ fontWeight: "bold" }}
+          styles={{ fontWeight: "bold", display:'flex', width:'100%', padding: '0 10px'}}
         />
         <TextComponent
           text="Báo cáo"
           size={26}
-          styles={{ fontWeight: "bold" }}
+          styles={{ fontWeight: "bold", display:'flex', width:'100%', padding: '0 10px'}}
         />
       </RowComponent>
 
