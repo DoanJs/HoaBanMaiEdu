@@ -97,6 +97,8 @@
 //              && resource.data.status == "pending";
 
 //       allow write: if isAdmin();
+
+
 //     }
 
 //      //REPORTTASKS

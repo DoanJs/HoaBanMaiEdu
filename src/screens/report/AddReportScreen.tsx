@@ -37,9 +37,11 @@ export default function AddReportScreen() {
   const [planApprovals, setPlanApprovals] = useState<PlanModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
 
+  console.log(plans);
+
   useEffect(() => {
     if (plans) {
-      const items = plans.filter((plan) => plan.status === "approval");
+      const items = plans.filter((plan) => plan.status === "approved");
       setPlanApprovals(items);
     }
   }, [plans]);
@@ -181,14 +183,12 @@ export default function AddReportScreen() {
           style={{ width: "20%" }}
         >
           <option value={""}>Chọn kế hoạch tháng</option>
-          {plans &&
-            plans
-              .filter((plan) => plan.status === "approval")
-              .map((plan, index) => (
-                <option key={index} value={plan.id}>
-                  {plan.title}
-                </option>
-              ))}
+          {planApprovals &&
+            planApprovals.map((plan, index) => (
+              <option key={index} value={plan.id}>
+                {plan.title}
+              </option>
+            ))}
         </select>
       </RowComponent>
 

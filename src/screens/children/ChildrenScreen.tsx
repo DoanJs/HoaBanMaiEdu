@@ -1,4 +1,4 @@
-import { where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect } from "react";
 import {
   CardImageComponent,
@@ -15,6 +15,7 @@ import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithM
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
+import { db } from "../../firebase.config";
 
 export default function ChildrenScreen() {
   const { user } = useUserStore();

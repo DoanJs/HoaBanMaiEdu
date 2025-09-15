@@ -67,6 +67,7 @@ export default function Navbar() {
       nameCollect: "plans",
       condition: [where("teacherId", "==", user?.id)],
     });
+  
   const { data: data_reports, loading: loading_reports } =
     useFirestoreWithMetaCondition({
       key: "reportsCache",

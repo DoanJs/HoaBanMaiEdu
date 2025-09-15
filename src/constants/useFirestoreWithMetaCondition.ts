@@ -27,7 +27,12 @@ export function useFirestoreWithMetaCondition<T>({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      setData([])
+      setLoading(false)
+      return;
+    }
+
     let mounted = true;
 
     async function loadData() {
