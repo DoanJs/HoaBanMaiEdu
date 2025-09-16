@@ -6,21 +6,19 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
-import { PlanModel } from "../../models/PlanModel";
-import { ReportModel } from "../../models/ReportModel";
-import usePlanStore from "../../zustand/usePlanStore";
-import useReportStore from "../../zustand/useReportStore";
+import { PlanModel, ReportModel } from "../../models";
+import { usePlanStore, useReportStore } from "../../zustand";
 
 export default function PendingScreen() {
   const { plans } = usePlanStore();
   const { reports } = useReportStore();
-  const [newPlans, setNewPlans] = useState<PlanModel[]>([]);
+  const [plansPending, setPlansPending] = useState<PlanModel[]>([]);
   const [reportsPending, setReportsPending] = useState<ReportModel[]>([]);
 
   useEffect(() => {
     if (plans) {
       const items = plans.filter((plan) => plan.status === "pending");
-      setNewPlans(items);
+      setPlansPending(items);
     }
   }, [plans]);
 
@@ -43,22 +41,32 @@ export default function PendingScreen() {
         <TextComponent
           text="Kế hoạch"
           size={26}
-          styles={{ fontWeight: "bold", display:'flex', width:'100%', padding: '0 10px'}}
+          styles={{
+            fontWeight: "bold",
+            display: "flex",
+            width: "100%",
+            padding: "0 10px",
+          }}
         />
         <TextComponent
           text="Báo cáo"
           size={26}
-          styles={{ fontWeight: "bold", display:'flex', width:'100%', padding: '0 10px'}}
+          styles={{
+            fontWeight: "bold",
+            display: "flex",
+            width: "100%",
+            padding: "0 10px",
+          }}
         />
       </RowComponent>
 
-{/* ben ke hoach */}
       <RowComponent justify="space-between">
+        {/* ben ke hoach */}
         <RowComponent
           styles={{ display: "flex", flexWrap: "wrap", width: "100%" }}
         >
-          {newPlans.length > 0 &&
-            newPlans.map((_, index) => (
+          {plansPending.length > 0 &&
+            plansPending.map((_, index) => (
               <Link
                 key={index}
                 to={"../pendingList"}
@@ -80,7 +88,7 @@ export default function PendingScreen() {
             ))}
         </RowComponent>
 
-{/* ben bao cao */}
+        {/* ben bao cao */}
         <RowComponent
           styles={{
             display: "flex",
@@ -97,7 +105,7 @@ export default function PendingScreen() {
                 state={{
                   title: _.title,
                   reportId: _.id,
-                  status: _.status
+                  status: _.status,
                 }}
                 type="button"
                 className="btn "

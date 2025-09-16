@@ -10,12 +10,15 @@ import {
   TextComponent,
 } from ".";
 import { colors } from "../constants/colors";
+import { convertNameTargetAndFieldId } from "../constants/convertNameTargetAndFieldId";
 import { getDocsData } from "../constants/firebase/getDocsData";
-import { PlanTaskModel } from "../models/PlanTaskModel";
-import useCartEditStore from "../zustand/useCartEditStore";
-import useCartStore from "../zustand/useCartStore";
-import useSelectTargetStore from "../zustand/useSelectTargetStore";
-import useTargetStore from "../zustand/useTargetStore";
+import { PlanTaskModel } from "../models";
+import {
+  useCartEditStore,
+  useCartStore,
+  useSelectTargetStore,
+  useTargetStore,
+} from "../zustand";
 
 export default function PendingListComponent() {
   const location = useLocation();
@@ -37,16 +40,19 @@ export default function PendingListComponent() {
     }
   }, [planId]);
 
-  const convertNameTargetAndFieldId = (targetId: string) => {
-    let name: string = "";
-    let fieldId: string = "";
-    const index = targets.findIndex((target) => target.id === targetId);
-    if (index !== -1) {
-      name = targets[index].name;
-      fieldId = targets[index].fieldId;
-    }
-
-    return { name, fieldId };
+  const handleEditPlan = () => {
+    const convertPlanTasksToCarts = planTasks.map((_) => {
+      const { targetId,planId, ...newPlanTask } = _;
+      return {
+        ...newPlanTask,
+        fieldId: convertNameTargetAndFieldId(_.targetId, targets).fieldId,
+        id: _.targetId, //targetId
+        name: convertNameTargetAndFieldId(_.targetId, targets).name,
+      };
+    });
+    setCarts(convertPlanTasksToCarts);
+    setCartEdit(planId);
+    setSelectTarget("GIỎ MỤC TIÊU");
   };
 
   return (
@@ -67,7 +73,7 @@ export default function PendingListComponent() {
       </RowComponent>
 
       <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -87,20 +93,7 @@ export default function PendingListComponent() {
 
       <RowComponent justify="flex-end">
         <Link
-          onClick={() => {
-            const convertPlanTasks = planTasks.map((_) => {
-              const { targetId, planId, ...newPlanTask } = _;
-              return {
-                ...newPlanTask,
-                fieldId: convertNameTargetAndFieldId(_.targetId).fieldId,
-                id: _.targetId, //targetId
-                name: convertNameTargetAndFieldId(_.targetId).name,
-              };
-            });
-            setCarts(convertPlanTasks);
-            setCartEdit(planId);
-            setSelectTarget("GIỎ MỤC TIÊU");
-          }}
+          onClick={handleEditPlan}
           to={`../cart`}
           type="button"
           className="btn btn-success"

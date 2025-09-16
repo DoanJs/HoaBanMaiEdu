@@ -127,7 +127,8 @@ export default function AddReportScreen() {
               nameCollect: "reportTasks",
               value: {
                 reportId: result.id,
-                planId: plan?.id as string,
+                // planId: plan?.id as string,
+                childId: child.id,
                 planTaskId: _.id,
                 content: _.total,
                 isEdit: false,

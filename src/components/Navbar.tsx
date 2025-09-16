@@ -67,35 +67,36 @@ export default function Navbar() {
       nameCollect: "plans",
       condition: [where("teacherId", "==", user?.id)],
     });
+    console.log(data_plans)
   
-  const { data: data_reports, loading: loading_reports } =
-    useFirestoreWithMetaCondition({
-      key: "reportsCache",
-      metaDoc: "reports",
-      id: user?.id,
-      nameCollect: "reports",
-      condition: [where("teacherId", "==", user?.id)],
-    });
+  // const { data: data_reports, loading: loading_reports } =
+  //   useFirestoreWithMetaCondition({
+  //     key: "reportsCache",
+  //     metaDoc: "reports",
+  //     id: user?.id,
+  //     nameCollect: "reports",
+  //     condition: [where("teacherId", "==", user?.id)],
+  //   });
   const { data: data_interventions, loading: loading_interventions } =
     useFirestoreWithMeta({
       key: "interventions",
       query: query_interventions,
       metaDoc: "interventions",
     });
-
+ 
   useEffect(() => {
     if (!loading_interventions) {
       setInterventions(data_interventions as InterventionModel[]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_interventions, loading_interventions]);
-  useEffect(() => {
-    if (!loading_reports) {
-      const items = data_reports as ReportModel[];
-      setReports(items.filter((plan) => plan.childId === child?.id));
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data_reports, loading_reports]);
+  // useEffect(() => {
+  //   if (!loading_reports) {
+  //     const items = data_reports as ReportModel[];
+  //     setReports(items.filter((plan) => plan.childId === child?.id));
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [data_reports, loading_reports]);
   useEffect(() => {
     if (!loading_plans) {
       const items = data_plans as PlanModel[];

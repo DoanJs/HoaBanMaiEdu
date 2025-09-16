@@ -21,26 +21,28 @@ import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocData } from "../../constants/firebase/getDocData";
 import { sizes } from "../../constants/sizes";
 import { db } from "../../firebase.config";
-import { PlanModel } from "../../models/PlanModel";
-import useCartEditStore from "../../zustand/useCartEditStore";
-import useCartStore from "../../zustand/useCartStore";
-import useChildStore from "../../zustand/useChildStore";
-import usePlanStore from "../../zustand/usePlanStore";
-import useSelectTargetStore from "../../zustand/useSelectTargetStore";
-import useUserStore from "../../zustand/useUserStore";
+import { PlanModel } from "../../models";
+import {
+  useCartEditStore,
+  useCartStore,
+  useChildStore,
+  usePlanStore,
+  useSelectTargetStore,
+  useUserStore,
+} from "../../zustand";
 
 export default function CartScreen() {
   const navigate = useNavigate();
   const { setSelectTarget } = useSelectTargetStore();
   const { carts, setCarts } = useCartStore();
+  const { addPlan } = usePlanStore();
   const { child } = useChildStore();
   const { user } = useUserStore();
+  const { cartEdit, setCartEdit } = useCartEditStore();
   const [title, setTitle] = useState("");
-  const { addPlan } = usePlanStore();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
-  const { cartEdit, setCartEdit } = useCartEditStore();
 
   useEffect(() => {
     if (carts.length > 0 && title !== "") {
@@ -66,7 +68,7 @@ export default function CartScreen() {
     if (user && child) {
       setIsLoading(true);
       if (!cartEdit) {
-        addDocData({
+        await addDocData({
           nameCollect: "plans",
           value: {
             type: "KH",
@@ -95,6 +97,7 @@ export default function CartScreen() {
               addDocData({
                 nameCollect: "planTasks",
                 value: {
+                  childId: child.id,
                   planId: result.id,
                   targetId: cart.id,
                   content: cart.content,
@@ -137,8 +140,9 @@ export default function CartScreen() {
           addDocData({
             nameCollect: "planTasks",
             value: {
+              childId: child.id,
               planId: cartEdit,
-              targetId: cart.targetId || cart.id,
+              targetId: cart.id,
               content: cart.content,
               intervention: cart.intervention,
 
@@ -150,12 +154,12 @@ export default function CartScreen() {
         );
 
         await Promise.all(promisePlanTasksNew);
-        setCartEdit(null)
+        setCartEdit(null);
         setCarts([]);
         setTitle("");
       }
-      // navigate(`/home/${user?.id}/pending`);
-      // setSelectTarget("CHỜ DUYỆT");
+      navigate("../pending");
+      setSelectTarget("CHỜ DUYỆT");
     }
   };
 
@@ -194,7 +198,7 @@ export default function CartScreen() {
         </Link>
       </RowComponent>
       <div style={{ height: "85%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">STT</th>
@@ -208,11 +212,7 @@ export default function CartScreen() {
           <tbody>
             {carts.length > 0 &&
               carts.map((_, index) => (
-                <CartItemComponent
-                  key={index}
-                  index={index}
-                  cart={_}
-                />
+                <CartItemComponent key={index} index={index} cart={_} />
               ))}
           </tbody>
         </table>

@@ -5,9 +5,9 @@ export interface PlanTaskModel {
   id: string;
   targetId: string;
   planId: string
+  childId: string
   content: string;
   intervention: string
-  // isEdit: boolean //xong roi bo luon
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;
