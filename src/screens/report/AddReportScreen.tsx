@@ -146,8 +146,6 @@ export default function AddReportScreen() {
           console.log(error);
         });
     }
-    // navigate(`/home/${user?.id}/pending`);
-    // setSelectTarget("CHỜ DUYỆT");
   };
   return (
     <div
@@ -180,9 +178,9 @@ export default function AddReportScreen() {
           onChange={(val) => handleSelectPlan(val.target.value)}
           className="form-select"
           aria-label="Default select example"
-          style={{ width: "20%" }}
+          style={{ width: "30%" }}
         >
-          <option value={""}>Chọn kế hoạch tháng</option>
+          <option value={""}>Chọn kế hoạch tháng đã duyệt</option>
           {planApprovals &&
             planApprovals.map((plan, index) => (
               <option key={index} value={plan.id}>

@@ -94,8 +94,8 @@
 //      // READ
 //      match /reportTasks/{reportTaskId} {
 //          allow read: if isAdmin()
-//              || (isTeacher() && request.auth.uid == getPlan(resource.data.planId).data.teacherId)
-//              || (isManager() && request.auth.uid == getPlan(resource.data.planId).data.teacherId);
+//              || (isTeacher() && request.auth.uid == getPlan(resource.data.planId).data.teacherId) 
+//              || (isManager() && request.auth.uid == getPlan(resource.data.planId).data.teacherId)
 
 //       // CREATE
 //          allow create: if isTeacher()
