@@ -1,6 +1,5 @@
-import { PlanTaskModel } from "../models/PlanTaskModel";
-import useFieldStore from "../zustand/useFieldStore";
-import useTargetStore from "../zustand/useTargetStore";
+import { PlanTaskModel } from "../models";
+import { useFieldStore, useTargetStore } from "../zustand";
 
 interface Props {
   planTask: PlanTaskModel;

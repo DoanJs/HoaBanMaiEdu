@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { colors } from "../constants/colors";
 import { getDocData } from "../constants/firebase/getDocData";
-import { PlanTaskModel } from "../models/PlanTaskModel";
-import { ReportTaskModel } from "../models/ReportTaskModel";
-import useFieldStore from "../zustand/useFieldStore";
-import useTargetStore from "../zustand/useTargetStore";
+import { PlanTaskModel, ReportTaskModel } from "../models";
+import { useFieldStore, useTargetStore } from "../zustand";
 
 interface Props {
   reportTask: ReportTaskModel;

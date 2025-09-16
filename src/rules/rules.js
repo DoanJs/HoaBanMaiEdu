@@ -11,6 +11,10 @@
 //        return get(/databases/$(database)/documents/plans/$(planId))
 //     }
 
+// 		function getReport(reportId) {
+//        return get(/databases/$(database)/documents/reports/$(reportId))
+//     }
+
 //     function isAdmin() {
 //       return request.auth != null && getUserRole() == "admin"
 //     }
@@ -94,8 +98,8 @@
 //      // READ
 //      match /reportTasks/{reportTaskId} {
 //          allow read: if isAdmin()
-//              || (isTeacher() && request.auth.uid == getPlan(resource.data.planId).data.teacherId)
-//              || (isManager() && request.auth.uid == getPlan(resource.data.planId).data.teacherId);
+//              || (isTeacher() && request.auth.uid == getReport(resource.data.reportId).data.teacherId)
+//              || (isManager() && request.auth.uid == getReport(resource.data.reportId).data.teacherId);
 
 //       // CREATE
 //          allow create: if isTeacher()

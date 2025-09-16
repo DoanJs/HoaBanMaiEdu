@@ -23,7 +23,6 @@ export function useFirestoreWithMeta<T>({
 
       // 1. Lấy meta từ Firestore
 
-      console.log('getDoc meta')
       const metaSnap = await getDoc(doc(db, "Meta", metaDoc));
       const lastUpdated = metaSnap.exists()
         ? metaSnap.data().lastUpdated?.toMillis() //chuyển sang minisecond để so sánh

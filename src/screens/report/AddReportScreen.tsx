@@ -8,7 +8,6 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
-import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { sizes } from "../../constants/sizes";
 import { PlanModel } from "../../models/PlanModel";
@@ -20,6 +19,7 @@ import useReportStore from "../../zustand/useReportStore";
 import useSelectTargetStore from "../../zustand/useSelectTargetStore";
 import useTargetStore from "../../zustand/useTargetStore";
 import useUserStore from "../../zustand/useUserStore";
+import { addDocData } from "../../constants/firebase/addDocData";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -90,10 +90,10 @@ export default function AddReportScreen() {
 
     return { name, field };
   };
-  const handleAddReport = () => {
+  const handleAddReport = async () => {
     if (user && child) {
       setIsLoading(true);
-      addDocData({
+      await addDocData({
         nameCollect: "reports",
         value: {
           type: "BC",
@@ -145,9 +145,9 @@ export default function AddReportScreen() {
           setIsLoading(false);
           console.log(error);
         });
+      navigate('../pending')
+      setSelectTarget('CHỜ DUYỆT')
     }
-    // navigate(`/home/${user?.id}/pending`);
-    // setSelectTarget("CHỜ DUYỆT");
   };
   return (
     <div
@@ -180,9 +180,9 @@ export default function AddReportScreen() {
           onChange={(val) => handleSelectPlan(val.target.value)}
           className="form-select"
           aria-label="Default select example"
-          style={{ width: "20%" }}
+          style={{ width: "30%" }}
         >
-          <option value={""}>Chọn kế hoạch tháng</option>
+          <option value={""}>Chọn kế hoạch tháng đã duyệt</option>
           {planApprovals &&
             planApprovals.map((plan, index) => (
               <option key={index} value={plan.id}>

@@ -154,8 +154,8 @@ export default function CartScreen() {
         setCarts([]);
         setTitle("");
       }
-      navigate(`/home/${user?.id}/pending`);
-      setSelectTarget("CHỜ DUYỆT");
+      // navigate(`/home/${user?.id}/pending`);
+      // setSelectTarget("CHỜ DUYỆT");
     }
   };
 

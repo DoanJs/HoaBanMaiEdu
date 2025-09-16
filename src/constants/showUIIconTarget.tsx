@@ -10,7 +10,7 @@ import {
 } from "../assets/icons";
 import { colors } from "./colors";
 
-export const showUIIconTarget = (title: string) => {
+export const showUIIconTarget = (title: string, width?: number, height?: number) => {
   let result: any;
   switch (title) {
     case "Ngôn ngữ hiểu":
@@ -18,8 +18,8 @@ export const showUIIconTarget = (title: string) => {
         <Ear
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;
@@ -28,8 +28,8 @@ export const showUIIconTarget = (title: string) => {
         <Chat
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;
@@ -38,8 +38,8 @@ export const showUIIconTarget = (title: string) => {
         <Light
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
 
@@ -49,8 +49,8 @@ export const showUIIconTarget = (title: string) => {
         <Puzzle
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;
@@ -59,8 +59,8 @@ export const showUIIconTarget = (title: string) => {
         <Alphabet
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;
@@ -69,8 +69,8 @@ export const showUIIconTarget = (title: string) => {
         <Hearts
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;
@@ -79,8 +79,8 @@ export const showUIIconTarget = (title: string) => {
         <Universal
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;
@@ -89,8 +89,8 @@ export const showUIIconTarget = (title: string) => {
         <Eye
           className="w-6 h-6 fill-current"
           fill={colors.textBold}
-          width={80}
-          height={80}
+          width={width ?? 80}
+          height={height ?? 80}
         />
       );
       break;

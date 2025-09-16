@@ -10,9 +10,8 @@ import {
 } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import { PlanModel } from "../../models/PlanModel";
-import usePlanStore from "../../zustand/usePlanStore";
-import useSelectTargetStore from "../../zustand/useSelectTargetStore";
+import { usePlanStore, useSelectTargetStore } from "../../zustand";
+import { PlanModel } from "../../models";
 
 export default function PlanScreen() {
   const { setSelectTarget } = useSelectTargetStore();
