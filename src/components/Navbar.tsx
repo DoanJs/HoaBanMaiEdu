@@ -1,18 +1,142 @@
-import { Link, Outlet } from "react-router-dom";
+import { where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Link, Outlet, useParams } from "react-router-dom";
 import {
   HomeItemComponent,
   RowComponent,
   SectionComponent,
   SpaceComponent,
+  SpinnerComponent,
   TextComponent,
 } from ".";
 import { colors } from "../constants/colors";
+import { getDocData } from "../constants/firebase/getDocData";
+import { getDocsData } from "../constants/firebase/getDocsData";
+import {
+  query_fields,
+  query_interventions,
+  query_targets,
+} from "../constants/firebase/query/Index";
 import { sizes } from "../constants/sizes";
-import useEnableHomeItemStore from "../zustand/store";
+import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
+import { useFirestoreWithMetaCondition } from "../constants/useFirestoreWithMetaCondition";
+import { FieldModel } from "../models/FieldModel";
+import { InterventionModel } from "../models/InterventionModel";
+import { PlanModel } from "../models/PlanModel";
+import { ReportModel } from "../models/ReportModel";
+import { TargetModel } from "../models/TargetModel";
+import { UserModel } from "../models/UserModel";
+import useChildStore from "../zustand/useChildStore";
+import useFieldStore from "../zustand/useFieldStore";
+import useInterventionStore from "../zustand/useInterventionStore";
+import usePlanStore from "../zustand/usePlanStore";
+import useReportStore from "../zustand/useReportStore";
+import useSelectTargetStore from "../zustand/useSelectTargetStore";
+import useTargetStore from "../zustand/useTargetStore";
+import useUserStore from "../zustand/useUserStore";
 
 export default function Navbar() {
-  const { enableHomeItem, setEnableHomeItem } = useEnableHomeItemStore();
+  const { id } = useParams();
+  const { user } = useUserStore();
+  const { selectTarget, setSelectTarget } = useSelectTargetStore();
+  const { child, setChild } = useChildStore();
+  const [teachers, setTeachers] = useState<UserModel[]>([]);
+  const { setTargets } = useTargetStore();
+  const { setFields } = useFieldStore();
+  const { setPlans } = usePlanStore();
+  const { setReports } = useReportStore();
+  const { setInterventions } = useInterventionStore();
 
+  const { data: data_fields, loading } = useFirestoreWithMeta({
+    key: "fieldsCache",
+    query: query_fields,
+    metaDoc: "fields",
+  });
+  const { data: data_targets, loading: loading_targets } = useFirestoreWithMeta(
+    {
+      key: "targetsCache",
+      query: query_targets,
+      metaDoc: "targets",
+    }
+  );
+  const { data: data_plans, loading: loading_plans } =
+    useFirestoreWithMetaCondition({
+      key: "plansCache",
+      metaDoc: "plans",
+      id: user?.id,
+      nameCollect: "plans",
+      condition: [where("teacherId", "==", user?.id)],
+    });
+  
+  const { data: data_reports, loading: loading_reports } =
+    useFirestoreWithMetaCondition({
+      key: "reportsCache",
+      metaDoc: "reports",
+      id: user?.id,
+      nameCollect: "reports",
+      condition: [where("teacherId", "==", user?.id)],
+    });
+  const { data: data_interventions, loading: loading_interventions } =
+    useFirestoreWithMeta({
+      key: "interventions",
+      query: query_interventions,
+      metaDoc: "interventions",
+    });
+
+  useEffect(() => {
+    if (!loading_interventions) {
+      setInterventions(data_interventions as InterventionModel[]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_interventions, loading_interventions]);
+  useEffect(() => {
+    if (!loading_reports) {
+      const items = data_reports as ReportModel[];
+      setReports(items.filter((plan) => plan.childId === child?.id));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_reports, loading_reports]);
+  useEffect(() => {
+    if (!loading_plans) {
+      const items = data_plans as PlanModel[];
+      setPlans(items.filter((plan) => plan.childId === child?.id));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_plans, loading_plans]);
+  useEffect(() => {
+    if (!loading) {
+      setFields(data_fields as FieldModel[]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_fields, loading]);
+  useEffect(() => {
+    if (!loading_targets) {
+      setTargets(data_targets as TargetModel[]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_targets, loading_targets]);
+  useEffect(() => {
+    if (id) {
+      getDocData({
+        id,
+        nameCollect: "children",
+        setData: setChild,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+  useEffect(() => {
+    if (child) {
+      getDocsData({
+        nameCollect: "users",
+        condition: [where("id", "in", child.teacherIds)],
+        setData: setTeachers,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [child]);
+
+  if (!user) return <SpinnerComponent />;
   return (
     <SectionComponent
       styles={{
@@ -36,7 +160,7 @@ export default function Navbar() {
             <Link to={"/"}>
               <img
                 alt=""
-                src="HBMIcon.jpg"
+                src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1757600460/HoaBanMaiEdu/icons/HBMIcon_ujnyvq.jpg"
                 style={{
                   height: 60,
                   width: 60,
@@ -59,51 +183,71 @@ export default function Navbar() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRight:'1px solid',
+                borderRight: "1px solid",
                 borderRightColor: colors.primary,
-                paddingRight: 16
+                paddingRight: 16,
               }}
             >
-                <img
-                  alt=""
-                  src="voi.jpg"
-                  style={{ height: 36, width: 36, borderRadius: 100 }}
-                />
-                <SpaceComponent width={10} />
-                <TextComponent
-                  text="Nguyễn Kim Trung"
-                  styles={{ fontWeight: "bold" }}
-                  size={sizes.bigText}
-                />
+              <img
+                alt=""
+                src={child?.avatar}
+                style={{
+                  height: 36,
+                  width: 36,
+                  borderRadius: 100,
+                  objectFit: "cover",
+                }}
+              />
+              <SpaceComponent width={10} />
+              <TextComponent
+                text={child?.fullName as string}
+                styles={{ fontWeight: "bold" }}
+                size={sizes.bigText}
+              />
             </RowComponent>
-            <SpaceComponent width={10}/>
+            <SpaceComponent width={10} />
             <div>
               <TextComponent
                 text="Giáo viên phụ trách:"
                 styles={{ fontWeight: "bold" }}
                 size={sizes.bigText}
               />
-              <TextComponent text="1. Nguyễn Thị Lài" />
-              <TextComponent text="2. Thái Thị Miền" />
+              {teachers.length > 0 &&
+                teachers.map((teacher, index) => (
+                  <TextComponent
+                    key={index}
+                    text={`${index + 1}. ${teacher.fullName}`}
+                  />
+                ))}
             </div>
           </RowComponent>
 
           <RowComponent>
             <RowComponent styles={{ flexDirection: "column" }}>
               <TextComponent
-                text="TRẦN THỊ MY NY"
+                text={user?.fullName.toUpperCase() as string}
                 color={colors.textBold}
                 size={sizes.bigText}
                 styles={{ fontWeight: "bold" }}
               />
-              <TextComponent text="Giám đốc" color={colors.textBold} />
+              <TextComponent
+                text={user?.position as string}
+                color={colors.textBold}
+              />
             </RowComponent>
             <SpaceComponent width={6} />
-            <img
-              alt=""
-              src="voi.jpg"
-              style={{ height: 40, width: 40, borderRadius: 100 }}
-            />
+            <Link to={"profile"} onClick={() => setSelectTarget("")}>
+              <img
+                alt=""
+                src={user?.avatar}
+                style={{
+                  height: 40,
+                  width: 40,
+                  borderRadius: 100,
+                  cursor: "pointer",
+                }}
+              />
+            </Link>
           </RowComponent>
         </RowComponent>
 
@@ -140,45 +284,51 @@ export default function Navbar() {
                 <HomeItemComponent
                   title="NGÂN HÀNG MỤC TIÊU"
                   icon="bank"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="KẾ HOẠCH"
                   icon="plan"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="BÁO CÁO"
                   icon="chart"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
+                />
+                <HomeItemComponent
+                  title="CHỜ DUYỆT"
+                  icon="pending"
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="ĐIỂM DANH"
                   icon="callover"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="HÌNH ẢNH/VIDEO"
                   icon="image"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
                 <HomeItemComponent
                   title="CÀI ĐẶT"
                   icon="setting"
-                  value={enableHomeItem}
-                  onClick={(val) => setEnableHomeItem(val)}
+                  value={selectTarget}
+                  onClick={(val) => setSelectTarget(val)}
                 />
               </RowComponent>
               <HomeItemComponent
                 title="GIỎ MỤC TIÊU"
                 icon="cart"
-                value={enableHomeItem}
-                onClick={(val) => setEnableHomeItem(val)}
+                value={selectTarget}
+                onClick={(val) => setSelectTarget(val)}
               />
             </RowComponent>
           </SectionComponent>

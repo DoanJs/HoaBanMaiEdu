@@ -12,7 +12,7 @@ export default function CalloverScreen() {
           aria-label="Default select example"
           style={{ width: "20%" }}
         >
-          <option selected>Chọn tháng</option>
+          <option defaultValue=''>Chọn tháng</option>
           <option value="1">01/2024</option>
           <option value="2">02/2024</option>
           <option value="3">03/2024</option>

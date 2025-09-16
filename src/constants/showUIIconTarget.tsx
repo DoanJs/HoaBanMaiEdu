@@ -1,36 +1,98 @@
 import {
-  Airpods,
-  Hierarchy,
-  Message,
-  Message2,
-  Notepad2,
-  Profile2User,
-} from "iconsax-react";
+  Alphabet,
+  Chat,
+  Ear,
+  Eye,
+  Hearts,
+  Light,
+  Puzzle,
+  Universal,
+} from "../assets/icons";
 import { colors } from "./colors";
 
-export const showUIIconTarget = (icon: string) => {
+export const showUIIconTarget = (title: string) => {
   let result: any;
-  switch (icon) {
-    case "message":
-      result = <Message size={30} color={colors.textBold} variant="Bold" />;
+  switch (title) {
+    case "Ngôn ngữ hiểu":
+      result = (
+        <Ear
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
       break;
-    case "message2":
-      result = <Message2 size={30} color={colors.textBold} variant="Bold" />;
+    case "Ngôn ngữ diễn đạt":
+      result = (
+        <Chat
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
       break;
-    case "hierarchy":
-      result = <Hierarchy size={30} color={colors.textBold} variant="Bold" />;
+    case "Nhận thức":
+      result = (
+        <Light
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
 
       break;
-    case "notepad2":
-      result = <Notepad2 size={30} color={colors.textBold} variant="Bold" />;
-      break;
-    case "profile2User":
+    case "Vận động tinh":
       result = (
-        <Profile2User size={30} color={colors.textBold} variant="Bold" />
+        <Puzzle
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
+      break;
+    case "Chỉnh âm":
+      result = (
+        <Alphabet
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
+      break;
+    case "Cá nhân xã hội":
+      result = (
+        <Hearts
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
+      break;
+    case "Hành vi":
+      result = (
+        <Universal
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
       );
       break;
     default:
-      result = <Airpods size={30} color={colors.textBold} variant="Bold" />;
+      result = (
+        <Eye
+          className="w-6 h-6 fill-current"
+          fill={colors.textBold}
+          width={80}
+          height={80}
+        />
+      );
       break;
   }
   return result;

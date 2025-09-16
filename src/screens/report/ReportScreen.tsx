@@ -1,12 +1,36 @@
 import { AddCircle } from "iconsax-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { RowComponent, SpaceComponent, TextComponent } from "../../components";
+import {
+  RowComponent,
+  SearchComponent,
+  SpaceComponent,
+  SpinnerComponent,
+  TextComponent,
+} from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
+import { ReportModel } from "../../models/ReportModel";
+import useReportStore from "../../zustand/useReportStore";
 
 export default function ReportScreen() {
+  const { reports } = useReportStore();
+  const [reportNews, setReportNews] = useState<ReportModel[]>([]);
+
+  useEffect(() => {
+    if (reports) {
+      const items = reports.filter((report) => report.status === 'approved')
+      setReportNews(items);
+    }
+  }, [reports]);
+
+  if (!reports) return <SpinnerComponent />;
   return (
-    <div>
+    <div
+      style={{
+        width: "100%",
+      }}
+    >
       <RowComponent
         justify="space-between"
         styles={{
@@ -16,18 +40,13 @@ export default function ReportScreen() {
           borderBottomColor: colors.gray,
         }}
       >
-        <div className="input-group" style={{ width: "30%" }}>
-          <span className="input-group-text" id="basic-addon1">
-            Tìm tháng
-          </span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Nhập tháng"
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-          />
-        </div>
+        <SearchComponent
+          type="searchReport"
+          placeholder="Nhập tháng"
+          title="Tìm tháng"
+          onChange={(val) => setReportNews(val)}
+          arrSource={reports.filter((report) => report.status === 'approved')}
+        />
         <Link
           to={"../addReport"}
           style={{
@@ -45,26 +64,27 @@ export default function ReportScreen() {
       </RowComponent>
 
       <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
-        {Array.from({ length: 20 }).map((_, index) => (
-          <Link
-            to={"../reportList"}
-            state={{
-              type: "BC",
-              title: `BC ${index + 1 < 10 ? `0${index + 1}` : index + 1}/2025`,
-            }}
-            key={index}
-            type="button"
-            className="btn "
-            style={{
-              background: colors.primaryLightOpacity,
-              border: "1px solid coral",
-              fontWeight: "bold",
-              margin: 10,
-            }}
-          >
-            BC {index + 1 < 10 ? `0${index + 1}` : index + 1}/2025
-          </Link>
-        ))}
+        {reportNews &&
+          reportNews.map((_, index) => (
+            <Link
+              to={"../reportList"}
+              state={{
+                title: _.title,
+                reportId: _.id,
+              }}
+              key={index}
+              type="button"
+              className="btn "
+              style={{
+                background: colors.primaryLightOpacity,
+                border: "1px solid coral",
+                fontWeight: "bold",
+                margin: 10,
+              }}
+            >
+              {_.title}
+            </Link>
+          ))}
       </RowComponent>
     </div>
   );

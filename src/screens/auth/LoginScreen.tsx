@@ -1,14 +1,51 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   RowComponent,
   SectionComponent,
   SpaceComponent,
+  SpinnerComponent,
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
+import { validateEmail } from "../../constants/validateEmailPhone";
+import { auth } from "../../firebase.config";
 
 export default function LoginScreen() {
+  const [disable, setDisable] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+  // const [remember, setRemember] = useState(false);
+
+  useEffect(() => {
+    if (form.email && validateEmail(form.email) && form.password) {
+      setDisable(false);
+    } else {
+      setDisable(true);
+    }
+  }, [form]);
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    await signInWithEmailAndPassword(auth, form.email, form.password)
+      .then(async (userCredential) => {
+        // Signed in
+        setIsLoading(false);
+        // const user = userCredential.user;
+        // if (remember) {
+        //   await localforage.setItem("user", user.email as string);
+        // }
+      })
+      .catch((error: any) => {
+        console.log(error);
+        setIsLoading(false);
+      });
+  };
   return (
     <SectionComponent
       styles={{
@@ -61,9 +98,11 @@ export default function LoginScreen() {
                 Email
               </label>
               <input
+                onChange={(val) =>
+                  setForm({ ...form, email: val.target.value })
+                }
                 type="email"
                 className="form-control"
-                id="exampleFormControlInput1"
               />
             </div>
             <SpaceComponent height={10} />
@@ -72,12 +111,15 @@ export default function LoginScreen() {
                 Mật khẩu
               </label>
               <input
-                type="email"
+                onChange={(val) =>
+                  setForm({ ...form, password: val.target.value })
+                }
+                type="password"
                 className="form-control"
-                id="exampleFormControlInput1"
               />
             </div>
-            <SpaceComponent height={10} />
+
+            <SpaceComponent height={6} />
             <div
               className="form-check"
               style={{ width: "100%", margin: "10px 0" }}
@@ -93,16 +135,17 @@ export default function LoginScreen() {
             </div>
 
             <button
+              onClick={!disable ? handleLogin : undefined}
               style={{
                 width: "100%",
-                background: colors.orange,
-                borderColor: colors.orange,
+                background: disable ? colors.gray : colors.orange,
+                borderColor: disable ? colors.gray : colors.orange,
                 fontWeight: "bold",
               }}
               type="button"
               className="btn btn-primary"
             >
-              Đăng nhập
+              {isLoading ? <SpinnerComponent /> : <>Đăng nhập</>}
             </button>
             <div
               style={{
@@ -132,7 +175,8 @@ export default function LoginScreen() {
             height: "100%",
             width: "100%",
             justifyContent: "flex-start",
-            alignItems:'flex-start',
+            alignItems: "flex-start",
+            borderRadius: 10,
           }}
         >
           <img
@@ -140,7 +184,7 @@ export default function LoginScreen() {
             alt=""
             style={{
               borderRadius: 10,
-              objectFit:'contain',
+              objectFit: "cover",
               height: "100%",
               width: "100%",
             }}

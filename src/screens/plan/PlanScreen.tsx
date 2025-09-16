@@ -1,14 +1,34 @@
 import { AddCircle } from "iconsax-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { RowComponent, SpaceComponent, TextComponent } from "../../components";
+import {
+  RowComponent,
+  SearchComponent,
+  SpaceComponent,
+  SpinnerComponent,
+  TextComponent,
+} from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import useEnableHomeItemStore from "../../zustand/store";
+import { PlanModel } from "../../models/PlanModel";
+import usePlanStore from "../../zustand/usePlanStore";
+import useSelectTargetStore from "../../zustand/useSelectTargetStore";
 
 export default function PlanScreen() {
-  const { setEnableHomeItem } = useEnableHomeItemStore();
+  const { setSelectTarget } = useSelectTargetStore();
+  const { plans } = usePlanStore();
+  const [planNews, setPlanNews] = useState<PlanModel[]>([]);
+
+  useEffect(() => {
+    if (plans) {
+      const items = plans.filter((plan) => plan.status === 'approved')
+      setPlanNews(items);
+    }
+  }, [plans]);
+
+  if (!plans) return <SpinnerComponent />;
   return (
-    <div>
+    <div style={{ width: "100%" }}>
       <RowComponent
         justify="space-between"
         styles={{
@@ -18,18 +38,13 @@ export default function PlanScreen() {
           borderBottomColor: colors.gray,
         }}
       >
-        <div className="input-group" style={{ width: "30%" }}>
-          <span className="input-group-text" id="basic-addon1">
-            Tìm tháng
-          </span>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Nhập tháng"
-            aria-label="Username"
-            aria-describedby="basic-addon1"
-          />
-        </div>
+        <SearchComponent
+          type="searchPlan"
+          placeholder="Nhập tháng"
+          title="Tìm tháng"
+          onChange={(val) => setPlanNews(val)}
+          arrSource={plans.filter((plan) => plan.status === 'approved')}
+        />
         <Link
           to={"../bank"}
           style={{
@@ -39,7 +54,7 @@ export default function PlanScreen() {
             justifyContent: "center",
             alignItems: "center",
           }}
-          onClick={() => setEnableHomeItem("NGÂN HÀNG MỤC TIÊU")}
+          onClick={() => setSelectTarget("NGÂN HÀNG MỤC TIÊU")}
         >
           <AddCircle size={30} color={colors.primary} variant="Bold" />
           <SpaceComponent width={4} />
@@ -48,26 +63,27 @@ export default function PlanScreen() {
       </RowComponent>
 
       <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
-        {Array.from({ length: 20 }).map((_, index) => (
-          <Link
-            to={"../reportList"}
-            state={{
-              type: "KH",
-              title: `KH ${index + 1 < 10 ? `0${index + 1}` : index + 1}/2025`,
-            }}
-            key={index}
-            type="button"
-            className="btn "
-            style={{
-              background: colors.primaryLightOpacity,
-              border: "1px solid coral",
-              fontWeight: "bold",
-              margin: 10,
-            }}
-          >
-            KH {index + 1 < 10 ? `0${index + 1}` : index + 1}/2025
-          </Link>
-        ))}
+        {planNews.length > 0 &&
+          planNews.map((_, index) => (
+            <Link
+              key={index}
+              to={"../planList"}
+              state={{
+                title: _.title,
+                planId: _.id,
+              }}
+              type="button"
+              className="btn "
+              style={{
+                background: colors.primaryLightOpacity,
+                border: "1px solid coral",
+                fontWeight: "bold",
+                margin: 10,
+              }}
+            >
+              {_.title}
+            </Link>
+          ))}
       </RowComponent>
     </div>
   );

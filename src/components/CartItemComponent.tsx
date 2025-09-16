@@ -1,22 +1,79 @@
 import { Trash } from "iconsax-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RowComponent, SpaceComponent } from ".";
 import { colors } from "../constants/colors";
+import useCartStore from "../zustand/useCartStore";
+import useFieldStore from "../zustand/useFieldStore";
+import useInterventionStore from "../zustand/useInterventionStore";
+import useTargetStore from "../zustand/useTargetStore";
 
-export default function CartItemComponent() {
+interface Props {
+  index: number;
+  cart: any;
+}
+
+export default function CartItemComponent(props: Props) {
+  const { index, cart } = props;
+  const { fields } = useFieldStore();
+  const { removeCart, editCart } = useCartStore();
   const [type, setType] = useState("");
+  const [content, setContent] = useState("");
+  const { interventions } = useInterventionStore();
+  const { targets } = useTargetStore();
+
+  useEffect(() => {
+    if (cart) {
+      setContent(cart.content);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart]);
+  useEffect(() => {
+    if (type === "Ý khác" && content) {
+      editCart(cart.id, { ...cart, content: content });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, content]);
+
+  const showTarget = (targetId: string) => {
+    let field: string = "";
+    let name: string = "";
+    const index = targets.findIndex((target) => target.id === targetId);
+    if (index !== -1) {
+      const indexField = fields.findIndex(
+        (_) => _.id === targets[index].fieldId
+      );
+      field = fields[indexField].name;
+      name = targets[index].name;
+    }
+
+    return { name, field };
+  };
+  const handleSelectIntervention = (val: string) => {
+    editCart(cart.id, { ...cart, intervention: val });
+  };
+
   return (
     <tr>
-      <td scope="row">1</td>
-      <td>Ngôn ngữ hiểu</td>
-      <td>
-        Con có thể mô tả đơn giản về món ăn/đồ vật mà con yêu thích dựa vào
-        những đặc điểm: Màu sắc, hình dạng, kích thước, công dụng,... Con đạt
-        3/5 cơ hội liên tiếp trong 3 ngày. VD: Con thích ăn một cây kem màu nâu,
-        mùi chocola có vị ngọt/Con thích chơi tàu hỏa, nó có màu xanh dương, nó
-        dài có nhiều toa tàu, để chở hàng.
+      <td>{index + 1}</td>
+      <td>{showTarget(cart.id).field}</td>
+      <td>{showTarget(cart.id).name}</td>
+      <td style={{ width: "20%" }}>
+        <select
+          value={cart.intervention}
+          className="form-select"
+          aria-label="Default select example"
+          onChange={(val) => handleSelectIntervention(val.target.value)}
+        >
+          <option defaultValue={""}>Chọn</option>
+          {interventions.length > 0 &&
+            interventions.map((_, index) => (
+              <option key={index} value={_.name}>
+                {_.name}
+              </option>
+            ))}
+        </select>
       </td>
-      <td style={{ width: "50%" }}>
+      <td style={{ width: "40%" }}>
         <RowComponent>
           <button
             type="button"
@@ -75,6 +132,8 @@ export default function CartItemComponent() {
 
           {type === "Ý khác" && (
             <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               className="form-control"
               placeholder="Nhập đánh giá"
               rows={6}
@@ -87,10 +146,14 @@ export default function CartItemComponent() {
       <td>
         <div
           style={{ textAlign: "center", cursor: "pointer" }}
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
+          onClick={() => removeCart(cart.id)}
         >
-          <Trash size={20} color={colors.red} variant="Bold" />
+          <Trash
+            size={20}
+            color={colors.red}
+            variant="Bold"
+            style={{ cursor: "pointer" }}
+          />
         </div>
       </td>
     </tr>

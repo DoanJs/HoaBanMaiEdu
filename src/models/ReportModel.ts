@@ -1,11 +1,15 @@
+import { FieldValue } from "firebase/firestore";
 import { TimeAtModel } from "./TimeAtModel";
 
 export interface ReportModel {
   id: string;
+  type:string
   title: string;
-  reportTaskIds: [string];
   childId: string
-
-  createAt: TimeAtModel;
-  updateAt: TimeAtModel;
+  teacherId: string
+  planId: string
+  status: string
+  
+  createAt: TimeAtModel | FieldValue;
+  updateAt: TimeAtModel | FieldValue;
 }
