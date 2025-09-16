@@ -1,35 +1,26 @@
 // rules_version = '2';
 // service cloud.firestore {
 //   match /databases/{database}/documents {
-
-//     // FUNCTION
-
+  
+//   // FUNCTION
 //     function getUserRole() {
-//       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+//       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
 //     }
 
 //     function getPlan(planId) {
-//        return get(/databases/$(database)/documents/plans/$(planId));
-//     }
-
-//      function getPlanTask(planTaskId) {
-//         return get(/databases/$(database)/documents/planTasks/$(planTaskId));
-//   }
-
-//     function getChild(childId) {
-//          return get(/databases/$(database)/documents/children/$(childId));
+//        return get(/databases/$(database)/documents/plans/$(planId))
 //     }
 
 //     function isAdmin() {
-//       return request.auth != null && getUserRole() == "admin";
+//       return request.auth != null && getUserRole() == "admin"
 //     }
 
 //     function isTeacher() {
-//       return request.auth != null && getUserRole() == "teacher";
+//       return request.auth != null && getUserRole() == "teacher"
 //     }
 
 //     function isManager() {
-//       return request.auth != null && getUserRole() == "manager";
+//       return request.auth != null && getUserRole() == "manager"
 //     }
 
 //     // USERS
@@ -51,14 +42,15 @@
 //     // PLANS
 //     match /plans/{planId} {
 //       allow read: if isAdmin()
-//         || (isTeacher() && request.auth.uid in getChild(resource.data.childId).data.teacherIds)
-//         || (isManager() && request.auth.uid in getChild(resource.data.childId).data.managerIds);
+//       		|| (isTeacher() && request.auth.uid == resource.data.teacherId)
+//         	|| (isManager() && request.auth.uid == resource.data.teacherId)
 
 //       allow create: if isTeacher()
-//              && request.auth.uid in getChild(request.resource.data.childId).data.teacherIds
+//              && request.auth.uid == request.resource.data.teacherId
 //              && request.resource.data.status == "pending";
+             
 //       allow update, delete: if isTeacher()
-//              && request.auth.uid in getChild(resource.data.childId).data.teacherIds
+//              && request.auth.uid == resource.data.teacherId
 //              && resource.data.status == "pending";
 
 //       allow write: if isAdmin();
@@ -67,56 +59,53 @@
 //     // PLANTASKS
 //     match /planTasks/{planTaskId} {
 //       allow read: if isAdmin() 
-//              || (isTeacher() && request.auth.uid in getChild(getPlan(resource.data.planId).data.childId).data.teacherIds) 
-//              || (isManager() && request.auth.uid in getChild(getPlan(resource.data.planId).data.childId).data.managerIds)
+//              || (isTeacher() && request.auth.uid == getPlan(resource.data.planId).data.teacherId) 
+//              || (isManager() && request.auth.uid == getPlan(resource.data.planId).data.teacherId)
 
 //       allow create: if isTeacher() 
-//              && request.auth.uid in getChild(getPlan(request.resource.data.planId).data.childId).data.teacherIds 
+//              && request.auth.uid == getPlan(request.resource.data.planId).data.teacherId 
 //              && getPlan(request.resource.data.planId).data.status == "pending";
 
 //       allow update, delete: if isTeacher() 
-//              && request.auth.uid in getChild(getPlan(resource.data.planId).data.childId).data.teacherIds
+//              && request.auth.uid == getPlan(resource.data.planId).data.teacherId
 //              && getPlan(resource.data.planId).data.status == "pending";
 
-//       // Admin toàn quyền
 //       allow write: if isAdmin();
 //     }
 
 //     // REPORTS
 //     match /reports/{reportId} {
 //       allow read: if isAdmin()
-//         || (isTeacher() && request.auth.uid in getChild(resource.data.childId).data.teacherIds)
-//         || (isManager() && request.auth.uid in getChild(resource.data.childId).data.managerIds);
+//         || (isTeacher() && request.auth.uid == resource.data.teacherId)
+//         || (isManager() && request.auth.uid == resource.data.teacherId);
 
 //       allow create: if isTeacher()
-//              && request.auth.uid in getChild(request.resource.data.childId).data.teacherIds
+//              && request.auth.uid == request.resource.data.teacherId
 //              && request.resource.data.status == "pending";
 
 //       allow update, delete: if isTeacher()
-//              && request.auth.uid in getChild(resource.data.childId).data.teacherIds
+//              && request.auth.uid == resource.data.teacherId
 //              && resource.data.status == "pending";
 
 //       allow write: if isAdmin();
-
-
 //     }
 
 //      //REPORTTASKS
 //      // READ
 //      match /reportTasks/{reportTaskId} {
 //          allow read: if isAdmin()
-//              || (isTeacher() && request.auth.uid in getChild(getPlan(getPlanTask(resource.data.planTaskId).data.planId).data.childId).data.teacherIds)
-//              || (isManager() && request.auth.uid in getChild(getPlan(getPlanTask(resource.data.planTaskId).data.planId).data.childId).data.managerIds);
+//              || (isTeacher() && request.auth.uid == getPlan(resource.data.planId).data.teacherId)
+//              || (isManager() && request.auth.uid == getPlan(resource.data.planId).data.teacherId);
 
 //       // CREATE
 //          allow create: if isTeacher()
-//              && request.auth.uid in getChild(getPlan(getPlanTask(request.resource.data.planTaskId).data.planId).data.childId).data.teacherIds
-//              && getPlan(getPlanTask(request.resource.data.planTaskId).data.planId).data.status == "approved";
+//              && request.auth.uid == getPlan(request.resource.data.planId).data.teacherId
+//              && getPlan(request.resource.data.planId).data.status == "approved";
 
 //      // UPDATE / DELETE
 //          allow update, delete: if isTeacher()
-//              && request.auth.uid in getChild(getPlan(getPlanTask(resource.data.planTaskId).data.planId).data.childId).data.teacherIds
-//              && getPlan(getPlanTask(resource.data.planTaskId).data.planId).data.status == "approved";
+//              && request.auth.uid == getPlan(resource.data.planId).data.teacherId
+//              && getPlan(resource.data.planId).data.status == "approved";
 //      }
 
 //     // FIELDS

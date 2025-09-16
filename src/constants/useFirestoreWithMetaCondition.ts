@@ -36,15 +36,18 @@ export function useFirestoreWithMetaCondition<T>({
     let mounted = true;
 
     async function loadData() {
+      const valiConditions = condition.filter(Boolean)
       setLoading(true);
 
       // 1. Lấy meta từ Firestore
+      console.log('getDoc meta condition')
       const metaSnap = await getDoc(doc(db, "Meta", metaDoc));
       const lastUpdated = metaSnap.exists()
         ? metaSnap.data().lastUpdated
           ? metaSnap.data().lastUpdated.toMillis() //chuyển sang minisecond để so sánh
           : metaSnap.data()[key]?.toMillis() //chuyển sang minisecond để so sánh
         : null;
+
 
       // 2. Lấy cache
       const cache = await localforage.getItem<{
@@ -63,12 +66,13 @@ export function useFirestoreWithMetaCondition<T>({
 
       // 4. Nếu Meta thay đổi → fetch Firestore mới
       const snapshot = await getDocs(
-        query(collection(db, nameCollect), ...condition)
+        query(collection(db, nameCollect), ...valiConditions)
       );
       const freshData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as T[];
+
 
       // 5. Lưu cache kèm lastUpdated
       await localforage.setItem(key, {

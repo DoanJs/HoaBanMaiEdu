@@ -37,8 +37,6 @@ export default function AddReportScreen() {
   const [planApprovals, setPlanApprovals] = useState<PlanModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
 
-  console.log(plans);
-
   useEffect(() => {
     if (plans) {
       const items = plans.filter((plan) => plan.status === "approved");
@@ -129,8 +127,10 @@ export default function AddReportScreen() {
               nameCollect: "reportTasks",
               value: {
                 reportId: result.id,
+                planId: plan?.id as string,
                 planTaskId: _.id,
                 content: _.total,
+                isEdit: false,
 
                 createAt: serverTimestamp(),
                 updateAt: serverTimestamp(),
@@ -146,8 +146,8 @@ export default function AddReportScreen() {
           console.log(error);
         });
     }
-    navigate(`/home/${user?.id}/pending`);
-    setSelectTarget("CHỜ DUYỆT");
+    // navigate(`/home/${user?.id}/pending`);
+    // setSelectTarget("CHỜ DUYỆT");
   };
   return (
     <div

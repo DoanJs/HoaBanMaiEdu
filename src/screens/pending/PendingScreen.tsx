@@ -29,6 +29,7 @@ export default function PendingScreen() {
       const items = reports.filter((report) => report.status === "pending");
       setReportsPending(items);
     }
+    console.log(reports)
   }, [reports]);
 
   if (!plans && !reports) return <SpinnerComponent />;
