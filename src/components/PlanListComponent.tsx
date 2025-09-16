@@ -2,17 +2,13 @@ import { where } from "firebase/firestore";
 import { DocumentDownload } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { RowComponent, SpaceComponent, TextComponent } from ".";
+import { PlanItemComponent, RowComponent, SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { showTargetAndField } from "../constants/showTargetAndField";
 import { exportWord } from "../exportFile/WordExport";
-import { PlanTaskModel } from "../models/PlanTaskModel";
-import useChildStore from "../zustand/useChildStore";
-import useFieldStore from "../zustand/useFieldStore";
-import useTargetStore from "../zustand/useTargetStore";
-import useUserStore from "../zustand/useUserStore";
-import PlanItemComponent from "./PlanItemComponent";
+import { useChildStore, useFieldStore, useTargetStore, useUserStore } from "../zustand";
+import { PlanTaskModel } from "../models";
 
 export default function PlanListComponent() {
   const location = useLocation();
@@ -43,6 +39,7 @@ export default function PlanListComponent() {
         content: planTask.content,
       };
     });
+    
     exportWord({
       rows: items,
       title: title.substring(2).trim(),

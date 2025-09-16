@@ -10,8 +10,8 @@ import {
 } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import { ReportModel } from "../../models/ReportModel";
-import useReportStore from "../../zustand/useReportStore";
+import { useReportStore } from "../../zustand";
+import { ReportModel } from "../../models";
 
 export default function ReportScreen() {
   const { reports } = useReportStore();

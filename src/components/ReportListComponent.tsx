@@ -16,11 +16,8 @@ import { updateDocData } from "../constants/firebase/updateDocData";
 import { showTargetAndField } from "../constants/showTargetAndField";
 import { exportWord } from "../exportFile/WordExport";
 import { db } from "../firebase.config";
-import { ReportTaskModel } from "../models/ReportTaskModel";
-import useChildStore from "../zustand/useChildStore";
-import useFieldStore from "../zustand/useFieldStore";
-import useTargetStore from "../zustand/useTargetStore";
-import useUserStore from "../zustand/useUserStore";
+import { ReportTaskModel } from "../models";
+import { useChildStore, useFieldStore, useTargetStore, useUserStore } from "../zustand";
 
 export default function ReportListComponent() {
   const location = useLocation();

@@ -4,12 +4,13 @@ import {
   RowComponent,
   SpinnerComponent,
 } from "../../components";
-import useFieldStore from "../../zustand/useFieldStore";
+import { useFieldStore } from "../../zustand";
 
 export default function BankScreen() {
   const { fields } = useFieldStore();
 
   if (!fields) return <SpinnerComponent />;
+
   return (
     <RowComponent
       styles={{
@@ -17,7 +18,7 @@ export default function BankScreen() {
         alignItems: "flex-start",
       }}
     >
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent:'center' }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: 'center' }}>
         {fields.map((_, index) => (
           <FieldItemComponent key={index} title={_.name} fieldId={_.id} />
         ))}

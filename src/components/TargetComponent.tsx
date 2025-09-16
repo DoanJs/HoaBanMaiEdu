@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { RowComponent, SearchComponent, SpaceComponent, TargetItemComponent, TextComponent } from ".";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
 import { TargetModel } from "../models/TargetModel";
-import useCartStore from "../zustand/useCartStore";
-import useTargetStore from "../zustand/useTargetStore";
-import RowComponent from "./RowComponent";
-import SearchComponent from "./SearchComponent";
-import SpaceComponent from "./SpaceComponent";
-import TargetItemComponent from "./TargetItemComponent";
-import TextComponent from "./TextComponent";
+import { useCartStore, useTargetStore } from "../zustand";
 
 export default function TargetComponent() {
   const location = useLocation();
+  const { title, fieldId } = location.state || {};
   const { targets } = useTargetStore();
   const [targetsNew, setTargetsNew] = useState<TargetModel[]>([]);
   const { carts, setCarts } = useCartStore();
 
-  const { title, fieldId } = location.state || {};
 
   useEffect(() => {
     if (targets) {
@@ -59,9 +54,10 @@ export default function TargetComponent() {
           width: "100%",
           overflowY: "scroll",
           height: "82%",
+          marginTop: 10
         }}
       >
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">STT</th>

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { RowComponent, SpaceComponent, TextComponent } from ".";
+import { SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
 import { sizes } from "../constants/sizes";
@@ -37,24 +37,13 @@ export default function FieldItemComponent(props: Props) {
         }}
       >
         <div>{showUIIconTarget(title)}</div>
-        <RowComponent
-          styles={{
-            display: "flex",
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <SpaceComponent width={6} />
-          <TextComponent
-            text={title}
-            size={sizes.thinTitle}
-            color={colors.textBold}
-            styles={{ textAlign: "center", fontWeight: "bold" }}
-          />
-        </RowComponent>
-
-        {/* <ProcessBar /> */}
+        <SpaceComponent height={30} />
+        <TextComponent
+          text={title}
+          size={sizes.thinTitle}
+          color={colors.textBold}
+          styles={{ textAlign: "center", fontWeight: "bold" }}
+        />
       </Link>
     </div>
   );
