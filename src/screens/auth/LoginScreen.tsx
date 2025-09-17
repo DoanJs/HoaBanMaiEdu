@@ -2,6 +2,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  ModalResetPassword,
   RowComponent,
   SectionComponent,
   SpaceComponent,
@@ -161,6 +162,7 @@ export default function LoginScreen() {
               <Link to={"/forgotPassword"} style={{ textDecoration: "none" }}>
                 <TextComponent text="Quên mật khẩu ?" size={sizes.bigText} />
               </Link>
+              <SpaceComponent height={6}/>
               <Link to={"/register"} style={{ textDecoration: "none" }}>
                 <TextComponent
                   text="Đăng ký tài khoản mới"
@@ -193,6 +195,8 @@ export default function LoginScreen() {
           />
         </RowComponent>
       </RowComponent>
+
+      <ModalResetPassword />
     </SectionComponent>
   );
 }

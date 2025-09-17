@@ -19,6 +19,7 @@ import {
   CalloverScreen,
   CartScreen,
   ChildrenScreen,
+  ForgotPasswordScreen,
   LoginScreen,
   MediaScreen,
   PendingScreen,
@@ -109,6 +110,7 @@ export default function App() {
           <Route path="cart" element={<CartScreen />} />
         </Route>
         <Route path="register" element={<RegisterScreen />} />
+        <Route path="forgotPassword" element={<ForgotPasswordScreen />} />
 
         <Route path="*" element={<>404</>} />
       </Routes>

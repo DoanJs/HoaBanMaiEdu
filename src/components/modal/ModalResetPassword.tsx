@@ -13,7 +13,7 @@ const [isLoading, setIsLoading] = useState(false);
     setIsLoading(true)
     try {
       sendPasswordResetEmail(auth, user?.email as string).then(result => console.log(result))
-      handleToastSuccess('Kiểm tra lại emai để reset lại mật khẩu !')
+      handleToastSuccess('Kiểm tra emai để reset lại mật khẩu !')
       setIsLoading(false)
     } catch (error: any) {
       console.error(error);

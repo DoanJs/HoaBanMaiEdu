@@ -24,7 +24,6 @@ export default function ProfileScreen() {
       console.error("Error signing out:", error);
     }
   };
-  const handleChangePassword = () => {};
   return (
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
@@ -34,7 +33,6 @@ export default function ProfileScreen() {
           className="btn btn-warning"
           data-bs-toggle="modal" 
           data-bs-target="#resetPassword"
-          onClick={handleChangePassword}
         >
           {isLoading ? <SpinnerComponent /> : <>Đổi mật khẩu</>}
         </button>
