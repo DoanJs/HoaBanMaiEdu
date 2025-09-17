@@ -21,7 +21,7 @@ export const getDocsData = async ({
       ...doc.data(),
     }));
     setData(items); // In ra danh sách item
-  } catch (error) {
-    console.error("Error getting documents: ", error);
+  } catch (error: any) {
+    console.error("Error getting documents: ", error.message);
   }
 };

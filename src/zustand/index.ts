@@ -2,6 +2,7 @@ import useCartEditStore from "./useCartEditStore";
 import useCartStore from "./useCartStore";
 import useChildStore from "./useChildStore";
 import useFieldStore from "./useFieldStore";
+import useInterventionStore from "./useInterventionStore";
 import usePlanStore from "./usePlanStore";
 import useReportStore from "./useReportStore";
 import useSelectTargetStore from "./useSelectTargetStore";
@@ -17,5 +18,5 @@ export {
   useReportStore,
   useSelectTargetStore,
   useTargetStore,
-  useUserStore,
+  useUserStore,useInterventionStore
 };

@@ -6,7 +6,7 @@ export interface PlanModel {
   type:string
   title: string
   childId: string
-  teacherId: string
+  teacherIds: string[]
   status: string
 
   createAt: TimeAtModel | FieldValue;

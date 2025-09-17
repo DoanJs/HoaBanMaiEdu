@@ -6,6 +6,7 @@ import { PlanTaskModel } from "../../models/PlanTaskModel";
 import { ReportTaskModel } from "../../models/ReportTaskModel";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
+import { useUserStore } from "../../zustand";
 
 interface DataModel {
   id: string;
@@ -18,6 +19,7 @@ interface Props {
 
 export default function ModalDeleteComponent(props: Props) {
   const { data } = props;
+  const {user} = useUserStore()
   const navigate = useNavigate();
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
@@ -25,14 +27,10 @@ export default function ModalDeleteComponent(props: Props) {
   const deleteReportPending = async (reportId: string) => {
     removeReport(reportId);
 
-    await deleteDocData({
-      nameCollect: "reports",
-      id: reportId,
-      metaDoc: "reports",
-    });
-
     const reportTasks = await getDocs(
-      query(collection(db, "reportTasks"), where("reportId", "==", reportId))
+      query(collection(db, "reportTasks"), 
+      where("teacherIds", 'array-contains', user?.id),
+      where("reportId", "==", reportId))
     );
 
     if (!reportTasks.empty) {
@@ -45,16 +43,18 @@ export default function ModalDeleteComponent(props: Props) {
       );
       await Promise.all(promiseReportTasks);
     }
+
+    await deleteDocData({
+      nameCollect: "reports",
+      id: reportId,
+      metaDoc: "reports",
+    });
+
     navigate("../pending");
   };
   const deletePlanPending = async (planId: string) => {
     removePlan(planId);
 
-    await deleteDocData({
-      nameCollect: "plans",
-      id: planId,
-      metaDoc: "plans",
-    });
     const promisePlanTasks = data.itemTasks.map((_) =>
       deleteDocData({
         nameCollect: "planTasks",
@@ -63,6 +63,12 @@ export default function ModalDeleteComponent(props: Props) {
       })
     );
     await Promise.all(promisePlanTasks);
+
+    await deleteDocData({
+      nameCollect: "plans",
+      id: planId,
+      metaDoc: "plans",
+    });
 
     navigate("../pending");
   };
@@ -75,7 +81,6 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "reports":
         deleteReportPending(data.id);
-
         break;
 
       default:

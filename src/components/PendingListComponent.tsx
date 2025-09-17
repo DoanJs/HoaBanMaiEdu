@@ -10,18 +10,22 @@ import {
   TextComponent,
 } from ".";
 import { colors } from "../constants/colors";
-import { convertNameTargetAndFieldId } from "../constants/convertNameTargetAndFieldId";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { PlanTaskModel } from "../models";
 import {
   useCartEditStore,
   useCartStore,
+  useFieldStore,
   useSelectTargetStore,
   useTargetStore,
+  useUserStore,
 } from "../zustand";
+import { convertTargetField } from "../constants/convertTargetAndField";
 
 export default function PendingListComponent() {
   const location = useLocation();
+  const {fields} = useFieldStore()
+  const { user } = useUserStore()
   const { title, planId } = location.state || {};
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
@@ -34,7 +38,9 @@ export default function PendingListComponent() {
     if (planId) {
       getDocsData({
         nameCollect: "planTasks",
-        condition: [where("planId", "==", planId)],
+        condition: [
+          where("teacherIds", "array-contains", user?.id),
+          where("planId", "==", planId)],
         setData: setPlanTasks,
       });
     }
@@ -42,12 +48,12 @@ export default function PendingListComponent() {
 
   const handleEditPlan = () => {
     const convertPlanTasksToCarts = planTasks.map((_) => {
-      const { targetId,planId, ...newPlanTask } = _;
+      const { targetId, planId, ...newPlanTask } = _;
       return {
         ...newPlanTask,
-        fieldId: convertNameTargetAndFieldId(_.targetId, targets).fieldId,
+        fieldId: convertTargetField(_.targetId, targets, fields).fieldId,
         id: _.targetId, //targetId
-        name: convertNameTargetAndFieldId(_.targetId, targets).name,
+        name: convertTargetField(_.targetId, targets, fields).nameTarget,
       };
     });
     setCarts(convertPlanTasksToCarts);

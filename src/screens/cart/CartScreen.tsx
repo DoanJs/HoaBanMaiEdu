@@ -74,8 +74,9 @@ export default function CartScreen() {
             type: "KH",
             title,
             childId: child.id,
-            teacherId: user.id,
+            teacherIds: child.teacherIds,
             status: "pending",
+
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
           },
@@ -88,8 +89,9 @@ export default function CartScreen() {
               type: "KH",
               title,
               childId: child.id,
-              teacherId: user.id,
+              teacherIds: child.teacherIds,
               status: "pending",
+              
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
             });
@@ -97,11 +99,12 @@ export default function CartScreen() {
               addDocData({
                 nameCollect: "planTasks",
                 value: {
-                  childId: child.id,
-                  planId: result.id,
-                  targetId: cart.id,
                   content: cart.content,
                   intervention: cart.intervention,
+                  teacherIds: child.teacherIds,
+                  planId: result.id,
+                  targetId: cart.id,
+                  childId: child.id,
 
                   createAt: serverTimestamp(),
                   updateAt: serverTimestamp(),
@@ -121,7 +124,9 @@ export default function CartScreen() {
       } else {
         // xoa het cai cu
         const snapShot = await getDocs(
-          query(collection(db, "planTasks"), where("planId", "==", cartEdit))
+          query(collection(db, "planTasks"), 
+          where("teacherIds", "array-contains", user.id),
+          where("planId", "==", cartEdit))
         );
         if (!snapShot.empty) {
           const promisePlanTasksOld = snapShot.docs.map((_) =>
@@ -143,6 +148,7 @@ export default function CartScreen() {
               childId: child.id,
               planId: cartEdit,
               targetId: cart.id,
+              teacherIds: child.teacherIds,
               content: cart.content,
               intervention: cart.intervention,
 

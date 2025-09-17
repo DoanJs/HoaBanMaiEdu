@@ -2,12 +2,13 @@ import { TimeAtModel } from "./TimeAtModel";
 
 export interface ReportTaskModel {
   id: string;
-  planId: string //xem co can dung khong
-  planTaskId: string;
   content: string;
+  isEdit: boolean
+  planId: string
+  planTaskId: string;
   reportId: string
   childId: string
-  isEdit: boolean
+  teacherIds: string[]
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

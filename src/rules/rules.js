@@ -11,10 +11,6 @@
 //        return get(/databases/$(database)/documents/plans/$(planId))
 //     }
 
-// 		function getReport(reportId) {
-//        return get(/databases/$(database)/documents/reports/$(reportId))
-//     }
-
 //     function isAdmin() {
 //       return request.auth != null && getUserRole() == "admin"
 //     }
@@ -45,16 +41,16 @@
 
 //     // PLANS
 //     match /plans/{planId} {
-//       allow read: if isAdmin()
-//       		|| (isTeacher() && request.auth.uid == resource.data.teacherId)
-//         	|| (isManager() && request.auth.uid == resource.data.teacherId)
+//     	allow read: if isAdmin() 
+//       				|| isTeacher() && request.auth.uid in resource.data.teacherIds
+//               || isManager() && request.auth.uid in resource.data.teacherIds
 
 //       allow create: if isTeacher()
-//              && request.auth.uid == request.resource.data.teacherId
+//              && request.auth.uid in request.resource.data.teacherIds
 //              && request.resource.data.status == "pending";
              
 //       allow update, delete: if isTeacher()
-//              && request.auth.uid == resource.data.teacherId
+//              && request.auth.uid in resource.data.teacherIds
 //              && resource.data.status == "pending";
 
 //       allow write: if isAdmin();
@@ -63,15 +59,15 @@
 //     // PLANTASKS
 //     match /planTasks/{planTaskId} {
 //       allow read: if isAdmin() 
-//              || (isTeacher() && request.auth.uid == getPlan(resource.data.planId).data.teacherId) 
-//              || (isManager() && request.auth.uid == getPlan(resource.data.planId).data.teacherId)
+//              || isTeacher() && request.auth.uid in resource.data.teacherIds 
+//              || isManager() && request.auth.uid in resource.data.teacherIds
 
 //       allow create: if isTeacher() 
-//              && request.auth.uid == getPlan(request.resource.data.planId).data.teacherId 
+//              && request.auth.uid in request.resource.data.teacherIds 
 //              && getPlan(request.resource.data.planId).data.status == "pending";
 
 //       allow update, delete: if isTeacher() 
-//              && request.auth.uid == getPlan(resource.data.planId).data.teacherId
+//              && request.auth.uid in resource.data.teacherIds 
 //              && getPlan(resource.data.planId).data.status == "pending";
 
 //       allow write: if isAdmin();
@@ -80,15 +76,15 @@
 //     // REPORTS
 //     match /reports/{reportId} {
 //       allow read: if isAdmin()
-//         || (isTeacher() && request.auth.uid == resource.data.teacherId)
-//         || (isManager() && request.auth.uid == resource.data.teacherId);
+//         || isTeacher() && request.auth.uid in resource.data.teacherIds
+//         || isManager() && request.auth.uid in resource.data.teacherIds
 
 //       allow create: if isTeacher()
-//              && request.auth.uid == request.resource.data.teacherId
+//              && request.auth.uid in request.resource.data.teacherIds
 //              && request.resource.data.status == "pending";
 
 //       allow update, delete: if isTeacher()
-//              && request.auth.uid == resource.data.teacherId
+//              && request.auth.uid in resource.data.teacherIds
 //              && resource.data.status == "pending";
 
 //       allow write: if isAdmin();
@@ -98,17 +94,17 @@
 //      // READ
 //      match /reportTasks/{reportTaskId} {
 //          allow read: if isAdmin()
-//              || (isTeacher() && request.auth.uid == getReport(resource.data.reportId).data.teacherId)
-//              || (isManager() && request.auth.uid == getReport(resource.data.reportId).data.teacherId);
+//              	|| isTeacher() && request.auth.uid in resource.data.teacherIds 
+//              	|| isManager() && request.auth.uid in resource.data.teacherIds
 
 //       // CREATE
 //          allow create: if isTeacher()
-//              && request.auth.uid == getPlan(request.resource.data.planId).data.teacherId
+//              && request.auth.uid in request.resource.data.teacherIds 
 //              && getPlan(request.resource.data.planId).data.status == "approved";
 
 //      // UPDATE / DELETE
 //          allow update, delete: if isTeacher()
-//              && request.auth.uid == getPlan(resource.data.planId).data.teacherId
+//              && request.auth.uid in resource.data.teacherIds 
 //              && getPlan(resource.data.planId).data.status == "approved";
 //      }
 
@@ -137,3 +133,4 @@
 //     }
 //   }
 // }
+// // 

@@ -8,6 +8,8 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
+import { convertTargetField } from "../../constants/convertTargetAndField";
+import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { sizes } from "../../constants/sizes";
 import { PlanModel } from "../../models/PlanModel";
@@ -19,7 +21,6 @@ import useReportStore from "../../zustand/useReportStore";
 import useSelectTargetStore from "../../zustand/useSelectTargetStore";
 import useTargetStore from "../../zustand/useTargetStore";
 import useUserStore from "../../zustand/useUserStore";
-import { addDocData } from "../../constants/firebase/addDocData";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -64,10 +65,14 @@ export default function AddReportScreen() {
       setPlan(planApprovals[index]);
       getDocsData({
         nameCollect: "planTasks",
-        condition: [where("planId", "==", planId)],
+        condition: [
+          where("teacherIds", "array-contains", user?.id),
+          where("planId", "==", planId)
+        ],
         setData: setPlanTasks,
       });
     } else {
+      setPlanTasks([])
       setDisable(true);
     }
   };
@@ -75,20 +80,6 @@ export default function AddReportScreen() {
     const index = addReports.findIndex((_: any) => _.id === data.planTaskId);
     addReports[index].total = data.val;
     setAddReports(addReports);
-  };
-  const showTarget = (targetId: string) => {
-    let field: string = "";
-    let name: string = "";
-    const index = targets.findIndex((target) => target.id === targetId);
-    if (index !== -1) {
-      const indexField = fields.findIndex(
-        (_) => _.id === targets[index].fieldId
-      );
-      field = fields[indexField].name;
-      name = targets[index].name;
-    }
-
-    return { name, field };
   };
   const handleAddReport = async () => {
     if (user && child) {
@@ -99,7 +90,7 @@ export default function AddReportScreen() {
           type: "BC",
           title: plan?.title.replace("KH", "BC"),
           childId: child.id,
-          teacherId: user.id,
+          teacherIds: child.teacherIds,
           planId: plan?.id,
           status: "pending",
 
@@ -115,7 +106,7 @@ export default function AddReportScreen() {
             type: "BC",
             title: plan?.title.replace("KH", "BC") as string,
             childId: child.id,
-            teacherId: user.id,
+            teacherIds: child.teacherIds,
             planId: plan?.id as string,
             status: "pending",
 
@@ -127,11 +118,12 @@ export default function AddReportScreen() {
               nameCollect: "reportTasks",
               value: {
                 reportId: result.id,
-                // planId: plan?.id as string,
+                planId: plan?.id as string,
                 childId: child.id,
                 planTaskId: _.id,
                 content: _.total,
                 isEdit: false,
+                teacherIds: child.teacherIds,
 
                 createAt: serverTimestamp(),
                 updateAt: serverTimestamp(),
@@ -150,6 +142,7 @@ export default function AddReportScreen() {
       setSelectTarget('CHỜ DUYỆT')
     }
   };
+
   return (
     <div
       style={{
@@ -194,7 +187,7 @@ export default function AddReportScreen() {
       </RowComponent>
 
       <div style={{ height: "90%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -208,8 +201,8 @@ export default function AddReportScreen() {
             {planTasks &&
               planTasks.map((_, index) => (
                 <tr key={index}>
-                  <th scope="row">{showTarget(_.targetId).field}</th>
-                  <td>{showTarget(_.targetId).name}</td>
+                  <th scope="row">{convertTargetField(_.targetId, targets, fields).nameField}</th>
+                  <td>{convertTargetField(_.targetId, targets, fields).nameTarget}</td>
                   <td>{_.intervention}</td>
                   <td>{_.content}</td>
                   <td>

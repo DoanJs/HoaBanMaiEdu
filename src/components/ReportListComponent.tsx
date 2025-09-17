@@ -13,7 +13,6 @@ import {
 import { colors } from "../constants/colors";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
-import { showTargetAndField } from "../constants/showTargetAndField";
 import { exportWord } from "../exportFile/WordExport";
 import { db } from "../firebase.config";
 import { ReportTaskModel } from "../models";
@@ -23,6 +22,7 @@ import {
   useTargetStore,
   useUserStore,
 } from "../zustand";
+import { convertTargetField } from "../constants/convertTargetAndField";
 
 export default function ReportListComponent() {
   const location = useLocation();
@@ -40,7 +40,10 @@ export default function ReportListComponent() {
     if (reportId) {
       getDocsData({
         nameCollect: "reportTasks",
-        condition: [where("reportId", "==", reportId)],
+        condition: [
+          where("teacherIds", 'array-contains', user?.id),
+          where("reportId", "==", reportId)
+        ],
         setData: setReportTasks,
       });
     }
@@ -76,10 +79,10 @@ export default function ReportListComponent() {
         return {
           intervention: docSnap.data().intervention,
           content: docSnap.data().content,
-          field: showTargetAndField(targets, docSnap.data().targetId, fields)
-            .field,
-          target: showTargetAndField(targets, docSnap.data().targetId, fields)
-            .name,
+          field: convertTargetField(docSnap.data().targetId,targets, fields)
+            .nameField,
+          target: convertTargetField(docSnap.data().targetId,targets, fields)
+            .nameTarget,
           total: reportTask.content,
         };
       } else {
