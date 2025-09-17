@@ -35,6 +35,7 @@ export default function ChildrenScreen() {
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
 
+
   useEffect(() => {
     if (!loading_children) {
       setChildren(data_children as ChildrenModel[]);

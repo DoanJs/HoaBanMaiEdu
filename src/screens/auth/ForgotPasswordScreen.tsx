@@ -1,11 +1,11 @@
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RowComponent, SectionComponent, SpaceComponent, SpinnerComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
 import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { validateEmail } from "../../constants/validateEmailPhone";
-import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase.config";
 
 export default function ForgotPasswordScreen() {
@@ -71,7 +71,7 @@ export default function ForgotPasswordScreen() {
             Email reset tài khoản:
           </label>
           <input
-            placeholder="Nhập tài khoản cô đã đăng ký"
+            placeholder="Nhập tài khoản email cô đã đăng ký"
             onChange={(val) =>
               setEmail(val.target.value)
             }
@@ -94,6 +94,20 @@ export default function ForgotPasswordScreen() {
         >
           {isLoading ? <SpinnerComponent /> : <>Send email</>}
         </button>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            margin: "10px 0",
+          }}
+        >
+          <Link to={"/login"} style={{ textDecoration: "none" }}>
+            <TextComponent text="Đăng nhập" size={sizes.bigText} />
+          </Link>
+        </div>
       </RowComponent>
     </SectionComponent>
   );
