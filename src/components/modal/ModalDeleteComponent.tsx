@@ -7,6 +7,9 @@ import { ReportTaskModel } from "../../models/ReportTaskModel";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
 import { useUserStore } from "../../zustand";
+import LoadingOverlay from "../LoadingOverLay";
+import { useState } from "react";
+import { handleToastSuccess } from "../../constants/handleToast";
 
 interface DataModel {
   id: string;
@@ -23,9 +26,11 @@ export default function ModalDeleteComponent(props: Props) {
   const navigate = useNavigate();
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const deleteReportPending = async (reportId: string) => {
     removeReport(reportId);
+    setIsLoading(true)
 
     const reportTasks = await getDocs(
       query(collection(db, "reportTasks"), 
@@ -50,10 +55,13 @@ export default function ModalDeleteComponent(props: Props) {
       metaDoc: "reports",
     });
 
+    handleToastSuccess('Xóa báo cáo thành công !')
+    setIsLoading(false)
     navigate("../pending");
   };
   const deletePlanPending = async (planId: string) => {
     removePlan(planId);
+    setIsLoading(true)
 
     const promisePlanTasks = data.itemTasks.map((_) =>
       deleteDocData({
@@ -70,6 +78,8 @@ export default function ModalDeleteComponent(props: Props) {
       metaDoc: "plans",
     });
 
+    handleToastSuccess('Xóa kế hoạch thành công !')
+    setIsLoading(false)
     navigate("../pending");
   };
 
@@ -131,6 +141,8 @@ export default function ModalDeleteComponent(props: Props) {
           </div>
         </div>
       </div>
+
+      <LoadingOverlay show={isLoading}/>
     </div>
   );
 }

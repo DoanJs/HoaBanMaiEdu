@@ -12,15 +12,10 @@ import { convertTargetField } from "../../constants/convertTargetAndField";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { sizes } from "../../constants/sizes";
-import { PlanModel } from "../../models/PlanModel";
-import { PlanTaskModel } from "../../models/PlanTaskModel";
-import useChildStore from "../../zustand/useChildStore";
-import useFieldStore from "../../zustand/useFieldStore";
-import usePlanStore from "../../zustand/usePlanStore";
-import useReportStore from "../../zustand/useReportStore";
-import useSelectTargetStore from "../../zustand/useSelectTargetStore";
-import useTargetStore from "../../zustand/useTargetStore";
-import useUserStore from "../../zustand/useUserStore";
+import { useChildStore, useFieldStore, usePlanStore, useReportStore, useSelectTargetStore, useTargetStore, useUserStore } from "../../zustand";
+import { PlanModel, PlanTaskModel } from "../../models";
+import LoadingOverlay from "../../components/LoadingOverLay";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -100,7 +95,6 @@ export default function AddReportScreen() {
         metaDoc: "reports",
       })
         .then(async (result) => {
-          setIsLoading(false);
           addReport({
             id: result.id,
             type: "BC",
@@ -121,7 +115,7 @@ export default function AddReportScreen() {
                 planId: plan?.id as string,
                 childId: child.id,
                 planTaskId: _.id,
-                content: _.total,
+                content: _.total ?? '',
                 isEdit: false,
                 teacherIds: child.teacherIds,
 
@@ -133,8 +127,11 @@ export default function AddReportScreen() {
           );
 
           await Promise.all(promiseItems);
+          handleToastSuccess('Thêm mới báo cáo thành công !')
+          setIsLoading(false);
         })
         .catch((error) => {
+          handleToastError('Thêm mới báo cáo thất bại !')
           setIsLoading(false);
           console.log(error);
         });
@@ -239,6 +236,9 @@ export default function AddReportScreen() {
           {isLoading ? <SpinnerComponent /> : <>Tạo mới</>}
         </button>
       </RowComponent>
+    
+
+    <LoadingOverlay show={isLoading}/>
     </div>
   );
 }

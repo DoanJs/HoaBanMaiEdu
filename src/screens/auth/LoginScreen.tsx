@@ -12,6 +12,7 @@ import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
 import { validateEmail } from "../../constants/validateEmailPhone";
 import { auth } from "../../firebase.config";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 
 export default function LoginScreen() {
   const [disable, setDisable] = useState(false);
@@ -40,9 +41,10 @@ export default function LoginScreen() {
         // if (remember) {
         //   await localforage.setItem("user", user.email as string);
         // }
+        handleToastSuccess(`Xin chào cô ${userCredential.user.displayName} đã đăng nhập thành công !`)
       })
-      .catch((error: any) => {
-        console.log(error);
+      .catch(() => {
+        handleToastError('Đăng nhập thất bại, tài khoản không chính xác !')
         setIsLoading(false);
       });
   };

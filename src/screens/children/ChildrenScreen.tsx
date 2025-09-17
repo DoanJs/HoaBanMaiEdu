@@ -1,5 +1,8 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { useEffect } from "react";
+import { signOut } from "firebase/auth";
+import { where } from "firebase/firestore";
+import { Logout } from "iconsax-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CardImageComponent,
   RowComponent,
@@ -10,16 +13,19 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
+import { auth } from "../../firebase.config";
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
-import { db } from "../../firebase.config";
 
 export default function ChildrenScreen() {
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const { children, setChildren } = useChildrenStore();
+  const [isLoading, setIsLoading] = useState(false);
   const { data: data_children, loading: loading_children } =
     useFirestoreWithMetaCondition({
       key: `${user?.id}_childrenCache`,
@@ -34,6 +40,20 @@ export default function ChildrenScreen() {
       setChildren(data_children as ChildrenModel[]);
     }
   }, [data_children, loading_children, setChildren]);
+
+  const handleLogout = async () => {
+    setIsLoading(true);
+
+    try {
+      await signOut(auth);
+      handleToastSuccess('Đăng xuất tài khoản thành công !')
+      setIsLoading(false);
+      navigate("/login", { replace: true }); // <-- chuyển hướng rõ ràng
+    } catch (error) {
+      handleToastError('Đăng xuất tài khoản thất bại !')
+      console.error("Error signing out:", error);
+    }
+  };
 
   if (loading_children) return <SpinnerComponent />;
   return (
@@ -57,6 +77,18 @@ export default function ChildrenScreen() {
             borderRadius: 10,
           }}
         >
+          <div style={{
+            position: 'absolute',
+            right: 20, top: 20,
+            padding: 6,
+            borderRadius: 10,
+            background: colors.bacground,
+            cursor: 'pointer',
+          }}
+            onClick={handleLogout}
+          >
+            {isLoading ? <SpinnerComponent /> : <Logout size={32} color='coral' variant="Bold" />}
+          </div>
           <TextComponent
             text={`Cô ${user.fullName} _ ${user.position}`}
             size={32}

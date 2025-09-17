@@ -2,6 +2,7 @@ import { signOut } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  ModalResetPassword,
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
@@ -31,18 +32,22 @@ export default function ProfileScreen() {
         <button
           type="button"
           className="btn btn-warning"
-          onClick={handleLogout}
-        >
-          {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
-        </button>
-        <button
-          type="button"
-          className="btn btn-warning"
+          data-bs-toggle="modal" 
+          data-bs-target="#resetPassword"
           onClick={handleChangePassword}
         >
           {isLoading ? <SpinnerComponent /> : <>Đổi mật khẩu</>}
         </button>
+        <button
+          type="button"
+          className="btn btn-warning"
+          onClick={handleLogout}
+        >
+          {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
+        </button>
       </RowComponent>
+
+      <ModalResetPassword />
     </div>
   );
 }

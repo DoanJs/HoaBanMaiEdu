@@ -1,6 +1,6 @@
 import { Bounce, toast } from "react-toastify";
 
-export const handleToastSuccess = (text: string) => toast.success(`🦄 ${text}`, {
+export const handleToastSuccess = (text: string) => toast.success(`${text}`, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -11,7 +11,7 @@ export const handleToastSuccess = (text: string) => toast.success(`🦄 ${text}`
     theme: "colored",
     transition: Bounce,
 });
-export const handleToastWarn = (text: string) => toast.warn(`🦄 ${text}`, {
+export const handleToastWarn = (text: string) => toast.warn(`${text}`, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -22,7 +22,7 @@ export const handleToastWarn = (text: string) => toast.warn(`🦄 ${text}`, {
     theme: "colored",
     transition: Bounce,
 });
-export const handleToastError = (text: string) => toast.error(`🦄 ${text}`, {
+export const handleToastError = (text: string) => toast.error(`${text}`, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -33,7 +33,7 @@ export const handleToastError = (text: string) => toast.error(`🦄 ${text}`, {
     theme: "colored",
     transition: Bounce,
 });
-export const handleToastInfo = (text: string) => toast.info(`🦄 ${text}`, {
+export const handleToastInfo = (text: string) => toast.info(`${text}`, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,
@@ -44,7 +44,7 @@ export const handleToastInfo = (text: string) => toast.info(`🦄 ${text}`, {
     theme: "colored",
     transition: Bounce,
 });
-export const handleToastDefault = (text: string) => toast(`🦄 ${text}`, {
+export const handleToastDefault = (text: string) => toast(`${text}`, {
     position: "top-right",
     autoClose: 5000,
     hideProgressBar: false,

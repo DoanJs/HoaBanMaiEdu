@@ -13,12 +13,14 @@ import {
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
-  TextComponent,
+  TextComponent
 } from "../../components";
+import LoadingOverlay from "../../components/LoadingOverLay";
 import { colors } from "../../constants/colors";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocData } from "../../constants/firebase/getDocData";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { db } from "../../firebase.config";
 import { PlanModel } from "../../models";
@@ -83,7 +85,6 @@ export default function CartScreen() {
           metaDoc: "plans",
         })
           .then(async (result) => {
-            setIsLoading(false);
             addPlan({
               id: result.id,
               type: "KH",
@@ -91,7 +92,7 @@ export default function CartScreen() {
               childId: child.id,
               teacherIds: child.teacherIds,
               status: "pending",
-              
+
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
             });
@@ -99,8 +100,8 @@ export default function CartScreen() {
               addDocData({
                 nameCollect: "planTasks",
                 value: {
-                  content: cart.content,
-                  intervention: cart.intervention,
+                  content: cart.content ?? '',
+                  intervention: cart.intervention ?? '',
                   teacherIds: child.teacherIds,
                   planId: result.id,
                   targetId: cart.id,
@@ -114,19 +115,22 @@ export default function CartScreen() {
             );
 
             await Promise.all(promiseItems);
+            handleToastSuccess('Thêm mới kế hoạch thành công !')
+            setIsLoading(false);
             setCarts([]);
             setTitle("");
           })
           .catch((error) => {
+            handleToastError('Thêm mới kế hoạch thất bại !')
             setIsLoading(false);
             console.log(error);
           });
       } else {
         // xoa het cai cu
         const snapShot = await getDocs(
-          query(collection(db, "planTasks"), 
-          where("teacherIds", "array-contains", user.id),
-          where("planId", "==", cartEdit))
+          query(collection(db, "planTasks"),
+            where("teacherIds", "array-contains", user.id),
+            where("planId", "==", cartEdit))
         );
         if (!snapShot.empty) {
           const promisePlanTasksOld = snapShot.docs.map((_) =>
@@ -136,7 +140,6 @@ export default function CartScreen() {
               metaDoc: "plans",
             })
           );
-
           await Promise.all(promisePlanTasksOld);
         }
 
@@ -149,8 +152,8 @@ export default function CartScreen() {
               planId: cartEdit,
               targetId: cart.id,
               teacherIds: child.teacherIds,
-              content: cart.content,
-              intervention: cart.intervention,
+              content: cart.content ?? '',
+              intervention: cart.intervention ?? '',
 
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
@@ -160,6 +163,8 @@ export default function CartScreen() {
         );
 
         await Promise.all(promisePlanTasksNew);
+        handleToastSuccess('Chỉnh sửa kế hoạch thành công !')
+        setIsLoading(false)
         setCartEdit(null);
         setCarts([]);
         setTitle("");
@@ -203,6 +208,7 @@ export default function CartScreen() {
           <TextComponent text="Thêm mục tiêu" size={sizes.bigText} />
         </Link>
       </RowComponent>
+      <SpaceComponent height={10} />
       <div style={{ height: "85%", overflowY: "scroll" }}>
         <table className="table table-bordered">
           <thead>
@@ -227,7 +233,7 @@ export default function CartScreen() {
       <RowComponent
         justify="flex-end"
         styles={{
-          padding: 20,
+          padding: 10,
         }}
       >
         <button
@@ -248,6 +254,8 @@ export default function CartScreen() {
           )}
         </button>
       </RowComponent>
+
+      <LoadingOverlay show={isLoading} />
     </div>
   );
 }

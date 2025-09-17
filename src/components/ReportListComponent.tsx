@@ -23,6 +23,8 @@ import {
   useUserStore,
 } from "../zustand";
 import { convertTargetField } from "../constants/convertTargetAndField";
+import LoadingOverlay from "./LoadingOverLay";
+import { handleToastError, handleToastSuccess } from "../constants/handleToast";
 
 export default function ReportListComponent() {
   const location = useLocation();
@@ -52,22 +54,29 @@ export default function ReportListComponent() {
   const handleSaveReportTask = async () => {
     // luu phia firestore
     if (!disable) {
-      setIsLoading(true);
-      const promiseItems = reportTasks.map((_) =>
-        updateDocData({
-          nameCollect: "reportTasks",
-          id: _.id,
-          valueUpdate: {
-            content: _.content,
-            updateAt: serverTimestamp(),
-          },
-          metaDoc: "reports",
-        })
-      );
-      await Promise.all(promiseItems);
+      try {
+        setIsLoading(true);
+        const promiseItems = reportTasks.map((_) =>
+          updateDocData({
+            nameCollect: "reportTasks",
+            id: _.id,
+            valueUpdate: {
+              content: _.content,
+              updateAt: serverTimestamp(),
+            },
+            metaDoc: "reports",
+          })
+        );
+        await Promise.all(promiseItems);
+        handleToastSuccess('Chỉnh sửa báo cáo thành công !')
+        setIsLoading(false)
+        setDisable(true)
+      } catch (error) {
+        handleToastError('Chỉnh sửa báo cáo thất bại !')
+        setIsLoading(false);
+        setDisable(true);
+      }
 
-      setIsLoading(false);
-      setDisable(true);
     }
   };
 
@@ -226,6 +235,8 @@ export default function ReportListComponent() {
           </button>
         </RowComponent>
       )}
+
+      <LoadingOverlay show={isLoading}/>
     </div>
   );
 }

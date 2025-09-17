@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import {
   FieldItemComponent,
   RowComponent,
-  SpinnerComponent,
+  SpinnerComponent
 } from "../../components";
 import { useFieldStore } from "../../zustand";
 

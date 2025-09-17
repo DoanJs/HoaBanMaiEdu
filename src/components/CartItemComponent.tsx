@@ -24,6 +24,7 @@ export default function CartItemComponent(props: Props) {
   useEffect(() => {
     if (cart) {
       setContent(cart.content);
+      setType('Ý khác')
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart]);

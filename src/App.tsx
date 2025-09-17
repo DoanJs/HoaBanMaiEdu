@@ -1,4 +1,4 @@
-import { onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   ReportListComponent,
   SpinnerComponent,
   TargetComponent,
+  ToastContainer,
 } from "./components";
 import { auth, db } from "./firebase.config";
 import { UserModel } from "./models/UserModel";
@@ -28,6 +29,7 @@ import {
   SettingScreen,
 } from "./screens";
 import useUserStore from "./zustand/useUserStore";
+import { handleToastError, handleToastWarn } from "./constants/handleToast";
 
 type AuthState = {
   user: User | null;
@@ -47,11 +49,18 @@ export default function App() {
 
       if (currentUser) {
         // chỉ fetch khi có user
-        getDoc(doc(db, "users", currentUser.uid as string))
-          .then(async (result) => {
-            setUser({ ...result.data(), id: currentUser.uid } as UserModel);
-          })
-          .catch((error) => console.log(error));
+        try {
+          getDoc(doc(db, "users", currentUser.uid as string))
+            .then(async (result) => {
+              setUser({ ...result.data(), id: currentUser.uid } as UserModel);
+            })
+            .catch(async () => {
+              await signOut(auth);
+              handleToastWarn('Tài khoản chưa được cấp quyền, vui lòng liên hệ admin !')
+            });
+        } catch (error) {
+          console.log('error: ', error)
+        }
       } else {
         // clear user khi logout
         setUser(null);
@@ -103,6 +112,9 @@ export default function App() {
 
         <Route path="*" element={<>404</>} />
       </Routes>
+
+
+      <ToastContainer />
     </div>
   );
 }
