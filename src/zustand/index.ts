@@ -6,6 +6,7 @@ import useInterventionStore from "./useInterventionStore";
 import usePlanStore from "./usePlanStore";
 import useReportStore from "./useReportStore";
 import useSelectTargetStore from "./useSelectTargetStore";
+import useSuggestStore from "./useSuggestStore";
 import useTargetStore from "./useTargetStore";
 import useUserStore from "./useUserStore";
 
@@ -17,6 +18,6 @@ export {
   usePlanStore,
   useReportStore,
   useSelectTargetStore,
-  useTargetStore,
+  useTargetStore, useSuggestStore,
   useUserStore,useInterventionStore
 };

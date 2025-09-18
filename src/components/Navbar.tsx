@@ -15,13 +15,15 @@ import { getDocsData } from "../constants/firebase/getDocsData";
 import {
   query_fields,
   query_interventions,
+  query_suggests,
   query_targets,
 } from "../constants/firebase/query/Index";
 import { sizes } from "../constants/sizes";
 import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../constants/useFirestoreWithMetaCondition";
 import { FieldModel, InterventionModel, PlanModel, ReportModel, TargetModel, UserModel } from "../models";
-import { useChildStore, useFieldStore, useInterventionStore, usePlanStore, useReportStore, useSelectTargetStore, useTargetStore, useUserStore } from "../zustand";
+import { SuggestModel } from "../models/SuggestModel";
+import { useChildStore, useFieldStore, useInterventionStore, usePlanStore, useReportStore, useSelectTargetStore, useSuggestStore, useTargetStore, useUserStore } from "../zustand";
 
 export default function Navbar() {
   const { id } = useParams();
@@ -30,6 +32,7 @@ export default function Navbar() {
   const { child, setChild } = useChildStore();
   const [teachers, setTeachers] = useState<UserModel[]>([]);
   const { setTargets } = useTargetStore();
+  const { setSuggests } = useSuggestStore()
   const { setFields } = useFieldStore();
   const { setPlans } = usePlanStore();
   const { setReports } = useReportStore();
@@ -48,6 +51,13 @@ export default function Navbar() {
       metaDoc: "targets",
     }
   );
+  const { data: data_suggests, loading: loading_suggests } = useFirestoreWithMeta(
+    {
+      key: "suggestsCache",
+      query: query_suggests,
+      metaDoc: "suggests",
+    }
+  );
   const { data: data_plans, loading: loading_plans } =
     useFirestoreWithMetaCondition({
       key: "plansCache",
@@ -56,7 +66,6 @@ export default function Navbar() {
       nameCollect: "plans",
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
-
   const { data: data_reports, loading: loading_reports } =
     useFirestoreWithMetaCondition({
       key: "reportsCache",
@@ -104,6 +113,12 @@ export default function Navbar() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_targets, loading_targets]);
+  useEffect(() => {
+    if (!loading_suggests) {
+      setSuggests(data_suggests as SuggestModel[]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_suggests, loading_suggests]);
   useEffect(() => {
     if (id) {
       getDocData({

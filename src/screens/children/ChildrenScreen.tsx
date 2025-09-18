@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { where } from "firebase/firestore";
+import { serverTimestamp, where } from "firebase/firestore";
 import { Logout } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,15 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
+import suggestCA from "../../constants/database/suggest/suggestCA";
+import suggestCNXH from "../../constants/database/suggest/suggestCNXH";
+import suggestHV from "../../constants/database/suggest/suggestHV";
+import suggestNNDD from "../../constants/database/suggest/suggestNNDD";
+import suggestNNH from "../../constants/database/suggest/suggestNNH";
+import suggestNT from "../../constants/database/suggest/suggestNT";
+import suggestTTCY from "../../constants/database/suggest/suggestTTCY";
+import suggestVDT from "../../constants/database/suggest/suggestVDT";
+import { getDocsData } from "../../constants/firebase/getDocsData";
 import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
@@ -20,6 +29,7 @@ import { auth } from "../../firebase.config";
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
+import { addDocData } from "../../constants/firebase/addDocData";
 
 export default function ChildrenScreen() {
   const navigate = useNavigate();
@@ -34,7 +44,6 @@ export default function ChildrenScreen() {
       nameCollect: "children",
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
-
 
   useEffect(() => {
     if (!loading_children) {

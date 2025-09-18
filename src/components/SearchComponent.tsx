@@ -3,17 +3,19 @@ import { ChildrenModel } from "../models/ChildrenModel";
 import { TargetModel } from "../models/TargetModel";
 import { PlanModel } from "../models/PlanModel";
 import { ReportModel } from "../models/ReportModel";
+import { SuggestModel } from "../models/SuggestModel";
 
 interface Props {
   title: string;
   placeholder: string;
   type?: string;
-  arrSource: ChildrenModel[] | TargetModel[] | PlanModel[] | ReportModel[];
+  width?: number | string
+  arrSource: ChildrenModel[] | TargetModel[] | PlanModel[] | ReportModel[] | SuggestModel[];
   onChange: (val: any) => void;
 }
 
 export default function SearchComponent(props: Props) {
-  const { title, placeholder, type, arrSource, onChange } = props;
+  const { title, placeholder, type, arrSource, onChange, width } = props;
   const [value, setValue] = useState("");
 
   useEffect(() => {
@@ -39,6 +41,11 @@ export default function SearchComponent(props: Props) {
           report.title.toLowerCase().includes(value.toLowerCase())
         );
         break;
+      case "searchSuggest":
+        items = (arrSource as SuggestModel[]).filter((suggest) =>
+          suggest.name.toLowerCase().includes(value.toLowerCase())
+        );
+        break;
 
       default:
         break;
@@ -49,7 +56,7 @@ export default function SearchComponent(props: Props) {
   }, [value]);
 
   return (
-    <div className="input-group" style={{ width: "30%" }}>
+    <div className="input-group" style={{ width: width ?? "30%" }}>
       <span className="input-group-text" id="basic-addon1">
         {title}
       </span>
