@@ -1,4 +1,5 @@
 import { signOut } from "firebase/auth";
+import { Logout, Repeat } from "iconsax-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -6,7 +7,10 @@ import {
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
+  TextComponent,
 } from "../../components";
+import { colors } from "../../constants/colors";
+import { sizes } from "../../constants/sizes";
 import { auth } from "../../firebase.config";
 
 export default function ProfileScreen() {
@@ -28,21 +32,49 @@ export default function ProfileScreen() {
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
       <RowComponent justify="space-between">
-        <button
-          type="button"
-          className="btn btn-warning"
-          data-bs-toggle="modal" 
+        <div
+          style={{
+            display:'flex',
+            cursor: "pointer",
+          }}
+          data-bs-toggle="modal"
           data-bs-target="#resetPassword"
         >
-          {isLoading ? <SpinnerComponent /> : <>Đổi mật khẩu</>}
-        </button>
-        <button
-          type="button"
-          className="btn btn-warning"
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <>
+              <Repeat size={24} color="coral" variant="Bold" />
+              <SpaceComponent width={6} />
+              <TextComponent
+                text="Đổi mật khẩu"
+                size={sizes.bigText}
+                color={colors.primary}
+                styles={{ fontWeight: "bold" }}
+              />
+            </>
+          )}
+        </div>
+        <RowComponent
           onClick={handleLogout}
+          styles={{
+            cursor: "pointer",
+          }}
         >
-          {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
-        </button>
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <>
+              <Logout size={24} color="coral" variant="Bold" />
+              <TextComponent
+                text=" Đăng xuất"
+                size={sizes.bigText}
+                color={colors.primary}
+                styles={{ fontWeight: "bold" }}
+              />
+            </>
+          )}
+        </RowComponent>
       </RowComponent>
 
       <ModalResetPassword />

@@ -13,14 +13,17 @@ import {
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
-  TextComponent
+  TextComponent,
 } from "../../components";
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { colors } from "../../constants/colors";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocData } from "../../constants/firebase/getDocData";
-import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
+import {
+  handleToastError,
+  handleToastSuccess,
+} from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { db } from "../../firebase.config";
 import { PlanModel } from "../../models";
@@ -30,7 +33,7 @@ import {
   useChildStore,
   usePlanStore,
   useSelectTargetStore,
-  useUserStore
+  useUserStore,
 } from "../../zustand";
 
 export default function CartScreen() {
@@ -78,6 +81,7 @@ export default function CartScreen() {
             childId: child.id,
             teacherIds: child.teacherIds,
             status: "pending",
+            comment: "",
 
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
@@ -92,6 +96,7 @@ export default function CartScreen() {
               childId: child.id,
               teacherIds: child.teacherIds,
               status: "pending",
+              comment: "",
 
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
@@ -100,8 +105,8 @@ export default function CartScreen() {
               addDocData({
                 nameCollect: "planTasks",
                 value: {
-                  content: cart.content ?? '',
-                  intervention: cart.intervention ?? '',
+                  content: cart.content ?? "",
+                  intervention: cart.intervention ?? "",
                   teacherIds: child.teacherIds,
                   planId: result.id,
                   targetId: cart.id,
@@ -115,22 +120,24 @@ export default function CartScreen() {
             );
 
             await Promise.all(promiseItems);
-            handleToastSuccess('Thêm mới kế hoạch thành công !')
+            handleToastSuccess("Thêm mới kế hoạch thành công !");
             setIsLoading(false);
             setCarts([]);
             setTitle("");
           })
           .catch((error) => {
-            handleToastError('Thêm mới kế hoạch thất bại !')
+            handleToastError("Thêm mới kế hoạch thất bại !");
             setIsLoading(false);
             console.log(error);
           });
       } else {
         // xoa het cai cu
         const snapShot = await getDocs(
-          query(collection(db, "planTasks"),
+          query(
+            collection(db, "planTasks"),
             where("teacherIds", "array-contains", user.id),
-            where("planId", "==", cartEdit))
+            where("planId", "==", cartEdit)
+          )
         );
         if (!snapShot.empty) {
           const promisePlanTasksOld = snapShot.docs.map((_) =>
@@ -152,8 +159,8 @@ export default function CartScreen() {
               planId: cartEdit,
               targetId: cart.id,
               teacherIds: child.teacherIds,
-              content: cart.content ?? '',
-              intervention: cart.intervention ?? '',
+              content: cart.content ?? "",
+              intervention: cart.intervention ?? "",
 
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
@@ -163,8 +170,8 @@ export default function CartScreen() {
         );
 
         await Promise.all(promisePlanTasksNew);
-        handleToastSuccess('Chỉnh sửa kế hoạch thành công !')
-        setIsLoading(false)
+        handleToastSuccess("Chỉnh sửa kế hoạch thành công !");
+        setIsLoading(false);
         setCartEdit(null);
         setCarts([]);
         setTitle("");

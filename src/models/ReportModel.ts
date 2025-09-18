@@ -9,7 +9,7 @@ export interface ReportModel {
   teacherIds: string[]
   planId: string
   status: string
-  comment?: string
+  comment: string
   
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

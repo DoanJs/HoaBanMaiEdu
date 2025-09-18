@@ -19,6 +19,7 @@ import {
   useCartEditStore,
   useCartStore,
   useFieldStore,
+  usePlanStore,
   useSelectTargetStore,
   useTargetStore,
   useUserStore,
@@ -27,38 +28,44 @@ import LoadingOverlay from "./LoadingOverLay";
 
 export default function PendingListComponent() {
   const location = useLocation();
-  const { fields } = useFieldStore()
-  const { user } = useUserStore()
+  const { fields } = useFieldStore();
+  const { user } = useUserStore();
   const { title, planId, comment } = location.state || {};
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
+  const { plans, editPlan } = usePlanStore();
   const { setCarts } = useCartStore();
   const { setCartEdit } = useCartEditStore();
   const { targets } = useTargetStore();
-  const [text, setText] = useState('');
+  const [isComment, setIsComment] = useState(false);
+  const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(true);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (planId) {
-      comment && setText(comment.split('@Js@')[1])
+      if (comment) {
+        setIsComment(true);
+        setText(comment.split("@Js@")[1]);
+      }
       getDocsData({
         nameCollect: "planTasks",
         condition: [
           where("teacherIds", "array-contains", user?.id),
-          where("planId", "==", planId)],
+          where("planId", "==", planId),
+        ],
         setData: setPlanTasks,
       });
     }
   }, [planId]);
   useEffect(() => {
-    if (text !== comment.split('@Js@')[1]) {
-      setDisable(false)
+    if (text !== comment.split("@Js@")[1]) {
+      setDisable(false);
     } else {
-      setDisable(true)
+      setDisable(true);
     }
-  }, [text])
+  }, [text]);
 
   const handleEditPlan = () => {
     const convertPlanTasksToCarts = planTasks.map((_) => {
@@ -75,16 +82,21 @@ export default function PendingListComponent() {
     setSelectTarget("GIỎ MỤC TIÊU");
   };
   const handleSaveComment = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
+    const indexPlan = plans.findIndex((plan) => plan.id === planId);
+    editPlan(planId, {
+      ...plans[indexPlan],
+      comment: text ? `${user?.fullName}@Js@${text}` : "",
+    });
     await updateDocData({
-      nameCollect: 'plans',
+      nameCollect: "plans",
       id: planId,
-      metaDoc: 'plans',
-      valueUpdate: { comment: text ? `${user?.fullName}@Js@${text}` : '' }
-    })
-    setIsLoading(false)
-    setDisable(true)
-  }
+      metaDoc: "plans",
+      valueUpdate: { comment: text ? `${user?.fullName}@Js@${text}` : "" },
+    });
+    setIsLoading(false);
+    setDisable(true);
+  };
 
   return (
     <div style={{ width: "100%" }}>
@@ -120,74 +132,77 @@ export default function PendingListComponent() {
               ))}
           </tbody>
         </table>
-        {
-          comment &&
+        {isComment && (
           <>
-            <TextComponent text={`Góp ý từ cô ${comment.split('@Js@')[0]}: `} size={sizes.bigText} styles={{ fontWeight: 'bold' }} />
+            <TextComponent
+              text={`Góp ý từ cô ${comment.split("@Js@")[0]}: `}
+              size={sizes.bigText}
+              styles={{ fontWeight: "bold" }}
+            />
             <SpaceComponent height={4} />
             <RowComponent>
               <textarea
                 style={{
-
                   padding: 10,
-                  textAlign: 'justify',
-                  color: colors.red
+                  textAlign: "justify",
+                  color: colors.red,
                 }}
-                disabled={!['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string)}
+                disabled={
+                  !["Phó Giám đốc", "Giám đốc"].includes(
+                    user?.position as string
+                  )
+                }
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 className="form-control"
                 placeholder="Nhập comment"
                 rows={5}
               ></textarea>
-
             </RowComponent>
             <SpaceComponent height={10} />
           </>
-        }
+        )}
       </div>
 
       <SpaceComponent height={4} />
 
-      <RowComponent justify='space-between'>
-        {
-          ['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string) &&
-          (
-            comment ?
-              <button
-                onClick={disable ? undefined : handleSaveComment}
-                type="button"
-                className="btn btn-success"
-                data-bs-dismiss="modal"
-                style={{
-                  background: disable ? colors.gray : colors.primary,
-                  borderColor: disable ? colors.gray : colors.primary,
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <SaveAdd size={20} color={colors.bacground} />
-                <SpaceComponent width={6} />
-                <TextComponent text="Lưu góp ý" color={colors.bacground} />
-              </button>
-              :
-              <div
-                style={{
-                  cursor: "pointer",
-                  textDecoration: "none",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <AddCircle size={30} color={colors.primary} variant="Bold" />
-                <SpaceComponent width={4} />
-                <TextComponent text="Góp ý" size={sizes.bigText} />
-              </div>
-          )
-        }
+      <RowComponent justify="space-between">
+        {["Phó Giám đốc", "Giám đốc"].includes(user?.position as string) &&
+          (isComment ? (
+            <button
+              onClick={disable ? undefined : handleSaveComment}
+              type="button"
+              className="btn btn-success"
+              data-bs-dismiss="modal"
+              style={{
+                background: disable ? colors.gray : colors.primary,
+                borderColor: disable ? colors.gray : colors.primary,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <SaveAdd size={20} color={colors.bacground} />
+              <SpaceComponent width={6} />
+              <TextComponent text="Lưu góp ý" color={colors.bacground} />
+            </button>
+          ) : (
+            <div
+              style={{
+                cursor: "pointer",
+                textDecoration: "none",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onClick={() => setIsComment(true)}
+            >
+              <AddCircle size={30} color={colors.primary} variant="Bold" />
+              <SpaceComponent width={4} />
+              <TextComponent text="Góp ý" size={sizes.bigText} />
+            </div>
+          ))}
         <RowComponent justify="flex-end">
           <Link
             onClick={handleEditPlan}

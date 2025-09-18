@@ -101,17 +101,22 @@ export default function RegisterScreen() {
       >
         {/* ben trái */}
         <RowComponent
-          styles={{
+         styles={{
             height: "100%",
             width: "100%",
-            justifyContent: "flex-end",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            borderRadius: 10,
           }}
         >
           <img
-            src="voi.jpg"
+            src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1758204087/HoaBanMaiEdu/images/register_mnxnvj.jpg"
             alt=""
             style={{
               borderRadius: 10,
+              objectFit: "cover",
+              height: "100%",
+              width: "100%",
             }}
           />
         </RowComponent>

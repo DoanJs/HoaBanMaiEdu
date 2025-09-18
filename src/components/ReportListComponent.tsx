@@ -22,6 +22,7 @@ import { ReportTaskModel } from "../models";
 import {
   useChildStore,
   useFieldStore,
+  useReportStore,
   useTargetStore,
   useUserStore,
 } from "../zustand";
@@ -37,13 +38,18 @@ export default function ReportListComponent() {
   const { fields } = useFieldStore();
   const { child } = useChildStore();
   const { user } = useUserStore();
-  const [text, setText] = useState('');
   const [disableComment, setDisableComment] = useState(true);
+  const [isComment, setIsComment] = useState(false);
+  const [text, setText] = useState("");
+  const {reports, editReport} = useReportStore()
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (reportId) {
-      comment && setText(comment.split('@Js@')[1])
+      if (comment) {
+        setIsComment(true);
+        setText(comment.split("@Js@")[1]);
+      }
       getDocsData({
         nameCollect: "reportTasks",
         condition: [
@@ -123,6 +129,11 @@ export default function ReportListComponent() {
   };
   const handleSaveComment = async () => {
     setIsLoading(true)
+    const indexReport = reports.findIndex((report) => report.id === reportId);
+    editReport(reportId, {
+      ...reports[indexReport],
+      comment: text ? `${user?.fullName}@Js@${text}` : "",
+    });
     await updateDocData({
       nameCollect: 'reports',
       id: reportId,
@@ -176,7 +187,7 @@ export default function ReportListComponent() {
         </table>
 
         {
-          comment &&
+          isComment &&
           <>
             <TextComponent text={`Góp ý từ cô ${comment.split('@Js@')[0]}: `} size={sizes.bigText} styles={{ fontWeight: 'bold' }} />
             <SpaceComponent height={4} />
@@ -207,7 +218,7 @@ export default function ReportListComponent() {
             {
               ['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string) &&
               (
-                comment ?
+                isComment ?
                   <button
                     onClick={disableComment ? undefined : handleSaveComment}
                     type="button"
@@ -235,6 +246,7 @@ export default function ReportListComponent() {
                       justifyContent: "center",
                       alignItems: "center",
                     }}
+                    onClick={() => setIsComment(true)}
                   >
                     <AddCircle size={30} color={colors.primary} variant="Bold" />
                     <SpaceComponent width={4} />

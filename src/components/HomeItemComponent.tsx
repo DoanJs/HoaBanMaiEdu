@@ -1,8 +1,19 @@
-import { Bank, Calendar1, Chart, Document, DocumentLike, Gallery, Messages, Setting2, ShoppingCart } from "iconsax-react";
+import {
+  Bank,
+  Calendar1,
+  Chart,
+  Document,
+  DocumentLike,
+  Gallery,
+  Notification,
+  Setting2,
+  ShoppingCart,
+} from "iconsax-react";
 import { Link } from "react-router-dom";
 import { SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { sizes } from "../constants/sizes";
+import { usePlanStore, useReportStore } from "../zustand";
 import useCartStore from "../zustand/useCartStore";
 
 interface Props {
@@ -14,7 +25,9 @@ interface Props {
 
 export default function HomeItemComponent(props: Props) {
   const { title, icon, value, onClick } = props;
-  const { carts } = useCartStore()
+  const { carts } = useCartStore();
+  const { plans } = usePlanStore();
+  const { reports } = useReportStore();
 
   const showUI = () => {
     let result: any;
@@ -143,6 +156,16 @@ export default function HomeItemComponent(props: Props) {
 
     return { result, navigate };
   };
+  const handleCommentTotal = () => {
+    let isComment: boolean = false;
+    plans.concat(reports).map((_) => {
+      if (_.comment) {
+        isComment = true;
+      }
+    });
+
+    return isComment;
+  };
 
   return (
     <Link
@@ -159,15 +182,14 @@ export default function HomeItemComponent(props: Props) {
         background: value === title ? colors.primaryBold : colors.primaryLight,
         cursor: "pointer",
         justifyContent: "flex-start",
-        position: 'relative'
+        position: "relative",
       }}
     >
-      {
-        title === 'CHỜ DUYỆT' &&
+      {title === "CHỜ DUYỆT" && handleCommentTotal() && (
         <div
           style={{
             position: "absolute",
-            top: '40%',
+            top: "40%",
             right: 20,
             height: 20,
             width: 20,
@@ -177,9 +199,9 @@ export default function HomeItemComponent(props: Props) {
             alignItems: "center",
           }}
         >
-          <Messages color={colors.red} size={20} variant="Bold" />
+          <Notification color={colors.red} size={26} variant="Bold" />
         </div>
-      }
+      )}
       {showUI().result}
       <SpaceComponent width={6} />
       <TextComponent

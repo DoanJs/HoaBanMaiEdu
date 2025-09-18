@@ -8,7 +8,7 @@ export interface PlanModel {
   childId: string
   teacherIds: string[]
   status: string
-  comment?: string
+  comment: string
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

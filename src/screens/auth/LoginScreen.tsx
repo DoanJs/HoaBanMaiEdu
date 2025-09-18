@@ -184,7 +184,7 @@ export default function LoginScreen() {
           }}
         >
           <img
-            src="teamhbmedu.jpg"
+            src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1758202746/HoaBanMaiEdu/images/loginScreen_w9klhm.jpg"
             alt=""
             style={{
               borderRadius: 10,
