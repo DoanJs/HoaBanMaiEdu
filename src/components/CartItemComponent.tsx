@@ -1,6 +1,7 @@
 import { Trash } from "iconsax-react";
 import { useEffect, useState } from "react";
-import { RowComponent, SearchComponent, SpaceComponent } from ".";
+import Select, { SingleValue } from "react-select";
+import { RowComponent, SpaceComponent } from ".";
 import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
 import { sizes } from "../constants/sizes";
@@ -21,35 +22,34 @@ export default function CartItemComponent(props: Props) {
   const { fields } = useFieldStore();
   const { removeCart, editCart } = useCartStore();
   const [type, setType] = useState("");
-  const [content, setContent] = useState("");
   const [text, setText] = useState('');
-  const [selected, setSelected] = useState('');
+  const [suggest, setSuggest] = useState<SuggestModel>();
   const { interventions } = useInterventionStore();
   const { targets } = useTargetStore();
   const { suggests } = useSuggestStore()
-  const [suggestsNew, setSuggestsNew] = useState<SuggestModel[]>([]);
 
   useEffect(() => {
-    if (cart) {
-      setContent(cart.content);
-      setType('Ý khác')
+    if (cart && cart.content) {
+      setText(cart.content);
+      const index = suggests.findIndex((suggest) => suggest.name === cart.content)
+      if(index!==-1){
+        setSuggest(suggests[index])
+        setType('Gợi ý')
+      }else{
+        setType('Ý khác')
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart]);
   useEffect(() => {
-    if (type === "Ý khác" && content) {
+    if (type === "Ý khác" && text) {
       editCart(cart.id, { ...cart, content: text });
     }
-    if (type === 'Gợi ý' && selected) {
-      editCart(cart.id, { ...cart, content: selected })
+    if (type === "Gợi ý" && suggest) {
+      editCart(cart.id, { ...cart, content: suggest.name });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, content]);
-  useEffect(() => {
-    if (cart) {
-      setSuggestsNew(handleSuggestsWithField(cart.fieldId))
-    }
-  }, [cart])
+  }, [text, suggest]);
 
   const handleSelectIntervention = (val: string) => {
     editCart(cart.id, { ...cart, intervention: val });
@@ -58,7 +58,6 @@ export default function CartItemComponent(props: Props) {
     const items = suggests.filter((suggest) => suggest.fieldId === fieldId)
     return items
   }
-
   return (
     <tr>
       <td>{index + 1}</td>
@@ -80,7 +79,7 @@ export default function CartItemComponent(props: Props) {
             ))}
         </select>
       </td>
-      <td style={{ width: "40%" }}>
+      <td style={{ width: "30%" }}>
         <RowComponent>
           <button
             type="button"
@@ -99,40 +98,26 @@ export default function CartItemComponent(props: Props) {
             Ý khác
           </button>
         </RowComponent>
-        <div style={{ height: sizes.height * 30 / 100, overflowY: "scroll", }}>
+        <div>
           <SpaceComponent height={8} />
           {type === "Gợi ý" &&
-            <>
-              <SearchComponent
-                width={'80%'}
-                title='Tìm gợi ý' placeholder='Nhập gợi ý'
-                type='searchSuggest'
-                arrSource={handleSuggestsWithField(cart.fieldId)}
-                onChange={(vals) => setSuggestsNew(vals)} />
-              <SpaceComponent height={8} />
-              {
-                suggestsNew.map((_, index) => (
-                  <div className="form-check" key={index} style={{ marginLeft: 10 }}>
-                    <input
-                      value={_.name}
-                      onChange={e => setSelected(e.target.value)}
-                      checked={selected === _.name} className="form-check-input" type="radio" name="selectedSuggest" id={`selectedSuggest${index}`} />
-                    <label className="form-check-label" htmlFor={`selectedSuggest${index}`}>
-                      {_.name}
-                    </label>
-                  </div>
-                ))
-              }
-            </>
+            <Select<SuggestModel>
+              getOptionLabel={(option) => option.name}
+              getOptionValue={(option) => option.id.toString()}
+              options={handleSuggestsWithField(cart.fieldId)}
+              maxMenuHeight={sizes.height}
+              onChange={(val: SingleValue<SuggestModel>) => setSuggest(val as SuggestModel)}
+              value={suggest}
+            />
           }
 
           {type === "Ý khác" && (
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               className="form-control"
               placeholder="Nhập đánh giá"
-              rows={6}
+              rows={5}
               cols={400}
               id="floatingTextarea2"
             ></textarea>

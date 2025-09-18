@@ -67,113 +67,111 @@ export default function CartScreen() {
   }, [plan]);
 
   const handleAddEditPlan = async () => {
-    // if (user && child) {
-    //   setIsLoading(true);
-    //   if (!cartEdit) {
-    //     await addDocData({
-    //       nameCollect: "plans",
-    //       value: {
-    //         type: "KH",
-    //         title,
-    //         childId: child.id,
-    //         teacherIds: child.teacherIds,
-    //         status: "pending",
+    if (user && child) {
+      setIsLoading(true);
+      if (!cartEdit) {
+        await addDocData({
+          nameCollect: "plans",
+          value: {
+            type: "KH",
+            title,
+            childId: child.id,
+            teacherIds: child.teacherIds,
+            status: "pending",
 
-    //         createAt: serverTimestamp(),
-    //         updateAt: serverTimestamp(),
-    //       },
-    //       metaDoc: "plans",
-    //     })
-    //       .then(async (result) => {
-    //         addPlan({
-    //           id: result.id,
-    //           type: "KH",
-    //           title,
-    //           childId: child.id,
-    //           teacherIds: child.teacherIds,
-    //           status: "pending",
+            createAt: serverTimestamp(),
+            updateAt: serverTimestamp(),
+          },
+          metaDoc: "plans",
+        })
+          .then(async (result) => {
+            addPlan({
+              id: result.id,
+              type: "KH",
+              title,
+              childId: child.id,
+              teacherIds: child.teacherIds,
+              status: "pending",
 
-    //           createAt: serverTimestamp(),
-    //           updateAt: serverTimestamp(),
-    //         });
-    //         const promiseItems = carts.map((cart) =>
-    //           addDocData({
-    //             nameCollect: "planTasks",
-    //             value: {
-    //               content: cart.content ?? '',
-    //               intervention: cart.intervention ?? '',
-    //               teacherIds: child.teacherIds,
-    //               planId: result.id,
-    //               targetId: cart.id,
-    //               childId: child.id,
+              createAt: serverTimestamp(),
+              updateAt: serverTimestamp(),
+            });
+            const promiseItems = carts.map((cart) =>
+              addDocData({
+                nameCollect: "planTasks",
+                value: {
+                  content: cart.content ?? '',
+                  intervention: cart.intervention ?? '',
+                  teacherIds: child.teacherIds,
+                  planId: result.id,
+                  targetId: cart.id,
+                  childId: child.id,
 
-    //               createAt: serverTimestamp(),
-    //               updateAt: serverTimestamp(),
-    //             },
-    //             metaDoc: "plans",
-    //           })
-    //         );
+                  createAt: serverTimestamp(),
+                  updateAt: serverTimestamp(),
+                },
+                metaDoc: "plans",
+              })
+            );
 
-    //         await Promise.all(promiseItems);
-    //         handleToastSuccess('Thêm mới kế hoạch thành công !')
-    //         setIsLoading(false);
-    //         setCarts([]);
-    //         setTitle("");
-    //       })
-    //       .catch((error) => {
-    //         handleToastError('Thêm mới kế hoạch thất bại !')
-    //         setIsLoading(false);
-    //         console.log(error);
-    //       });
-    //   } else {
-    //     // xoa het cai cu
-    //     const snapShot = await getDocs(
-    //       query(collection(db, "planTasks"),
-    //         where("teacherIds", "array-contains", user.id),
-    //         where("planId", "==", cartEdit))
-    //     );
-    //     if (!snapShot.empty) {
-    //       const promisePlanTasksOld = snapShot.docs.map((_) =>
-    //         deleteDocData({
-    //           nameCollect: "planTasks",
-    //           id: _.id,
-    //           metaDoc: "plans",
-    //         })
-    //       );
-    //       await Promise.all(promisePlanTasksOld);
-    //     }
+            await Promise.all(promiseItems);
+            handleToastSuccess('Thêm mới kế hoạch thành công !')
+            setIsLoading(false);
+            setCarts([]);
+            setTitle("");
+          })
+          .catch((error) => {
+            handleToastError('Thêm mới kế hoạch thất bại !')
+            setIsLoading(false);
+            console.log(error);
+          });
+      } else {
+        // xoa het cai cu
+        const snapShot = await getDocs(
+          query(collection(db, "planTasks"),
+            where("teacherIds", "array-contains", user.id),
+            where("planId", "==", cartEdit))
+        );
+        if (!snapShot.empty) {
+          const promisePlanTasksOld = snapShot.docs.map((_) =>
+            deleteDocData({
+              nameCollect: "planTasks",
+              id: _.id,
+              metaDoc: "plans",
+            })
+          );
+          await Promise.all(promisePlanTasksOld);
+        }
 
-    //     // tao lai cai moi
-    //     const promisePlanTasksNew = carts.map((cart) =>
-    //       addDocData({
-    //         nameCollect: "planTasks",
-    //         value: {
-    //           childId: child.id,
-    //           planId: cartEdit,
-    //           targetId: cart.id,
-    //           teacherIds: child.teacherIds,
-    //           content: cart.content ?? '',
-    //           intervention: cart.intervention ?? '',
+        // tao lai cai moi
+        const promisePlanTasksNew = carts.map((cart) =>
+          addDocData({
+            nameCollect: "planTasks",
+            value: {
+              childId: child.id,
+              planId: cartEdit,
+              targetId: cart.id,
+              teacherIds: child.teacherIds,
+              content: cart.content ?? '',
+              intervention: cart.intervention ?? '',
 
-    //           createAt: serverTimestamp(),
-    //           updateAt: serverTimestamp(),
-    //         },
-    //         metaDoc: "plans",
-    //       })
-    //     );
+              createAt: serverTimestamp(),
+              updateAt: serverTimestamp(),
+            },
+            metaDoc: "plans",
+          })
+        );
 
-    //     await Promise.all(promisePlanTasksNew);
-    //     handleToastSuccess('Chỉnh sửa kế hoạch thành công !')
-    //     setIsLoading(false)
-    //     setCartEdit(null);
-    //     setCarts([]);
-    //     setTitle("");
-    //   }
-    //   navigate("../pending");
-    //   setSelectTarget("CHỜ DUYỆT");
-    // }
-
-    console.log(carts)
+        await Promise.all(promisePlanTasksNew);
+        handleToastSuccess('Chỉnh sửa kế hoạch thành công !')
+        setIsLoading(false)
+        setCartEdit(null);
+        setCarts([]);
+        setTitle("");
+      }
+      navigate("../pending");
+      setSelectTarget("CHỜ DUYỆT");
+    }
   };
 
   return (

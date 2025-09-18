@@ -36,7 +36,9 @@ export default function TargetItemComponent(props: Props) {
     <tr style={{ color: colors.textBold }}>
       <td style={{ textAlign: "center" }}>{index + 1}</td>
       <td>
-        {target.name}
+        <label className="form-check-label" htmlFor={`targetItem${target.id}`}>
+          {target.name}
+        </label>
       </td>
       <td style={{ textAlign: "center" }}>{target.level}</td>
       <td>
@@ -54,7 +56,7 @@ export default function TargetItemComponent(props: Props) {
             className="form-check-input"
             type="checkbox"
             value=""
-            id="flexCheckChecked"
+            id={`targetItem${target.id}`}
           />
         </div>
       </td>

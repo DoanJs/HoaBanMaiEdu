@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { ChildrenModel } from "../models/ChildrenModel";
-import { TargetModel } from "../models/TargetModel";
 import { PlanModel } from "../models/PlanModel";
 import { ReportModel } from "../models/ReportModel";
 import { SuggestModel } from "../models/SuggestModel";
+import { TargetModel } from "../models/TargetModel";
 
 interface Props {
   title: string;
@@ -29,6 +29,7 @@ export default function SearchComponent(props: Props) {
       case "searchTarget":
         items = (arrSource as TargetModel[]).filter((target) =>
           target.name.toLowerCase().includes(value.toLowerCase())
+          || target.level === Number(value)
         );
         break;
       case "searchPlan":
