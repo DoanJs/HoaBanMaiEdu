@@ -184,7 +184,7 @@ export default function LoginScreen() {
           }}
         >
           <img
-            src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1758202746/HoaBanMaiEdu/images/loginScreen_w9klhm.jpg"
+            src="https://res.cloudinary.com/dr8wxl8it/image/upload/v1758212689/login_tsbvxt.jpg"
             alt=""
             style={{
               borderRadius: 10,

@@ -13,6 +13,8 @@ import { handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { validateEmail } from "../../constants/validateEmailPhone";
 import { auth } from "../../firebase.config";
+import { setDocData } from "../../constants/firebase/setDocData";
+import { serverTimestamp } from "firebase/firestore";
 
 export default function RegisterScreen() {
   const navigate = useNavigate();
@@ -51,27 +53,28 @@ export default function RegisterScreen() {
           displayName: form.name,
         });
         // sign out để user không bị đăng nhập
-        await signOut(auth);
+        // await signOut(auth);
         // Signed in
         setIsLoading(false);
-        // const { user } = userCredential;
-        // setDocData({
-        //   nameCollect: "users",
-        //   id: user.uid,
-        //   valueUpdate: {
-        //     id: user.uid,
-        //     email: form.email,
-        //     fullName: form.name,
-        //     shortName: form.name,
-        //     avatar: "",
-        //     phone: "",
-        //     birth: serverTimestamp(),
-        //     role: "",
+        const { user } = userCredential;
+        setDocData({
+          nameCollect: "users",
+          id: user.uid,
+          valueUpdate: {
+            id: user.uid,
+            email: form.email,
+            fullName: form.name,
+            shortName: form.name,
+            avatar: "",
+            phone: "",
+            birth: serverTimestamp(),
+            role: "teacher",
+            position:'Phó Giám đốc',
 
-        //     createAt: serverTimestamp(),
-        //     updateAt: serverTimestamp(),
-        //   },
-        // });
+            createAt: serverTimestamp(),
+            updateAt: serverTimestamp(),
+          },
+        });
         handleToastSuccess('Đăng ký tài khoản thành công, cô hãy liên hệ admin để cấp quyền !')
         navigate("/login");
       })
@@ -110,7 +113,7 @@ export default function RegisterScreen() {
           }}
         >
           <img
-            src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1758204087/HoaBanMaiEdu/images/register_mnxnvj.jpg"
+            src="https://res.cloudinary.com/dr8wxl8it/image/upload/v1758212683/register_l0fwbj.jpg"
             alt=""
             style={{
               borderRadius: 10,
