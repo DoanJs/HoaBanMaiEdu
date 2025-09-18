@@ -1,3 +1,4 @@
+import ForgotPasswordScreen from "./auth/ForgotPasswordScreen";
 import LoginScreen from "./auth/LoginScreen";
 import RegisterScreen from "./auth/RegisterScreen";
 import BankScreen from "./bank/BankScreen";
@@ -26,4 +27,5 @@ export {
   RegisterScreen,
   ReportScreen,
   SettingScreen,
+  ForgotPasswordScreen
 };

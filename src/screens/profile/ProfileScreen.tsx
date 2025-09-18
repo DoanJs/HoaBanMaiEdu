@@ -2,6 +2,7 @@ import { signOut } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  ModalResetPassword,
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
@@ -23,7 +24,6 @@ export default function ProfileScreen() {
       console.error("Error signing out:", error);
     }
   };
-  const handleChangePassword = () => {};
   return (
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
@@ -31,18 +31,21 @@ export default function ProfileScreen() {
         <button
           type="button"
           className="btn btn-warning"
-          onClick={handleLogout}
+          data-bs-toggle="modal" 
+          data-bs-target="#resetPassword"
         >
-          {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
+          {isLoading ? <SpinnerComponent /> : <>Đổi mật khẩu</>}
         </button>
         <button
           type="button"
           className="btn btn-warning"
-          onClick={handleChangePassword}
+          onClick={handleLogout}
         >
-          {isLoading ? <SpinnerComponent /> : <>Đổi mật khẩu</>}
+          {isLoading ? <SpinnerComponent /> : <>Đăng xuất</>}
         </button>
       </RowComponent>
+
+      <ModalResetPassword />
     </div>
   );
 }

@@ -15,25 +15,15 @@ import { getDocsData } from "../constants/firebase/getDocsData";
 import {
   query_fields,
   query_interventions,
+  query_suggests,
   query_targets,
 } from "../constants/firebase/query/Index";
 import { sizes } from "../constants/sizes";
 import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../constants/useFirestoreWithMetaCondition";
-import { FieldModel } from "../models/FieldModel";
-import { InterventionModel } from "../models/InterventionModel";
-import { PlanModel } from "../models/PlanModel";
-import { ReportModel } from "../models/ReportModel";
-import { TargetModel } from "../models/TargetModel";
-import { UserModel } from "../models/UserModel";
-import useChildStore from "../zustand/useChildStore";
-import useFieldStore from "../zustand/useFieldStore";
-import useInterventionStore from "../zustand/useInterventionStore";
-import usePlanStore from "../zustand/usePlanStore";
-import useReportStore from "../zustand/useReportStore";
-import useSelectTargetStore from "../zustand/useSelectTargetStore";
-import useTargetStore from "../zustand/useTargetStore";
-import useUserStore from "../zustand/useUserStore";
+import { FieldModel, InterventionModel, PlanModel, ReportModel, TargetModel, UserModel } from "../models";
+import { SuggestModel } from "../models/SuggestModel";
+import { useChildStore, useFieldStore, useInterventionStore, usePlanStore, useReportStore, useSelectTargetStore, useSuggestStore, useTargetStore, useUserStore } from "../zustand";
 
 export default function Navbar() {
   const { id } = useParams();
@@ -42,10 +32,12 @@ export default function Navbar() {
   const { child, setChild } = useChildStore();
   const [teachers, setTeachers] = useState<UserModel[]>([]);
   const { setTargets } = useTargetStore();
+  const { setSuggests } = useSuggestStore()
   const { setFields } = useFieldStore();
   const { setPlans } = usePlanStore();
   const { setReports } = useReportStore();
   const { setInterventions } = useInterventionStore();
+
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -59,22 +51,28 @@ export default function Navbar() {
       metaDoc: "targets",
     }
   );
+  const { data: data_suggests, loading: loading_suggests } = useFirestoreWithMeta(
+    {
+      key: "suggestsCache",
+      query: query_suggests,
+      metaDoc: "suggests",
+    }
+  );
   const { data: data_plans, loading: loading_plans } =
     useFirestoreWithMetaCondition({
-      key: "plansCache",
+      key: 'plansCache',
       metaDoc: "plans",
       id: user?.id,
       nameCollect: "plans",
-      condition: [where("teacherId", "==", user?.id)],
+      condition: [where("teacherIds", "array-contains", user?.id)],
     });
-  
   const { data: data_reports, loading: loading_reports } =
     useFirestoreWithMetaCondition({
-      key: "reportsCache",
+      key: 'reportsCache',
       metaDoc: "reports",
       id: user?.id,
       nameCollect: "reports",
-      condition: [where("teacherId", "==", user?.id)],
+      condition: [where("teacherIds", "array-contains", user?.id)],
     });
   const { data: data_interventions, loading: loading_interventions } =
     useFirestoreWithMeta({
@@ -94,27 +92,33 @@ export default function Navbar() {
       const items = data_reports as ReportModel[];
       setReports(items.filter((plan) => plan.childId === child?.id));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_reports, loading_reports]);
   useEffect(() => {
     if (!loading_plans) {
       const items = data_plans as PlanModel[];
       setPlans(items.filter((plan) => plan.childId === child?.id));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_plans, loading_plans]);
   useEffect(() => {
     if (!loading) {
       setFields(data_fields as FieldModel[]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_fields, loading]);
   useEffect(() => {
     if (!loading_targets) {
       setTargets(data_targets as TargetModel[]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_targets, loading_targets]);
+  useEffect(() => {
+    if (!loading_suggests) {
+      setSuggests(data_suggests as SuggestModel[]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_suggests, loading_suggests]);
   useEffect(() => {
     if (id) {
       getDocData({
@@ -123,7 +127,7 @@ export default function Navbar() {
         setData: setChild,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
   useEffect(() => {
     if (child) {
@@ -133,7 +137,7 @@ export default function Navbar() {
         setData: setTeachers,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [child]);
 
   if (!user) return <SpinnerComponent />;

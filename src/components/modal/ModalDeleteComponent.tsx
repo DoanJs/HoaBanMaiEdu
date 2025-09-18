@@ -6,6 +6,10 @@ import { PlanTaskModel } from "../../models/PlanTaskModel";
 import { ReportTaskModel } from "../../models/ReportTaskModel";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
+import { useUserStore } from "../../zustand";
+import LoadingOverlay from "../LoadingOverLay";
+import { useState } from "react";
+import { handleToastSuccess } from "../../constants/handleToast";
 
 interface DataModel {
   id: string;
@@ -18,21 +22,20 @@ interface Props {
 
 export default function ModalDeleteComponent(props: Props) {
   const { data } = props;
+  const {user} = useUserStore()
   const navigate = useNavigate();
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const deleteReportPending = async (reportId: string) => {
     removeReport(reportId);
-
-    await deleteDocData({
-      nameCollect: "reports",
-      id: reportId,
-      metaDoc: "reports",
-    });
+    setIsLoading(true)
 
     const reportTasks = await getDocs(
-      query(collection(db, "reportTasks"), where("reportId", "==", reportId))
+      query(collection(db, "reportTasks"), 
+      where("teacherIds", 'array-contains', user?.id),
+      where("reportId", "==", reportId))
     );
 
     if (!reportTasks.empty) {
@@ -45,16 +48,21 @@ export default function ModalDeleteComponent(props: Props) {
       );
       await Promise.all(promiseReportTasks);
     }
+
+    await deleteDocData({
+      nameCollect: "reports",
+      id: reportId,
+      metaDoc: "reports",
+    });
+
+    handleToastSuccess('Xóa báo cáo thành công !')
+    setIsLoading(false)
     navigate("../pending");
   };
   const deletePlanPending = async (planId: string) => {
     removePlan(planId);
+    setIsLoading(true)
 
-    await deleteDocData({
-      nameCollect: "plans",
-      id: planId,
-      metaDoc: "plans",
-    });
     const promisePlanTasks = data.itemTasks.map((_) =>
       deleteDocData({
         nameCollect: "planTasks",
@@ -64,6 +72,14 @@ export default function ModalDeleteComponent(props: Props) {
     );
     await Promise.all(promisePlanTasks);
 
+    await deleteDocData({
+      nameCollect: "plans",
+      id: planId,
+      metaDoc: "plans",
+    });
+
+    handleToastSuccess('Xóa kế hoạch thành công !')
+    setIsLoading(false)
     navigate("../pending");
   };
 
@@ -75,7 +91,6 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "reports":
         deleteReportPending(data.id);
-
         break;
 
       default:
@@ -126,6 +141,8 @@ export default function ModalDeleteComponent(props: Props) {
           </div>
         </div>
       </div>
+
+      <LoadingOverlay show={isLoading}/>
     </div>
   );
 }

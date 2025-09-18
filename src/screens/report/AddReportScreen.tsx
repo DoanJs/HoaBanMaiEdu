@@ -8,18 +8,14 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
+import { convertTargetField } from "../../constants/convertTargetAndField";
+import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { sizes } from "../../constants/sizes";
-import { PlanModel } from "../../models/PlanModel";
-import { PlanTaskModel } from "../../models/PlanTaskModel";
-import useChildStore from "../../zustand/useChildStore";
-import useFieldStore from "../../zustand/useFieldStore";
-import usePlanStore from "../../zustand/usePlanStore";
-import useReportStore from "../../zustand/useReportStore";
-import useSelectTargetStore from "../../zustand/useSelectTargetStore";
-import useTargetStore from "../../zustand/useTargetStore";
-import useUserStore from "../../zustand/useUserStore";
-import { addDocData } from "../../constants/firebase/addDocData";
+import { useChildStore, useFieldStore, usePlanStore, useReportStore, useSelectTargetStore, useTargetStore, useUserStore } from "../../zustand";
+import { PlanModel, PlanTaskModel } from "../../models";
+import LoadingOverlay from "../../components/LoadingOverLay";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -64,10 +60,14 @@ export default function AddReportScreen() {
       setPlan(planApprovals[index]);
       getDocsData({
         nameCollect: "planTasks",
-        condition: [where("planId", "==", planId)],
+        condition: [
+          where("teacherIds", "array-contains", user?.id),
+          where("planId", "==", planId)
+        ],
         setData: setPlanTasks,
       });
     } else {
+      setPlanTasks([])
       setDisable(true);
     }
   };
@@ -75,20 +75,6 @@ export default function AddReportScreen() {
     const index = addReports.findIndex((_: any) => _.id === data.planTaskId);
     addReports[index].total = data.val;
     setAddReports(addReports);
-  };
-  const showTarget = (targetId: string) => {
-    let field: string = "";
-    let name: string = "";
-    const index = targets.findIndex((target) => target.id === targetId);
-    if (index !== -1) {
-      const indexField = fields.findIndex(
-        (_) => _.id === targets[index].fieldId
-      );
-      field = fields[indexField].name;
-      name = targets[index].name;
-    }
-
-    return { name, field };
   };
   const handleAddReport = async () => {
     if (user && child) {
@@ -99,7 +85,7 @@ export default function AddReportScreen() {
           type: "BC",
           title: plan?.title.replace("KH", "BC"),
           childId: child.id,
-          teacherId: user.id,
+          teacherIds: child.teacherIds,
           planId: plan?.id,
           status: "pending",
 
@@ -109,13 +95,12 @@ export default function AddReportScreen() {
         metaDoc: "reports",
       })
         .then(async (result) => {
-          setIsLoading(false);
           addReport({
             id: result.id,
             type: "BC",
             title: plan?.title.replace("KH", "BC") as string,
             childId: child.id,
-            teacherId: user.id,
+            teacherIds: child.teacherIds,
             planId: plan?.id as string,
             status: "pending",
 
@@ -128,9 +113,11 @@ export default function AddReportScreen() {
               value: {
                 reportId: result.id,
                 planId: plan?.id as string,
+                childId: child.id,
                 planTaskId: _.id,
-                content: _.total,
+                content: _.total ?? '',
                 isEdit: false,
+                teacherIds: child.teacherIds,
 
                 createAt: serverTimestamp(),
                 updateAt: serverTimestamp(),
@@ -140,8 +127,11 @@ export default function AddReportScreen() {
           );
 
           await Promise.all(promiseItems);
+          handleToastSuccess('Thêm mới báo cáo thành công !')
+          setIsLoading(false);
         })
         .catch((error) => {
+          handleToastError('Thêm mới báo cáo thất bại !')
           setIsLoading(false);
           console.log(error);
         });
@@ -149,6 +139,7 @@ export default function AddReportScreen() {
       setSelectTarget('CHỜ DUYỆT')
     }
   };
+
   return (
     <div
       style={{
@@ -193,7 +184,7 @@ export default function AddReportScreen() {
       </RowComponent>
 
       <div style={{ height: "90%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -207,8 +198,8 @@ export default function AddReportScreen() {
             {planTasks &&
               planTasks.map((_, index) => (
                 <tr key={index}>
-                  <th scope="row">{showTarget(_.targetId).field}</th>
-                  <td>{showTarget(_.targetId).name}</td>
+                  <th scope="row">{convertTargetField(_.targetId, targets, fields).nameField}</th>
+                  <td>{convertTargetField(_.targetId, targets, fields).nameTarget}</td>
                   <td>{_.intervention}</td>
                   <td>{_.content}</td>
                   <td>
@@ -222,7 +213,7 @@ export default function AddReportScreen() {
                       className="form-control"
                       placeholder="Nhập đánh giá"
                       rows={6}
-                      cols={100}
+                      cols={300}
                       id="floatingTextarea2"
                     ></textarea>
                   </td>
@@ -245,6 +236,9 @@ export default function AddReportScreen() {
           {isLoading ? <SpinnerComponent /> : <>Tạo mới</>}
         </button>
       </RowComponent>
+    
+
+    <LoadingOverlay show={isLoading}/>
     </div>
   );
 }

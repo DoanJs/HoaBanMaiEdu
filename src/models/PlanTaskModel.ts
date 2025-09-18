@@ -3,11 +3,12 @@ import { TimeAtModel } from "./TimeAtModel";
 
 export interface PlanTaskModel {
   id: string;
-  targetId: string;
-  planId: string
   content: string;
-  intervention: string
-  // isEdit: boolean //xong roi bo luon
+  intervention: string;
+  targetId: string;
+  planId: string;
+  childId: string;
+  teacherIds: string[]
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

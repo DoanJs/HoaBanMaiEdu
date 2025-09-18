@@ -8,7 +8,6 @@ export interface ChildrenModel {
   gender: string
   teacherIds: [string]
   managerIds: [string]
-  // parentIds:[string]
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

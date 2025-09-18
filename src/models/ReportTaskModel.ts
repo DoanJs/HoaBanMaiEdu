@@ -2,11 +2,13 @@ import { TimeAtModel } from "./TimeAtModel";
 
 export interface ReportTaskModel {
   id: string;
+  content: string;
+  isEdit: boolean
   planId: string
   planTaskId: string;
-  content: string;
   reportId: string
-  isEdit: boolean
+  childId: string
+  teacherIds: string[]
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

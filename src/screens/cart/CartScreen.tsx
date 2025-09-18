@@ -13,34 +13,38 @@ import {
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
-  TextComponent,
+  TextComponent
 } from "../../components";
+import LoadingOverlay from "../../components/LoadingOverLay";
 import { colors } from "../../constants/colors";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocData } from "../../constants/firebase/getDocData";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { db } from "../../firebase.config";
-import { PlanModel } from "../../models/PlanModel";
-import useCartEditStore from "../../zustand/useCartEditStore";
-import useCartStore from "../../zustand/useCartStore";
-import useChildStore from "../../zustand/useChildStore";
-import usePlanStore from "../../zustand/usePlanStore";
-import useSelectTargetStore from "../../zustand/useSelectTargetStore";
-import useUserStore from "../../zustand/useUserStore";
+import { PlanModel } from "../../models";
+import {
+  useCartEditStore,
+  useCartStore,
+  useChildStore,
+  usePlanStore,
+  useSelectTargetStore,
+  useUserStore
+} from "../../zustand";
 
 export default function CartScreen() {
   const navigate = useNavigate();
   const { setSelectTarget } = useSelectTargetStore();
   const { carts, setCarts } = useCartStore();
+  const { addPlan } = usePlanStore();
   const { child } = useChildStore();
   const { user } = useUserStore();
+  const { cartEdit, setCartEdit } = useCartEditStore();
   const [title, setTitle] = useState("");
-  const { addPlan } = usePlanStore();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
-  const { cartEdit, setCartEdit } = useCartEditStore();
 
   useEffect(() => {
     if (carts.length > 0 && title !== "") {
@@ -66,28 +70,29 @@ export default function CartScreen() {
     if (user && child) {
       setIsLoading(true);
       if (!cartEdit) {
-        addDocData({
+        await addDocData({
           nameCollect: "plans",
           value: {
             type: "KH",
             title,
             childId: child.id,
-            teacherId: user.id,
+            teacherIds: child.teacherIds,
             status: "pending",
+
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
           },
           metaDoc: "plans",
         })
           .then(async (result) => {
-            setIsLoading(false);
             addPlan({
               id: result.id,
               type: "KH",
               title,
               childId: child.id,
-              teacherId: user.id,
+              teacherIds: child.teacherIds,
               status: "pending",
+
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
             });
@@ -95,10 +100,12 @@ export default function CartScreen() {
               addDocData({
                 nameCollect: "planTasks",
                 value: {
+                  content: cart.content ?? '',
+                  intervention: cart.intervention ?? '',
+                  teacherIds: child.teacherIds,
                   planId: result.id,
                   targetId: cart.id,
-                  content: cart.content,
-                  intervention: cart.intervention,
+                  childId: child.id,
 
                   createAt: serverTimestamp(),
                   updateAt: serverTimestamp(),
@@ -108,17 +115,22 @@ export default function CartScreen() {
             );
 
             await Promise.all(promiseItems);
+            handleToastSuccess('Thêm mới kế hoạch thành công !')
+            setIsLoading(false);
             setCarts([]);
             setTitle("");
           })
           .catch((error) => {
+            handleToastError('Thêm mới kế hoạch thất bại !')
             setIsLoading(false);
             console.log(error);
           });
       } else {
         // xoa het cai cu
         const snapShot = await getDocs(
-          query(collection(db, "planTasks"), where("planId", "==", cartEdit))
+          query(collection(db, "planTasks"),
+            where("teacherIds", "array-contains", user.id),
+            where("planId", "==", cartEdit))
         );
         if (!snapShot.empty) {
           const promisePlanTasksOld = snapShot.docs.map((_) =>
@@ -128,7 +140,6 @@ export default function CartScreen() {
               metaDoc: "plans",
             })
           );
-
           await Promise.all(promisePlanTasksOld);
         }
 
@@ -137,10 +148,12 @@ export default function CartScreen() {
           addDocData({
             nameCollect: "planTasks",
             value: {
+              childId: child.id,
               planId: cartEdit,
-              targetId: cart.targetId || cart.id,
-              content: cart.content,
-              intervention: cart.intervention,
+              targetId: cart.id,
+              teacherIds: child.teacherIds,
+              content: cart.content ?? '',
+              intervention: cart.intervention ?? '',
 
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
@@ -150,12 +163,14 @@ export default function CartScreen() {
         );
 
         await Promise.all(promisePlanTasksNew);
-        setCartEdit(null)
+        handleToastSuccess('Chỉnh sửa kế hoạch thành công !')
+        setIsLoading(false)
+        setCartEdit(null);
         setCarts([]);
         setTitle("");
       }
-      // navigate(`/home/${user?.id}/pending`);
-      // setSelectTarget("CHỜ DUYỆT");
+      navigate("../pending");
+      setSelectTarget("CHỜ DUYỆT");
     }
   };
 
@@ -193,8 +208,9 @@ export default function CartScreen() {
           <TextComponent text="Thêm mục tiêu" size={sizes.bigText} />
         </Link>
       </RowComponent>
+      <SpaceComponent height={10} />
       <div style={{ height: "85%", overflowY: "scroll" }}>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">STT</th>
@@ -208,11 +224,7 @@ export default function CartScreen() {
           <tbody>
             {carts.length > 0 &&
               carts.map((_, index) => (
-                <CartItemComponent
-                  key={index}
-                  index={index}
-                  cart={_}
-                />
+                <CartItemComponent key={index} index={index} cart={_} />
               ))}
           </tbody>
         </table>
@@ -221,7 +233,7 @@ export default function CartScreen() {
       <RowComponent
         justify="flex-end"
         styles={{
-          padding: 20,
+          padding: 10,
         }}
       >
         <button
@@ -242,6 +254,8 @@ export default function CartScreen() {
           )}
         </button>
       </RowComponent>
+
+      <LoadingOverlay show={isLoading} />
     </div>
   );
 }

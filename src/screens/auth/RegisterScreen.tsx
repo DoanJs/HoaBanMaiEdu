@@ -1,5 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { serverTimestamp } from "firebase/firestore";
+import { createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -10,7 +9,7 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
-import { setDocData } from "../../constants/firebase/setDocData";
+import { handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { validateEmail } from "../../constants/validateEmailPhone";
 import { auth } from "../../firebase.config";
@@ -28,6 +27,7 @@ export default function RegisterScreen() {
 
   useEffect(() => {
     if (
+      form.name &&
       form.email &&
       validateEmail(form.email) &&
       form.password &&
@@ -45,29 +45,35 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
     setIsLoading(true);
     await createUserWithEmailAndPassword(auth, form.email, form.password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
+        // cập nhật displayName
+        await updateProfile(userCredential.user, {
+          displayName: form.name,
+        });
+        // sign out để user không bị đăng nhập
+        await signOut(auth);
         // Signed in
         setIsLoading(false);
-        const { user } = userCredential;
-        setDocData({
-          nameCollect: "users",
-          id: user.uid,
-          valueUpdate: {
-            id: user.uid,
-            email: form.email,
-            fullName: form.name,
-            shortName: form.name,
-            avatar: "",
-            phone: "",
-            birth: serverTimestamp(),
-            role: "",
+        // const { user } = userCredential;
+        // setDocData({
+        //   nameCollect: "users",
+        //   id: user.uid,
+        //   valueUpdate: {
+        //     id: user.uid,
+        //     email: form.email,
+        //     fullName: form.name,
+        //     shortName: form.name,
+        //     avatar: "",
+        //     phone: "",
+        //     birth: serverTimestamp(),
+        //     role: "",
 
-            createAt: serverTimestamp(),
-            updateAt: serverTimestamp(),
-          },
-        });
-
-        navigate("/");
+        //     createAt: serverTimestamp(),
+        //     updateAt: serverTimestamp(),
+        //   },
+        // });
+        handleToastSuccess('Đăng ký tài khoản thành công, cô hãy liên hệ admin để cấp quyền !')
+        navigate("/login");
       })
       .catch((error: any) => {
         console.log(error);
@@ -174,6 +180,7 @@ export default function RegisterScreen() {
                 Mật khẩu
               </label>
               <input
+                type="password"
                 onChange={(val) =>
                   setForm({
                     ...form,
@@ -190,6 +197,7 @@ export default function RegisterScreen() {
                 Nhập lại mật khẩu
               </label>
               <input
+                type="password"
                 onChange={(val) =>
                   setForm({
                     ...form,

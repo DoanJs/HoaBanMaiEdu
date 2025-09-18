@@ -70,6 +70,7 @@ export default function TargetComponent() {
             {targetsNew.length > 0 &&
               targetsNew
                 .filter((target: TargetModel) => target.fieldId === fieldId)
+                .sort((a, b) => a.level - b.level)
                 .map((_, index) => (
                   <TargetItemComponent index={index} key={index} target={_} />
                 ))}

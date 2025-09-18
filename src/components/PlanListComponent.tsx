@@ -5,10 +5,10 @@ import { useLocation } from "react-router-dom";
 import { PlanItemComponent, RowComponent, SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
 import { getDocsData } from "../constants/firebase/getDocsData";
-import { showTargetAndField } from "../constants/showTargetAndField";
 import { exportWord } from "../exportFile/WordExport";
-import { useChildStore, useFieldStore, useTargetStore, useUserStore } from "../zustand";
 import { PlanTaskModel } from "../models";
+import { useChildStore, useFieldStore, useTargetStore, useUserStore } from "../zustand";
+import { convertTargetField } from "../constants/convertTargetAndField";
 
 export default function PlanListComponent() {
   const location = useLocation();
@@ -24,22 +24,24 @@ export default function PlanListComponent() {
     if (planId) {
       getDocsData({
         nameCollect: "planTasks",
-        condition: [where("planId", "==", planId)],
+        condition: [
+          where("teacherIds", "array-contains", user?.id),
+          where("planId", "==", planId)],
         setData: setPlanTasks,
-      });
+    });
     }
   }, [planId]);
 
   const handleExportWordKH = () => {
     const items = planTasks.map((planTask) => {
       return {
-        field: showTargetAndField(targets, planTask.targetId, fields).field,
-        target: showTargetAndField(targets, planTask.targetId, fields).name,
+        field: convertTargetField(planTask.targetId,targets, fields).nameField,
+        target: convertTargetField(planTask.targetId,targets, fields).nameTarget,
         intervention: planTask.intervention,
         content: planTask.content,
       };
     });
-    
+
     exportWord({
       rows: items,
       title: title.substring(2).trim(),
