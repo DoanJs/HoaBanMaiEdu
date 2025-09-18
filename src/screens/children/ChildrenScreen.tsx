@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { serverTimestamp, where } from "firebase/firestore";
+import { where } from "firebase/firestore";
 import { Logout } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,23 +13,16 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
-import suggestCA from "../../constants/database/suggest/suggestCA";
-import suggestCNXH from "../../constants/database/suggest/suggestCNXH";
-import suggestHV from "../../constants/database/suggest/suggestHV";
-import suggestNNDD from "../../constants/database/suggest/suggestNNDD";
-import suggestNNH from "../../constants/database/suggest/suggestNNH";
-import suggestNT from "../../constants/database/suggest/suggestNT";
-import suggestTTCY from "../../constants/database/suggest/suggestTTCY";
-import suggestVDT from "../../constants/database/suggest/suggestVDT";
-import { getDocsData } from "../../constants/firebase/getDocsData";
-import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
+import {
+  handleToastError,
+  handleToastSuccess,
+} from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import { auth } from "../../firebase.config";
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
-import { addDocData } from "../../constants/firebase/addDocData";
 
 export default function ChildrenScreen() {
   const navigate = useNavigate();
@@ -56,11 +49,11 @@ export default function ChildrenScreen() {
 
     try {
       await signOut(auth);
-      handleToastSuccess('Đăng xuất tài khoản thành công !')
+      handleToastSuccess("Đăng xuất tài khoản thành công !");
       setIsLoading(false);
       navigate("/login", { replace: true }); // <-- chuyển hướng rõ ràng
     } catch (error) {
-      handleToastError('Đăng xuất tài khoản thất bại !')
+      handleToastError("Đăng xuất tài khoản thất bại !");
       console.error("Error signing out:", error);
     }
   };
@@ -87,17 +80,23 @@ export default function ChildrenScreen() {
             borderRadius: 10,
           }}
         >
-          <div style={{
-            position: 'absolute',
-            right: 20, top: 20,
-            padding: 6,
-            borderRadius: 10,
-            background: colors.bacground,
-            cursor: 'pointer',
-          }}
+          <div
+            style={{
+              position: "absolute",
+              right: 20,
+              top: 20,
+              padding: 6,
+              borderRadius: 10,
+              background: colors.bacground,
+              cursor: "pointer",
+            }}
             onClick={handleLogout}
           >
-            {isLoading ? <SpinnerComponent /> : <Logout size={32} color='coral' variant="Bold" />}
+            {isLoading ? (
+              <SpinnerComponent />
+            ) : (
+              <Logout size={32} color="coral" variant="Bold" />
+            )}
           </div>
           <TextComponent
             text={`Cô ${user.fullName} _ ${user.position}`}
