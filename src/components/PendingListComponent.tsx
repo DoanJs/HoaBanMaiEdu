@@ -1,7 +1,7 @@
 import { where } from "firebase/firestore";
-import { AddCircle, Edit2, SaveAdd, Trash } from "iconsax-react";
+import { AddCircle, ArchiveTick, Edit2, SaveAdd, Trash } from "iconsax-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ModalDeleteComponent,
   PendingItemComponent,
@@ -13,6 +13,7 @@ import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
+import { handleToastError, handleToastSuccess } from "../constants/handleToast";
 import { sizes } from "../constants/sizes";
 import { PlanTaskModel } from "../models";
 import {
@@ -27,6 +28,7 @@ import {
 import LoadingOverlay from "./LoadingOverLay";
 
 export default function PendingListComponent() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { fields } = useFieldStore();
   const { user } = useUserStore();
@@ -58,13 +60,15 @@ export default function PendingListComponent() {
         setData: setPlanTasks,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planId]);
   useEffect(() => {
-    if (text !== comment.split("@Js@")[1]) {
+    if (text !== comment?.split("@Js@")[1]) {
       setDisable(false);
     } else {
       setDisable(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
 
   const handleEditPlan = () => {
@@ -97,7 +101,28 @@ export default function PendingListComponent() {
     setIsLoading(false);
     setDisable(true);
   };
+  const handleApproved = () => {
+    const indexPlan = plans.findIndex((plan) => plan.id === planId);
+    editPlan(planId, { ...plans[indexPlan], status: "approved" });
 
+    setIsLoading(true);
+    updateDocData({
+      nameCollect: "plans",
+      id: planId,
+      valueUpdate: { status: "approved" },
+      metaDoc: "plans",
+    })
+      .then(() => {
+        setIsLoading(false);
+        navigate("../pending");
+        handleToastSuccess("Kế hoạch được duyệt thành công !");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Duyệt kế hoạch thất bại !")
+        console.log(error)
+      });
+  };
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -203,6 +228,23 @@ export default function PendingListComponent() {
               <TextComponent text="Góp ý" size={sizes.bigText} />
             </div>
           ))}
+
+        {user?.role === "admin" && (
+          <RowComponent
+            styles={{
+              cursor: "pointer",
+            }}
+            onClick={handleApproved}
+          >
+            <ArchiveTick size={26} color={colors.primary} variant="Bold" />
+            <TextComponent
+              text="Duyệt"
+              size={sizes.bigText}
+              styles={{ fontWeight: "bold" }}
+            />
+          </RowComponent>
+        )}
+
         <RowComponent justify="flex-end">
           <Link
             onClick={handleEditPlan}
