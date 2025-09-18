@@ -58,17 +58,17 @@ export default function Navbar() {
       metaDoc: "suggests",
     }
   );
-const { data: data_plans, loading: loading_plans } =
-  useFirestoreWithMetaCondition({
-    key: "plansCache",
-    metaDoc: "plans",
-    id: user?.id,
-    nameCollect: "plans",
-    condition: [where("teacherIds", "array-contains", user?.id)],
-  });
+  const { data: data_plans, loading: loading_plans } =
+    useFirestoreWithMetaCondition({
+      key: 'plansCache',
+      metaDoc: "plans",
+      id: user?.id,
+      nameCollect: "plans",
+      condition: [where("teacherIds", "array-contains", user?.id)],
+    });
   const { data: data_reports, loading: loading_reports } =
     useFirestoreWithMetaCondition({
-      key: "reportsCache",
+      key: 'reportsCache',
       metaDoc: "reports",
       id: user?.id,
       nameCollect: "reports",

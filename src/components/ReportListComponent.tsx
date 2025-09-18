@@ -1,5 +1,5 @@
 import { doc, getDoc, serverTimestamp, where } from "firebase/firestore";
-import { DocumentDownload, SaveAdd, Trash } from "iconsax-react";
+import { AddCircle, DocumentDownload, SaveAdd, Trash } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
@@ -11,8 +11,11 @@ import {
   TextComponent,
 } from ".";
 import { colors } from "../constants/colors";
+import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
+import { handleToastError, handleToastSuccess } from "../constants/handleToast";
+import { sizes } from "../constants/sizes";
 import { exportWord } from "../exportFile/WordExport";
 import { db } from "../firebase.config";
 import { ReportTaskModel } from "../models";
@@ -22,13 +25,11 @@ import {
   useTargetStore,
   useUserStore,
 } from "../zustand";
-import { convertTargetField } from "../constants/convertTargetAndField";
 import LoadingOverlay from "./LoadingOverLay";
-import { handleToastError, handleToastSuccess } from "../constants/handleToast";
 
 export default function ReportListComponent() {
   const location = useLocation();
-  const { title, reportId, status } = location.state || {};
+  const { title, reportId, status, comment } = location.state || {};
   const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
   const [disable, setDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +37,13 @@ export default function ReportListComponent() {
   const { fields } = useFieldStore();
   const { child } = useChildStore();
   const { user } = useUserStore();
+  const [text, setText] = useState('');
+  const [disableComment, setDisableComment] = useState(true);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (reportId) {
+      comment && setText(comment.split('@Js@')[1])
       getDocsData({
         nameCollect: "reportTasks",
         condition: [
@@ -50,6 +54,13 @@ export default function ReportListComponent() {
       });
     }
   }, [reportId]);
+  useEffect(() => {
+    if (text !== comment.split('@Js@')[1]) {
+      setDisableComment(false)
+    } else {
+      setDisableComment(true)
+    }
+  }, [text])
 
   const handleSaveReportTask = async () => {
     // luu phia firestore
@@ -79,7 +90,6 @@ export default function ReportListComponent() {
 
     }
   };
-
   const handleExportWordBC = async () => {
     setIsLoading(true);
     const promiseItems = reportTasks.map(async (reportTask) => {
@@ -88,9 +98,9 @@ export default function ReportListComponent() {
         return {
           intervention: docSnap.data().intervention,
           content: docSnap.data().content,
-          field: convertTargetField(docSnap.data().targetId,targets, fields)
+          field: convertTargetField(docSnap.data().targetId, targets, fields)
             .nameField,
-          target: convertTargetField(docSnap.data().targetId,targets, fields)
+          target: convertTargetField(docSnap.data().targetId, targets, fields)
             .nameTarget,
           total: reportTask.content,
         };
@@ -111,7 +121,17 @@ export default function ReportListComponent() {
     );
     setIsLoading(false);
   };
-
+  const handleSaveComment = async () => {
+    setIsLoading(true)
+    await updateDocData({
+      nameCollect: 'reports',
+      id: reportId,
+      metaDoc: 'reports',
+      valueUpdate: { comment: text !== '' ? `${user?.fullName}@Js@${text}` : '' }
+    })
+    setIsLoading(false)
+    setDisableComment(true)
+  }
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -154,53 +174,122 @@ export default function ReportListComponent() {
               ))}
           </tbody>
         </table>
+
+        {
+          comment &&
+          <>
+            <TextComponent text={`Góp ý từ cô ${comment.split('@Js@')[0]}: `} size={sizes.bigText} styles={{ fontWeight: 'bold' }} />
+            <SpaceComponent height={4} />
+            <RowComponent>
+              <textarea
+                style={{
+
+                  padding: 10,
+                  textAlign: 'justify',
+                  color: colors.red
+                }}
+                disabled={!['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string)}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="form-control"
+                placeholder="Nhập góp ý"
+                rows={5}
+              ></textarea>
+
+            </RowComponent>
+            <SpaceComponent height={10} />
+          </>
+        }
       </div>
       {status === "pending" ? (
         <>
-          <RowComponent justify="flex-end">
-            <button
-              onClick={disable ? undefined : handleSaveReportTask}
-              type="button"
-              className="btn btn-success"
-              data-bs-dismiss="modal"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                background: disable ? colors.gray : undefined,
-                borderColor: disable ? colors.gray : undefined,
-              }}
-            >
-              {isLoading ? (
-                <SpinnerComponent />
-              ) : (
-                <>
-                  <SaveAdd size={20} color={colors.bacground} />
-                  <SpaceComponent width={6} />
-                  <TextComponent text="Lưu" color={colors.bacground} />
-                </>
-              )}
-            </button>
-            <SpaceComponent width={10} />
-            <button
-              type="button"
-              className="btn btn-danger"
-              data-bs-dismiss="modal"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Trash size={20} color={colors.bacground} />
-              <SpaceComponent width={6} />
-              <TextComponent text="Xóa" color={colors.bacground} />
-            </button>
+          <RowComponent justify='space-between'>
+            {
+              ['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string) &&
+              (
+                comment ?
+                  <button
+                    onClick={disableComment ? undefined : handleSaveComment}
+                    type="button"
+                    className="btn btn-success"
+                    data-bs-dismiss="modal"
+                    style={{
+                      background: disableComment ? colors.gray : colors.primary,
+                      borderColor: disableComment ? colors.gray : colors.primary,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <SaveAdd size={20} color={colors.bacground} />
+                    <SpaceComponent width={6} />
+                    <TextComponent text="Lưu góp ý" color={colors.bacground} />
+                  </button>
+                  :
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      textDecoration: "none",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <AddCircle size={30} color={colors.primary} variant="Bold" />
+                    <SpaceComponent width={4} />
+                    <TextComponent text="Góp ý" size={sizes.bigText} />
+                  </div>
+              )
+
+            }
+
+            <RowComponent justify="flex-end">
+              <button
+                onClick={disable ? undefined : handleSaveReportTask}
+                type="button"
+                className="btn btn-success"
+                data-bs-dismiss="modal"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  background: disable ? colors.gray : undefined,
+                  borderColor: disable ? colors.gray : undefined,
+                }}
+              >
+                {isLoading ? (
+                  <SpinnerComponent />
+                ) : (
+                  <>
+                    <SaveAdd size={20} color={colors.bacground} />
+                    <SpaceComponent width={6} />
+                    <TextComponent text="Lưu" color={colors.bacground} />
+                  </>
+                )}
+              </button>
+              <SpaceComponent width={10} />
+              <button
+                type="button"
+                className="btn btn-danger"
+                data-bs-dismiss="modal"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Trash size={20} color={colors.bacground} />
+                <SpaceComponent width={6} />
+                <TextComponent text="Xóa" color={colors.bacground} />
+              </button>
+            </RowComponent>
           </RowComponent>
+
 
           <ModalDeleteComponent
             data={{
@@ -236,7 +325,7 @@ export default function ReportListComponent() {
         </RowComponent>
       )}
 
-      <LoadingOverlay show={isLoading}/>
+      <LoadingOverlay show={isLoading} />
     </div>
   );
 }

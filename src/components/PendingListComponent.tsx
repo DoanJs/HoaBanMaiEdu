@@ -1,5 +1,5 @@
 import { where } from "firebase/firestore";
-import { Edit2, Trash } from "iconsax-react";
+import { AddCircle, Edit2, SaveAdd, Trash } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -10,7 +10,10 @@ import {
   TextComponent,
 } from ".";
 import { colors } from "../constants/colors";
+import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
+import { updateDocData } from "../constants/firebase/updateDocData";
+import { sizes } from "../constants/sizes";
 import { PlanTaskModel } from "../models";
 import {
   useCartEditStore,
@@ -20,22 +23,26 @@ import {
   useTargetStore,
   useUserStore,
 } from "../zustand";
-import { convertTargetField } from "../constants/convertTargetAndField";
+import LoadingOverlay from "./LoadingOverLay";
 
 export default function PendingListComponent() {
   const location = useLocation();
-  const {fields} = useFieldStore()
+  const { fields } = useFieldStore()
   const { user } = useUserStore()
-  const { title, planId } = location.state || {};
+  const { title, planId, comment } = location.state || {};
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
   const { setCarts } = useCartStore();
   const { setCartEdit } = useCartEditStore();
   const { targets } = useTargetStore();
+  const [text, setText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [disable, setDisable] = useState(true);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (planId) {
+      comment && setText(comment.split('@Js@')[1])
       getDocsData({
         nameCollect: "planTasks",
         condition: [
@@ -45,6 +52,13 @@ export default function PendingListComponent() {
       });
     }
   }, [planId]);
+  useEffect(() => {
+    if (text !== comment.split('@Js@')[1]) {
+      setDisable(false)
+    } else {
+      setDisable(true)
+    }
+  }, [text])
 
   const handleEditPlan = () => {
     const convertPlanTasksToCarts = planTasks.map((_) => {
@@ -60,6 +74,17 @@ export default function PendingListComponent() {
     setCartEdit(planId);
     setSelectTarget("GIỎ MỤC TIÊU");
   };
+  const handleSaveComment = async () => {
+    setIsLoading(true)
+    await updateDocData({
+      nameCollect: 'plans',
+      id: planId,
+      metaDoc: 'plans',
+      valueUpdate: { comment: text ? `${user?.fullName}@Js@${text}` : '' }
+    })
+    setIsLoading(false)
+    setDisable(true)
+  }
 
   return (
     <div style={{ width: "100%" }}>
@@ -95,49 +120,118 @@ export default function PendingListComponent() {
               ))}
           </tbody>
         </table>
+        {
+          comment &&
+          <>
+            <TextComponent text={`Góp ý từ cô ${comment.split('@Js@')[0]}: `} size={sizes.bigText} styles={{ fontWeight: 'bold' }} />
+            <SpaceComponent height={4} />
+            <RowComponent>
+              <textarea
+                style={{
+
+                  padding: 10,
+                  textAlign: 'justify',
+                  color: colors.red
+                }}
+                disabled={!['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string)}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="form-control"
+                placeholder="Nhập comment"
+                rows={5}
+              ></textarea>
+
+            </RowComponent>
+            <SpaceComponent height={10} />
+          </>
+        }
       </div>
 
-      <RowComponent justify="flex-end">
-        <Link
-          onClick={handleEditPlan}
-          to={`../cart`}
-          type="button"
-          className="btn btn-success"
-          data-bs-dismiss="modal"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Edit2 size={20} color={colors.bacground} />
-          <SpaceComponent width={6} />
-          <TextComponent text="Sửa" color={colors.bacground} />
-        </Link>
-        <SpaceComponent width={10} />
-        <button
-          type="button"
-          className="btn btn-danger"
-          data-bs-dismiss="modal"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Trash size={20} color={colors.bacground} />
-          <SpaceComponent width={6} />
-          <TextComponent text="Xóa" color={colors.bacground} />
-        </button>
+      <SpaceComponent height={4} />
+
+      <RowComponent justify='space-between'>
+        {
+          ['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string) &&
+          (
+            comment ?
+              <button
+                onClick={disable ? undefined : handleSaveComment}
+                type="button"
+                className="btn btn-success"
+                data-bs-dismiss="modal"
+                style={{
+                  background: disable ? colors.gray : colors.primary,
+                  borderColor: disable ? colors.gray : colors.primary,
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <SaveAdd size={20} color={colors.bacground} />
+                <SpaceComponent width={6} />
+                <TextComponent text="Lưu góp ý" color={colors.bacground} />
+              </button>
+              :
+              <div
+                style={{
+                  cursor: "pointer",
+                  textDecoration: "none",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AddCircle size={30} color={colors.primary} variant="Bold" />
+                <SpaceComponent width={4} />
+                <TextComponent text="Góp ý" size={sizes.bigText} />
+              </div>
+          )
+        }
+        <RowComponent justify="flex-end">
+          <Link
+            onClick={handleEditPlan}
+            to={`../cart`}
+            type="button"
+            className="btn btn-success"
+            data-bs-dismiss="modal"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Edit2 size={20} color={colors.bacground} />
+            <SpaceComponent width={6} />
+            <TextComponent text="Sửa" color={colors.bacground} />
+          </Link>
+          <SpaceComponent width={10} />
+          <button
+            type="button"
+            className="btn btn-danger"
+            data-bs-dismiss="modal"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Trash size={20} color={colors.bacground} />
+            <SpaceComponent width={6} />
+            <TextComponent text="Xóa" color={colors.bacground} />
+          </button>
+        </RowComponent>
       </RowComponent>
 
       <ModalDeleteComponent
         data={{ id: planId, nameCollect: "plans", itemTasks: planTasks }}
       />
+
+      <LoadingOverlay show={isLoading} />
     </div>
   );
 }

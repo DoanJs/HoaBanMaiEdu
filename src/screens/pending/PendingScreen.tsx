@@ -1,3 +1,4 @@
+import { Messages } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -73,6 +74,7 @@ export default function PendingScreen() {
                 state={{
                   title: _.title,
                   planId: _.id,
+                  comment: _.comment
                 }}
                 type="button"
                 className="btn "
@@ -81,9 +83,26 @@ export default function PendingScreen() {
                   border: "1px solid coral",
                   fontWeight: "bold",
                   margin: 10,
+                  position: 'relative'
                 }}
               >
                 {_.title}
+
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: -6,
+                    left: -6,
+                    height: 20,
+                    width: 20,
+                    borderRadius: 100,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Messages color={colors.red} size={20} variant="Bold" />
+                </div>
               </Link>
             ))}
         </RowComponent>
@@ -106,6 +125,7 @@ export default function PendingScreen() {
                   title: _.title,
                   reportId: _.id,
                   status: _.status,
+                  comment: _.comment
                 }}
                 type="button"
                 className="btn "
@@ -114,9 +134,25 @@ export default function PendingScreen() {
                   border: "1px solid coral",
                   fontWeight: "bold",
                   margin: 10,
+                  position:'relative'
                 }}
               >
                 {_.title}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: -6,
+                    left: -6,
+                    height: 20,
+                    width: 20,
+                    borderRadius: 100,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Messages color={colors.red} size={20} variant="Bold" />
+                </div>
               </Link>
             ))}
         </RowComponent>

@@ -18,7 +18,7 @@ export default function BankScreen() {
   const { data: data_planTasks, loading: loading_planTasks } =
     useFirestoreWithMetaCondition({
       key: "planTasksCache",
-      metaDoc: "planTasks",
+      metaDoc: "plans",
       id: user?.id,
       nameCollect: "planTasks",
       condition: [

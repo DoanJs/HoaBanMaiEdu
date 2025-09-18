@@ -213,7 +213,7 @@ export default function AddReportScreen() {
                       className="form-control"
                       placeholder="Nhập đánh giá"
                       rows={6}
-                      cols={100}
+                      cols={300}
                       id="floatingTextarea2"
                     ></textarea>
                   </td>
