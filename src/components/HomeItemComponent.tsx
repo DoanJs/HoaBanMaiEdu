@@ -157,12 +157,13 @@ export default function HomeItemComponent(props: Props) {
     return { result, navigate };
   };
   const handleCommentTotal = () => {
+    // eslint-disable-next-line
     let isComment: boolean = false;
     plans.concat(reports).map((_) => {
       if (_.comment) {
         isComment = true;
       }
-    });
+    })
 
     return isComment;
   };

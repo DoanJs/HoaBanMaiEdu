@@ -32,8 +32,8 @@ export default function CardImageComponent(props: Props) {
         alt=""
         src={childInfo.avatar}
         style={{
-          height: 120,
-          width: 120,
+          height: 200,
+          width: 200,
           objectFit: "cover",
           borderRadius: 10,
           ...imgStyles,

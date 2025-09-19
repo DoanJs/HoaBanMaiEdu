@@ -13,8 +13,6 @@ import { handleToastSuccess } from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
 import { validateEmail } from "../../constants/validateEmailPhone";
 import { auth } from "../../firebase.config";
-import { setDocData } from "../../constants/firebase/setDocData";
-import { serverTimestamp } from "firebase/firestore";
 
 export default function RegisterScreen() {
   const navigate = useNavigate();
@@ -53,28 +51,28 @@ export default function RegisterScreen() {
           displayName: form.name,
         });
         // sign out để user không bị đăng nhập
-        // await signOut(auth);
+        await signOut(auth);
         // Signed in
         setIsLoading(false);
-        const { user } = userCredential;
-        setDocData({
-          nameCollect: "users",
-          id: user.uid,
-          valueUpdate: {
-            id: user.uid,
-            email: form.email,
-            fullName: form.name,
-            shortName: form.name,
-            avatar: "",
-            phone: "",
-            birth: serverTimestamp(),
-            role: "teacher",
-            position:'Phó Giám đốc',
+        // const { user } = userCredential;
+        // setDocData({
+        //   nameCollect: "users",
+        //   id: user.uid,
+        //   valueUpdate: {
+        //     id: user.uid,
+        //     email: form.email,
+        //     fullName: form.name,
+        //     shortName: form.name,
+        //     avatar: "",
+        //     phone: "",
+        //     birth: serverTimestamp(),
+        //     role: "teacher",
+        //     position:'Chuyên viên Tâm lý',
 
-            createAt: serverTimestamp(),
-            updateAt: serverTimestamp(),
-          },
-        });
+        //     createAt: serverTimestamp(),
+        //     updateAt: serverTimestamp(),
+        //   },
+        // });
         handleToastSuccess('Đăng ký tài khoản thành công, cô hãy liên hệ admin để cấp quyền !')
         navigate("/login");
       })
@@ -104,7 +102,7 @@ export default function RegisterScreen() {
       >
         {/* ben trái */}
         <RowComponent
-         styles={{
+          styles={{
             height: "100%",
             width: "100%",
             justifyContent: "flex-start",
