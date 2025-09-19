@@ -103,7 +103,7 @@ export default function ChildrenScreen() {
             size={32}
             styles={{ fontWeight: "bold" }}
           />
-          <SpaceComponent height={30} />
+          <SpaceComponent height={20} />
           <SearchComponent
             title="Tìm trẻ"
             placeholder="Nhập tên trẻ"
@@ -111,13 +111,14 @@ export default function ChildrenScreen() {
             arrSource={data_children as ChildrenModel[]}
             onChange={(val) => setChildren(val)}
           />
+          <SpaceComponent height={10} />
           <RowComponent
             styles={{
               display: "flex",
               flexWrap: "wrap",
               justifyContent: "center",
               height: "90%",
-              width: "70%",
+              width: "100%",
               overflow: children.length > 10 ? "scroll" : "hidden",
               alignItems: "flex-start",
               overflowY: 3 > 4 ? "scroll" : undefined,

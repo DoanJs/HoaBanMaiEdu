@@ -66,7 +66,8 @@ export default function RegisterScreen() {
         //     avatar: "",
         //     phone: "",
         //     birth: serverTimestamp(),
-        //     role: "",
+        //     role: "teacher",
+        //     position:'Chuyên viên Tâm lý',
 
         //     createAt: serverTimestamp(),
         //     updateAt: serverTimestamp(),
@@ -104,14 +105,19 @@ export default function RegisterScreen() {
           styles={{
             height: "100%",
             width: "100%",
-            justifyContent: "flex-end",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            borderRadius: 10,
           }}
         >
           <img
-            src="voi.jpg"
+            src="https://res.cloudinary.com/dr8wxl8it/image/upload/v1758212683/register_l0fwbj.jpg"
             alt=""
             style={{
               borderRadius: 10,
+              objectFit: "cover",
+              height: "100%",
+              width: "100%",
             }}
           />
         </RowComponent>

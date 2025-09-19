@@ -74,7 +74,7 @@ export default function ReportItemComponent(props: Props) {
       <td>{planTask?.intervention}</td>
       <td>{planTask?.content}</td>
 
-      <td  style={{width:'50%'}}>
+      <td  style={{width:'30%'}}>
         {status === "pending" ? (
           <textarea
             onChange={(e) => setContent(e.target.value)}

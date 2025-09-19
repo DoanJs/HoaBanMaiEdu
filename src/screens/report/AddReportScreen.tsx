@@ -7,15 +7,26 @@ import {
   SpinnerComponent,
   TextComponent,
 } from "../../components";
+import LoadingOverlay from "../../components/LoadingOverLay";
 import { colors } from "../../constants/colors";
 import { convertTargetField } from "../../constants/convertTargetAndField";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
+import {
+  handleToastError,
+  handleToastSuccess,
+} from "../../constants/handleToast";
 import { sizes } from "../../constants/sizes";
-import { useChildStore, useFieldStore, usePlanStore, useReportStore, useSelectTargetStore, useTargetStore, useUserStore } from "../../zustand";
 import { PlanModel, PlanTaskModel } from "../../models";
-import LoadingOverlay from "../../components/LoadingOverLay";
-import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
+import {
+  useChildStore,
+  useFieldStore,
+  usePlanStore,
+  useReportStore,
+  useSelectTargetStore,
+  useTargetStore,
+  useUserStore,
+} from "../../zustand";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -62,12 +73,12 @@ export default function AddReportScreen() {
         nameCollect: "planTasks",
         condition: [
           where("teacherIds", "array-contains", user?.id),
-          where("planId", "==", planId)
+          where("planId", "==", planId),
         ],
         setData: setPlanTasks,
       });
     } else {
-      setPlanTasks([])
+      setPlanTasks([]);
       setDisable(true);
     }
   };
@@ -88,6 +99,7 @@ export default function AddReportScreen() {
           teacherIds: child.teacherIds,
           planId: plan?.id,
           status: "pending",
+          comment: "",
 
           createAt: serverTimestamp(),
           updateAt: serverTimestamp(),
@@ -103,6 +115,7 @@ export default function AddReportScreen() {
             teacherIds: child.teacherIds,
             planId: plan?.id as string,
             status: "pending",
+            comment: "",
 
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
@@ -115,7 +128,7 @@ export default function AddReportScreen() {
                 planId: plan?.id as string,
                 childId: child.id,
                 planTaskId: _.id,
-                content: _.total ?? '',
+                content: _.total ?? "",
                 isEdit: false,
                 teacherIds: child.teacherIds,
 
@@ -127,16 +140,16 @@ export default function AddReportScreen() {
           );
 
           await Promise.all(promiseItems);
-          handleToastSuccess('Thêm mới báo cáo thành công !')
+          handleToastSuccess("Thêm mới báo cáo thành công !");
           setIsLoading(false);
         })
         .catch((error) => {
-          handleToastError('Thêm mới báo cáo thất bại !')
+          handleToastError("Thêm mới báo cáo thất bại !");
           setIsLoading(false);
           console.log(error);
         });
-      navigate('../pending')
-      setSelectTarget('CHỜ DUYỆT')
+      navigate("../pending");
+      setSelectTarget("CHỜ DUYỆT");
     }
   };
 
@@ -198,8 +211,12 @@ export default function AddReportScreen() {
             {planTasks &&
               planTasks.map((_, index) => (
                 <tr key={index}>
-                  <th scope="row">{convertTargetField(_.targetId, targets, fields).nameField}</th>
-                  <td>{convertTargetField(_.targetId, targets, fields).nameTarget}</td>
+                  <th scope="row">
+                    {convertTargetField(_.targetId, targets, fields).nameField}
+                  </th>
+                  <td>
+                    {convertTargetField(_.targetId, targets, fields).nameTarget}
+                  </td>
                   <td>{_.intervention}</td>
                   <td>{_.content}</td>
                   <td>
@@ -236,9 +253,8 @@ export default function AddReportScreen() {
           {isLoading ? <SpinnerComponent /> : <>Tạo mới</>}
         </button>
       </RowComponent>
-    
 
-    <LoadingOverlay show={isLoading}/>
+      <LoadingOverlay show={isLoading} />
     </div>
   );
 }

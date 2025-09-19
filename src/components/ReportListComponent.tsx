@@ -1,7 +1,13 @@
 import { doc, getDoc, serverTimestamp, where } from "firebase/firestore";
-import { AddCircle, DocumentDownload, SaveAdd, Trash } from "iconsax-react";
+import {
+  AddCircle,
+  ArchiveTick,
+  DocumentDownload,
+  SaveAdd,
+  Trash,
+} from "iconsax-react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   ModalDeleteComponent,
   ReportItemComponent,
@@ -22,12 +28,14 @@ import { ReportTaskModel } from "../models";
 import {
   useChildStore,
   useFieldStore,
+  useReportStore,
   useTargetStore,
   useUserStore,
 } from "../zustand";
 import LoadingOverlay from "./LoadingOverLay";
 
 export default function ReportListComponent() {
+  const navigate = useNavigate();
   const location = useLocation();
   const { title, reportId, status, comment } = location.state || {};
   const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
@@ -37,30 +45,37 @@ export default function ReportListComponent() {
   const { fields } = useFieldStore();
   const { child } = useChildStore();
   const { user } = useUserStore();
-  const [text, setText] = useState('');
   const [disableComment, setDisableComment] = useState(true);
+  const [isComment, setIsComment] = useState(false);
+  const [text, setText] = useState("");
+  const { reports, editReport } = useReportStore();
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
     if (reportId) {
-      comment && setText(comment.split('@Js@')[1])
+      if (comment) {
+        setIsComment(true);
+        setText(comment.split("@Js@")[1]);
+      }
       getDocsData({
         nameCollect: "reportTasks",
         condition: [
-          where("teacherIds", 'array-contains', user?.id),
-          where("reportId", "==", reportId)
+          where("teacherIds", "array-contains", user?.id),
+          where("reportId", "==", reportId),
         ],
         setData: setReportTasks,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportId]);
   useEffect(() => {
-    if (text !== comment.split('@Js@')[1]) {
-      setDisableComment(false)
+    if (text !== comment?.split("@Js@")[1]) {
+      setDisableComment(false);
     } else {
-      setDisableComment(true)
+      setDisableComment(true);
     }
-  }, [text])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text]);
 
   const handleSaveReportTask = async () => {
     // luu phia firestore
@@ -79,15 +94,14 @@ export default function ReportListComponent() {
           })
         );
         await Promise.all(promiseItems);
-        handleToastSuccess('Chỉnh sửa báo cáo thành công !')
-        setIsLoading(false)
-        setDisable(true)
+        handleToastSuccess("Chỉnh sửa báo cáo thành công !");
+        setIsLoading(false);
+        setDisable(true);
       } catch (error) {
-        handleToastError('Chỉnh sửa báo cáo thất bại !')
+        handleToastError("Chỉnh sửa báo cáo thất bại !");
         setIsLoading(false);
         setDisable(true);
       }
-
     }
   };
   const handleExportWordBC = async () => {
@@ -122,16 +136,45 @@ export default function ReportListComponent() {
     setIsLoading(false);
   };
   const handleSaveComment = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
+    const indexReport = reports.findIndex((report) => report.id === reportId);
+    editReport(reportId, {
+      ...reports[indexReport],
+      comment: text ? `${user?.fullName}@Js@${text}` : "",
+    });
     await updateDocData({
-      nameCollect: 'reports',
+      nameCollect: "reports",
       id: reportId,
-      metaDoc: 'reports',
-      valueUpdate: { comment: text !== '' ? `${user?.fullName}@Js@${text}` : '' }
+      metaDoc: "reports",
+      valueUpdate: {
+        comment: text !== "" ? `${user?.fullName}@Js@${text}` : "",
+      },
+    });
+    setIsLoading(false);
+    setDisableComment(true);
+  };
+  const handleApproved = () => {
+    const indexReport = reports.findIndex((report) => report.id === reportId);
+    editReport(reportId, { ...reports[indexReport], status: "approved" });
+
+    setIsLoading(true);
+    updateDocData({
+      nameCollect: "reports",
+      id: reportId,
+      valueUpdate: { status: "approved" },
+      metaDoc: "reports",
     })
-    setIsLoading(false)
-    setDisableComment(true)
-  }
+      .then(() => {
+        setIsLoading(false);
+        navigate("../pending");
+        handleToastSuccess("Báo cáo được duyệt thành công !");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Duyệt báo cáo thất bại !");
+        console.log(error);
+      });
+  };
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -175,74 +218,92 @@ export default function ReportListComponent() {
           </tbody>
         </table>
 
-        {
-          comment &&
+        {isComment && (
           <>
-            <TextComponent text={`Góp ý từ cô ${comment.split('@Js@')[0]}: `} size={sizes.bigText} styles={{ fontWeight: 'bold' }} />
+            <TextComponent
+              text={`Góp ý từ cô ${comment.split("@Js@")[0]}: `}
+              size={sizes.bigText}
+              styles={{ fontWeight: "bold" }}
+            />
             <SpaceComponent height={4} />
             <RowComponent>
               <textarea
                 style={{
-
                   padding: 10,
-                  textAlign: 'justify',
-                  color: colors.red
+                  textAlign: "justify",
+                  color: colors.red,
                 }}
-                disabled={!['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string)}
+                disabled={
+                  !["Phó Giám đốc", "Giám đốc"].includes(
+                    user?.position as string
+                  )
+                }
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 className="form-control"
                 placeholder="Nhập góp ý"
                 rows={5}
               ></textarea>
-
             </RowComponent>
             <SpaceComponent height={10} />
           </>
-        }
+        )}
       </div>
       {status === "pending" ? (
         <>
-          <RowComponent justify='space-between'>
-            {
-              ['Phó Giám đốc', 'Giám đốc'].includes(user?.position as string) &&
-              (
-                comment ?
-                  <button
-                    onClick={disableComment ? undefined : handleSaveComment}
-                    type="button"
-                    className="btn btn-success"
-                    data-bs-dismiss="modal"
-                    style={{
-                      background: disableComment ? colors.gray : colors.primary,
-                      borderColor: disableComment ? colors.gray : colors.primary,
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <SaveAdd size={20} color={colors.bacground} />
-                    <SpaceComponent width={6} />
-                    <TextComponent text="Lưu góp ý" color={colors.bacground} />
-                  </button>
-                  :
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      textDecoration: "none",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <AddCircle size={30} color={colors.primary} variant="Bold" />
-                    <SpaceComponent width={4} />
-                    <TextComponent text="Góp ý" size={sizes.bigText} />
-                  </div>
-              )
+          <RowComponent justify="space-between">
+            {["Phó Giám đốc", "Giám đốc"].includes(user?.position as string) &&
+              (isComment ? (
+                <button
+                  onClick={disableComment ? undefined : handleSaveComment}
+                  type="button"
+                  className="btn btn-success"
+                  data-bs-dismiss="modal"
+                  style={{
+                    background: disableComment ? colors.gray : colors.primary,
+                    borderColor: disableComment ? colors.gray : colors.primary,
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <SaveAdd size={20} color={colors.bacground} />
+                  <SpaceComponent width={6} />
+                  <TextComponent text="Lưu góp ý" color={colors.bacground} />
+                </button>
+              ) : (
+                <div
+                  style={{
+                    cursor: "pointer",
+                    textDecoration: "none",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onClick={() => setIsComment(true)}
+                >
+                  <AddCircle size={30} color={colors.primary} variant="Bold" />
+                  <SpaceComponent width={4} />
+                  <TextComponent text="Góp ý" size={sizes.bigText} />
+                </div>
+              ))}
 
-            }
+            {user?.role === "admin" && (
+              <RowComponent
+                styles={{
+                  cursor: "pointer",
+                }}
+                onClick={handleApproved}
+              >
+                <ArchiveTick size={26} color={colors.primary} variant="Bold" />
+                <TextComponent
+                  text="Duyệt"
+                  size={sizes.bigText}
+                  styles={{ fontWeight: "bold" }}
+                />
+              </RowComponent>
+            )}
 
             <RowComponent justify="flex-end">
               <button
@@ -289,7 +350,6 @@ export default function ReportListComponent() {
               </button>
             </RowComponent>
           </RowComponent>
-
 
           <ModalDeleteComponent
             data={{

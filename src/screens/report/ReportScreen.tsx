@@ -10,8 +10,8 @@ import {
 } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import { useReportStore } from "../../zustand";
 import { ReportModel } from "../../models";
+import { useReportStore } from "../../zustand";
 
 export default function ReportScreen() {
   const { reports } = useReportStore();
@@ -19,7 +19,7 @@ export default function ReportScreen() {
 
   useEffect(() => {
     if (reports) {
-      const items = reports.filter((report) => report.status === 'approved')
+      const items = reports.filter((report) => report.status === "approved");
       setReportNews(items);
     }
   }, [reports]);
@@ -45,7 +45,7 @@ export default function ReportScreen() {
           placeholder="Nhập tháng"
           title="Tìm tháng"
           onChange={(val) => setReportNews(val)}
-          arrSource={reports.filter((report) => report.status === 'approved')}
+          arrSource={reports.filter((report) => report.status === "approved")}
         />
         <Link
           to={"../addReport"}
@@ -63,7 +63,15 @@ export default function ReportScreen() {
         </Link>
       </RowComponent>
 
-      <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
+      <RowComponent
+        styles={{
+          display: "flex",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          height: "85%",
+          overflowY: "scroll",
+        }}
+      >
         {reportNews &&
           reportNews.map((_, index) => (
             <Link

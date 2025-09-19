@@ -10,8 +10,8 @@ import {
 } from "../../components";
 import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
-import { usePlanStore, useSelectTargetStore } from "../../zustand";
 import { PlanModel } from "../../models";
+import { usePlanStore, useSelectTargetStore } from "../../zustand";
 
 export default function PlanScreen() {
   const { setSelectTarget } = useSelectTargetStore();
@@ -20,7 +20,7 @@ export default function PlanScreen() {
 
   useEffect(() => {
     if (plans) {
-      const items = plans.filter((plan) => plan.status === 'approved')
+      const items = plans.filter((plan) => plan.status === "approved");
       setPlanNews(items);
     }
   }, [plans]);
@@ -42,7 +42,7 @@ export default function PlanScreen() {
           placeholder="Nhập tháng"
           title="Tìm tháng"
           onChange={(val) => setPlanNews(val)}
-          arrSource={plans.filter((plan) => plan.status === 'approved')}
+          arrSource={plans.filter((plan) => plan.status === "approved")}
         />
         <Link
           to={"../bank"}
@@ -61,9 +61,17 @@ export default function PlanScreen() {
         </Link>
       </RowComponent>
 
-      <RowComponent styles={{ display: "flex", flexWrap: "wrap" }}>
+      <RowComponent
+        styles={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "flex-start",
+          height: "85%",
+          overflowY: "scroll",
+        }}
+      >
         {planNews.length > 0 &&
-          planNews.map((_, index) => (
+         planNews.map((_, index) => (
             <Link
               key={index}
               to={"../planList"}
