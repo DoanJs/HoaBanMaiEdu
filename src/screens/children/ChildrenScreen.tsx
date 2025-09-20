@@ -17,6 +17,7 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
+import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import { auth } from "../../firebase.config";
@@ -63,7 +64,7 @@ export default function ChildrenScreen() {
     user && (
       <SectionComponent
         styles={{
-          padding: 100,
+          padding: "2% 6%",
           background: colors.primary,
           display: "flex",
           flex: 1,
@@ -76,15 +77,15 @@ export default function ChildrenScreen() {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            padding: 24,
+            padding: 16,
             borderRadius: 10,
           }}
         >
           <div
             style={{
               position: "absolute",
-              right: 20,
-              top: 20,
+              right: 16,
+              top: 16,
               padding: 6,
               borderRadius: 10,
               background: colors.bacground,
@@ -98,12 +99,13 @@ export default function ChildrenScreen() {
               <Logout size={32} color="coral" variant="Bold" />
             )}
           </div>
+
           <TextComponent
             text={`Cô ${user.fullName} _ ${user.position}`}
-            size={32}
+            size={sizes.title}
             styles={{ fontWeight: "bold" }}
           />
-          <SpaceComponent height={20} />
+          <SpaceComponent height={6} />
           <SearchComponent
             title="Tìm trẻ"
             placeholder="Nhập tên trẻ"
@@ -111,17 +113,21 @@ export default function ChildrenScreen() {
             arrSource={data_children as ChildrenModel[]}
             onChange={(val) => setChildren(val)}
           />
-          <SpaceComponent height={10} />
           <RowComponent
             styles={{
               display: "flex",
               flexWrap: "wrap",
               justifyContent: "center",
-              height: "90%",
+              height: "100%",
               width: "100%",
-              overflow: children.length > 10 ? "scroll" : "hidden",
               alignItems: "flex-start",
-              overflowY: 3 > 4 ? "scroll" : undefined,
+              overflowY: widthSmall
+                ? children.length > 4
+                  ? "scroll"
+                  : undefined
+                : children.length > 10
+                ? "scroll"
+                : undefined,
             }}
           >
             {children.length > 0 &&

@@ -21,6 +21,7 @@ import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
 import { handleToastError, handleToastSuccess } from "../constants/handleToast";
+import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { exportWord } from "../exportFile/WordExport";
 import { db } from "../firebase.config";
@@ -189,11 +190,20 @@ export default function ReportListComponent() {
           borderBottomColor: colors.gray,
         }}
       >
-        <TextComponent text={`${title}`} size={32} />
+        <TextComponent
+          text={`${title}`}
+          size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
+          styles={{ fontWeight: "bold" }}
+        />
       </RowComponent>
 
-      <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
-        <table className="table table-bordered">
+      <div
+        style={{ maxHeight: widthSmall ? "80%" : "85%", overflowY: "scroll" }}
+      >
+        <table
+          className="table table-bordered"
+          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
+        >
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -222,7 +232,7 @@ export default function ReportListComponent() {
           <>
             <TextComponent
               text={`Góp ý từ cô ${comment.split("@Js@")[0]}: `}
-              size={sizes.bigText}
+              size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
               styles={{ fontWeight: "bold" }}
             />
             <SpaceComponent height={4} />
@@ -268,9 +278,16 @@ export default function ReportListComponent() {
                     alignItems: "center",
                   }}
                 >
-                  <SaveAdd size={20} color={colors.bacground} />
+                  <SaveAdd
+                    size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+                    color={colors.bacground}
+                  />
                   <SpaceComponent width={6} />
-                  <TextComponent text="Lưu góp ý" color={colors.bacground} />
+                  <TextComponent
+                    text="Lưu góp ý"
+                    size={widthSmall ? sizes.text : sizes.bigText}
+                    color={colors.bacground}
+                  />
                 </button>
               ) : (
                 <div
@@ -283,9 +300,16 @@ export default function ReportListComponent() {
                   }}
                   onClick={() => setIsComment(true)}
                 >
-                  <AddCircle size={30} color={colors.primary} variant="Bold" />
+                  <AddCircle
+                    size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+                    color={colors.primary}
+                    variant="Bold"
+                  />
                   <SpaceComponent width={4} />
-                  <TextComponent text="Góp ý" size={sizes.bigText} />
+                  <TextComponent
+                    text="Góp ý"
+                    size={widthSmall ? sizes.text : sizes.bigText}
+                  />
                 </div>
               ))}
 
@@ -296,10 +320,14 @@ export default function ReportListComponent() {
                 }}
                 onClick={handleApproved}
               >
-                <ArchiveTick size={26} color={colors.primary} variant="Bold" />
+                <ArchiveTick
+                  size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+                  color={colors.primary}
+                  variant="Bold"
+                />
                 <TextComponent
                   text="Duyệt"
-                  size={sizes.bigText}
+                  size={widthSmall ? sizes.text : sizes.bigText}
                   styles={{ fontWeight: "bold" }}
                 />
               </RowComponent>
@@ -324,9 +352,16 @@ export default function ReportListComponent() {
                   <SpinnerComponent />
                 ) : (
                   <>
-                    <SaveAdd size={20} color={colors.bacground} />
+                    <SaveAdd
+                      size={widthSmall ? sizes.text : sizes.bigText}
+                      color={colors.bacground}
+                    />
                     <SpaceComponent width={6} />
-                    <TextComponent text="Lưu" color={colors.bacground} />
+                    <TextComponent
+                      text="Lưu"
+                      size={widthSmall ? sizes.text : sizes.bigText}
+                      color={colors.bacground}
+                    />
                   </>
                 )}
               </button>
@@ -344,9 +379,16 @@ export default function ReportListComponent() {
                   alignItems: "center",
                 }}
               >
-                <Trash size={20} color={colors.bacground} />
+                <Trash
+                  size={widthSmall ? sizes.text : sizes.bigText}
+                  color={colors.bacground}
+                />
                 <SpaceComponent width={6} />
-                <TextComponent text="Xóa" color={colors.bacground} />
+                <TextComponent
+                  text="Xóa"
+                  size={widthSmall ? sizes.text : sizes.bigText}
+                  color={colors.bacground}
+                />
               </button>
             </RowComponent>
           </RowComponent>
@@ -376,9 +418,16 @@ export default function ReportListComponent() {
               <SpinnerComponent />
             ) : (
               <>
-                <DocumentDownload size={20} color={colors.bacground} />
+                <DocumentDownload
+                  size={widthSmall ? sizes.bigText : sizes.smallTitle}
+                  color={colors.bacground}
+                />
                 <SpaceComponent width={6} />
-                <TextComponent text="Xuất File" color={colors.bacground} />
+                <TextComponent
+                  text="Xuất File"
+                  size={widthSmall ? sizes.text : sizes.bigText}
+                  color={colors.bacground}
+                />
               </>
             )}
           </button>

@@ -85,7 +85,7 @@ export default function RegisterScreen() {
   return (
     <SectionComponent
       styles={{
-        padding: 100,
+        padding: '2%',
         background: colors.primary,
         display: "flex",
         flex: 1,
@@ -139,7 +139,7 @@ export default function RegisterScreen() {
               background: colors.bacground,
               padding: 30,
               borderRadius: 10,
-              height: "70%",
+              height: "100%",
               width: "50%",
             }}
           >

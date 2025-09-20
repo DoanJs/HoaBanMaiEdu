@@ -2,13 +2,25 @@ import { where } from "firebase/firestore";
 import { DocumentDownload } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { PlanItemComponent, RowComponent, SpaceComponent, TextComponent } from ".";
+import {
+  PlanItemComponent,
+  RowComponent,
+  SpaceComponent,
+  TextComponent,
+} from ".";
 import { colors } from "../constants/colors";
+import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
+import { widthSmall } from "../constants/reponsive";
+import { sizes } from "../constants/sizes";
 import { exportWord } from "../exportFile/WordExport";
 import { PlanTaskModel } from "../models";
-import { useChildStore, useFieldStore, useTargetStore, useUserStore } from "../zustand";
-import { convertTargetField } from "../constants/convertTargetAndField";
+import {
+  useChildStore,
+  useFieldStore,
+  useTargetStore,
+  useUserStore,
+} from "../zustand";
 
 export default function PlanListComponent() {
   const location = useLocation();
@@ -26,28 +38,34 @@ export default function PlanListComponent() {
         nameCollect: "planTasks",
         condition: [
           where("teacherIds", "array-contains", user?.id),
-          where("planId", "==", planId)],
+          where("planId", "==", planId),
+        ],
         setData: setPlanTasks,
-    });
+      });
     }
+    // eslint-disable-next-line
   }, [planId]);
 
   const handleExportWordKH = () => {
     const items = planTasks.map((planTask) => {
       return {
-        field: convertTargetField(planTask.targetId,targets, fields).nameField,
-        target: convertTargetField(planTask.targetId,targets, fields).nameTarget,
+        field: convertTargetField(planTask.targetId, targets, fields).nameField,
+        target: convertTargetField(planTask.targetId, targets, fields)
+          .nameTarget,
         intervention: planTask.intervention,
         content: planTask.content,
       };
     });
 
-    exportWord({
-      rows: items,
-      title: title.substring(2).trim(),
-      child: child?.fullName,
-      teacher: user?.fullName,
-    }, "/template_KH.docx");
+    exportWord(
+      {
+        rows: items,
+        title: title.substring(2).trim(),
+        child: child?.fullName,
+        teacher: user?.fullName,
+      },
+      "/template_KH.docx"
+    );
   };
 
   return (
@@ -64,11 +82,18 @@ export default function PlanListComponent() {
           borderBottomColor: colors.gray,
         }}
       >
-        <TextComponent text={`${title}`} size={32} />
+        <TextComponent
+          text={`${title}`}
+          size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
+          styles={{ fontWeight: "bold" }}
+        />
       </RowComponent>
 
-      <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
-        <table className="table table-bordered">
+      <div style={{ height: widthSmall ? "80%" : "85%", overflowY: "scroll" }}>
+        <table
+          className="table table-bordered"
+          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
+        >
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -98,9 +123,16 @@ export default function PlanListComponent() {
             alignItems: "center",
           }}
         >
-          <DocumentDownload size={20} color={colors.bacground} />
+          <DocumentDownload
+            size={widthSmall ? sizes.bigText : sizes.smallTitle}
+            color={colors.bacground}
+          />
           <SpaceComponent width={6} />
-          <TextComponent text="Xuất File" color={colors.bacground} />
+          <TextComponent
+            text="Xuất File"
+            size={widthSmall ? sizes.text : sizes.bigText}
+            color={colors.bacground}
+          />
         </button>
       </RowComponent>
     </div>

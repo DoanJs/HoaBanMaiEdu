@@ -728,7 +728,7 @@ export const childNTD = [
     birth: '',
     gender: '',
     shortName: '',
-    teacherIds: ['52LPPcC0ejgAWSEoWhWBCT8KHsm2', 'DevLOWAoKoeLwhGooHi5Wc5lLqs1, wYvqPwMpwhNbPFm4Im40sJ8luMF3', 'LHlXX5G8NAgPeCr5Y6fpwVcijja2'],
+    teacherIds: ['52LPPcC0ejgAWSEoWhWBCT8KHsm2', 'DevLOWAoKoeLwhGooHi5Wc5lLqs1','wYvqPwMpwhNbPFm4Im40sJ8luMF3', 'LHlXX5G8NAgPeCr5Y6fpwVcijja2'],
     createAt: serverTimestamp(),
     updateAt: serverTimestamp(),
     fullName: 'Trần Ngọc An Nhiên (Miu)'

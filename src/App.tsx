@@ -11,6 +11,7 @@ import {
   TargetComponent,
   ToastContainer,
 } from "./components";
+import { handleToastWarn } from "./constants/handleToast";
 import { auth, db } from "./firebase.config";
 import { UserModel } from "./models/UserModel";
 import {
@@ -30,7 +31,6 @@ import {
   SettingScreen,
 } from "./screens";
 import useUserStore from "./zustand/useUserStore";
-import { handleToastError, handleToastWarn } from "./constants/handleToast";
 
 type AuthState = {
   user: User | null;
@@ -57,10 +57,12 @@ export default function App() {
             })
             .catch(async () => {
               await signOut(auth);
-              handleToastWarn('Tài khoản chưa được cấp quyền, vui lòng liên hệ admin !')
+              handleToastWarn(
+                "Tài khoản chưa được cấp quyền, vui lòng liên hệ admin !"
+              );
             });
         } catch (error) {
-          console.log('error: ', error)
+          console.log("error: ", error);
         }
       } else {
         // clear user khi logout
@@ -114,7 +116,6 @@ export default function App() {
 
         <Route path="*" element={<>404</>} />
       </Routes>
-
 
       <ToastContainer />
     </div>

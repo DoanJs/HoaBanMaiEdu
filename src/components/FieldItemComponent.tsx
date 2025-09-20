@@ -27,8 +27,8 @@ export default function FieldItemComponent(props: Props) {
           justifyContent: "center",
           alignItems: "center",
           background: colors.primaryLightOpacity,
-          width: 240,
-          height: 240,
+          width: 180,
+          height: 180,
           padding: 16,
           borderRadius: 10,
           margin: 10,
@@ -37,10 +37,10 @@ export default function FieldItemComponent(props: Props) {
         }}
       >
         <div>{showUIIconTarget(title)}</div>
-        <SpaceComponent height={30} />
+        <SpaceComponent height={20} />
         <TextComponent
           text={title}
-          size={sizes.thinTitle}
+          size={sizes.bigText}
           color={colors.textBold}
           styles={{ textAlign: "center", fontWeight: "bold" }}
         />

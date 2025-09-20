@@ -40,7 +40,7 @@ export default function ForgotPasswordScreen() {
   return (
     <SectionComponent
       styles={{
-        padding: 100,
+        padding:'10% 20%',
         background: colors.primary,
         display: "flex",
         flex: 1,
@@ -56,8 +56,8 @@ export default function ForgotPasswordScreen() {
           background: colors.bacground,
           padding: 30,
           borderRadius: 10,
-          height: "60%",
-          width: "50%",
+          height: "100%",
+          width: "100%",
         }}
       >
         <TextComponent

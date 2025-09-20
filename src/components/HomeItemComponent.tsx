@@ -15,6 +15,7 @@ import { colors } from "../constants/colors";
 import { sizes } from "../constants/sizes";
 import { usePlanStore, useReportStore } from "../zustand";
 import useCartStore from "../zustand/useCartStore";
+import { widthSmall } from "../constants/reponsive";
 
 interface Props {
   title: string;
@@ -36,7 +37,7 @@ export default function HomeItemComponent(props: Props) {
       case "bank":
         result = (
           <Bank
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -48,7 +49,7 @@ export default function HomeItemComponent(props: Props) {
       case "plan":
         result = (
           <Document
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -60,7 +61,7 @@ export default function HomeItemComponent(props: Props) {
       case "chart":
         result = (
           <Chart
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -72,7 +73,7 @@ export default function HomeItemComponent(props: Props) {
       case "pending":
         result = (
           <DocumentLike
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -84,7 +85,7 @@ export default function HomeItemComponent(props: Props) {
       case "callover":
         result = (
           <Calendar1
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -96,7 +97,7 @@ export default function HomeItemComponent(props: Props) {
       case "image":
         result = (
           <Gallery
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -109,7 +110,7 @@ export default function HomeItemComponent(props: Props) {
         result = (
           <div style={{ position: "relative" }}>
             <ShoppingCart
-              size={26}
+              size={widthSmall ? sizes.smallTitle: sizes.title}
               color={
                 value === title ? colors.primaryLightOpacity : colors.textBold
               }
@@ -143,7 +144,7 @@ export default function HomeItemComponent(props: Props) {
       default:
         result = (
           <Setting2
-            size={26}
+            size={widthSmall ? sizes.smallTitle: sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -176,9 +177,9 @@ export default function HomeItemComponent(props: Props) {
         textDecoration: "none",
         display: "flex",
         alignItems: "center",
-        padding: 16,
         borderRadius: 10,
-        height: 80,
+        height: widthSmall ? 50: 80,
+        paddingLeft: 10,
         width: "100%",
         background: value === title ? colors.primaryBold : colors.primaryLight,
         cursor: "pointer",
@@ -207,7 +208,7 @@ export default function HomeItemComponent(props: Props) {
       <SpaceComponent width={6} />
       <TextComponent
         text={title}
-        size={sizes.thinTitle}
+        size={widthSmall ?  sizes.text : sizes.thinTitle}
         color={colors.text}
         styles={{ fontWeight: "bold" }}
       />

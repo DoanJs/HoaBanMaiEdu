@@ -11,6 +11,7 @@ import useCartStore from "../zustand/useCartStore";
 import useFieldStore from "../zustand/useFieldStore";
 import useInterventionStore from "../zustand/useInterventionStore";
 import useTargetStore from "../zustand/useTargetStore";
+import { widthSmall } from "../constants/reponsive";
 
 interface Props {
   index: number;
@@ -66,7 +67,7 @@ export default function CartItemComponent(props: Props) {
       <td style={{ width: "20%" }}>
         <select
           value={cart.intervention}
-          className="form-select"
+          className={`form-select ${widthSmall && 'form-select-sm'}`}
           aria-label="Default select example"
           onChange={(val) => handleSelectIntervention(val.target.value)}
         >
@@ -86,6 +87,7 @@ export default function CartItemComponent(props: Props) {
             className="btn btn-success"
             data-bs-dismiss="modal"
             onClick={() => setType("Gợi ý")}
+            style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}
           >
             Gợi ý
           </button>
@@ -94,6 +96,7 @@ export default function CartItemComponent(props: Props) {
             type="button"
             className="btn btn-primary"
             onClick={() => setType("Ý khác")}
+             style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}
           >
             Ý khác
           </button>
@@ -130,7 +133,7 @@ export default function CartItemComponent(props: Props) {
           onClick={() => removeCart(cart.id)}
         >
           <Trash
-            size={20}
+            size={widthSmall ? sizes.thinTitle : sizes.smallTitle}
             color={colors.red}
             variant="Bold"
             style={{ cursor: "pointer" }}

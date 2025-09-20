@@ -7,6 +7,8 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
+import { widthSmall } from "../../constants/reponsive";
+import { sizes } from "../../constants/sizes";
 import { PlanModel, ReportModel } from "../../models";
 import { usePlanStore, useReportStore } from "../../zustand";
 
@@ -32,16 +34,17 @@ export default function PendingScreen() {
 
   if (!plans && !reports) return <SpinnerComponent />;
   return (
-    <div style={{ width: "100%", height: "100%", overflowY: "scroll" }}>
+    <div style={{ width: "100%", height: "100%" }}>
       <RowComponent
         styles={{
           borderBottom: "1px solid",
           borderBottomColor: colors.primaryBold,
+          paddingTop: 8,
         }}
       >
         <TextComponent
-          text="Kế hoạch"
-          size={26}
+          text="KẾ HOẠCH"
+          size={widthSmall ? sizes.bigText : sizes.title}
           styles={{
             fontWeight: "bold",
             display: "flex",
@@ -50,8 +53,8 @@ export default function PendingScreen() {
           }}
         />
         <TextComponent
-          text="Báo cáo"
-          size={26}
+          text="BÁO CÁO"
+          size={widthSmall ? sizes.bigText : sizes.title}
           styles={{
             fontWeight: "bold",
             display: "flex",
@@ -61,7 +64,7 @@ export default function PendingScreen() {
         />
       </RowComponent>
 
-      <RowComponent justify="space-between">
+      <RowComponent justify="space-between" styles={{ maxHeight: '90%', alignItems:'flex-start',overflowY: "scroll" }}>
         {/* ben ke hoach */}
         <RowComponent
           styles={{ display: "flex", flexWrap: "wrap", width: "100%" }}
@@ -76,17 +79,21 @@ export default function PendingScreen() {
                   planId: _.id,
                   comment: _.comment,
                 }}
-                type="button"
-                className="btn "
                 style={{
                   background: colors.primaryLightOpacity,
                   border: "1px solid coral",
                   fontWeight: "bold",
                   margin: 10,
                   position: "relative",
+                  borderRadius: 4,
+                  padding: 8,
+                  textDecoration: "none",
                 }}
               >
-                {_.title}
+                <TextComponent
+                  text={_.title}
+                  size={widthSmall ? sizes.text : sizes.thinTitle}
+                />
                 {_.comment && (
                   <div
                     style={{
@@ -135,10 +142,15 @@ export default function PendingScreen() {
                   border: "1px solid coral",
                   fontWeight: "bold",
                   margin: 10,
+                  padding: 8,
+                  borderRadius: 4,
                   position: "relative",
                 }}
               >
-                {_.title}
+                <TextComponent
+                  text={_.title}
+                  size={widthSmall ? sizes.text : sizes.thinTitle}
+                />
                 {_.comment && (
                   <div
                     style={{

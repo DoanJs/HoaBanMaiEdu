@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { widthSmall } from "../constants/reponsive";
 import { ChildrenModel } from "../models/ChildrenModel";
 import { PlanModel } from "../models/PlanModel";
 import { ReportModel } from "../models/ReportModel";
@@ -9,8 +10,13 @@ interface Props {
   title: string;
   placeholder: string;
   type?: string;
-  width?: number | string
-  arrSource: ChildrenModel[] | TargetModel[] | PlanModel[] | ReportModel[] | SuggestModel[];
+  width?: number | string;
+  arrSource:
+    | ChildrenModel[]
+    | TargetModel[]
+    | PlanModel[]
+    | ReportModel[]
+    | SuggestModel[];
   onChange: (val: any) => void;
 }
 
@@ -27,9 +33,10 @@ export default function SearchComponent(props: Props) {
         );
         break;
       case "searchTarget":
-        items = (arrSource as TargetModel[]).filter((target) =>
-          target.name.toLowerCase().includes(value.toLowerCase())
-          || target.level === Number(value)
+        items = (arrSource as TargetModel[]).filter(
+          (target) =>
+            target.name.toLowerCase().includes(value.toLowerCase()) ||
+            target.level === Number(value)
         );
         break;
       case "searchPlan":
@@ -57,7 +64,10 @@ export default function SearchComponent(props: Props) {
   }, [value]);
 
   return (
-    <div className="input-group" style={{ width: width ?? "30%" }}>
+    <div
+      className={`input-group ${widthSmall && "input-group-sm"}`}
+      style={{ width: width ?? "40%" }}
+    >
       <span className="input-group-text" id="basic-addon1">
         {title}
       </span>
