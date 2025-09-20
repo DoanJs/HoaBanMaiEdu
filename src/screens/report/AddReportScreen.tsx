@@ -16,6 +16,7 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
+import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
 import { PlanModel, PlanTaskModel } from "../../models";
 import {
@@ -176,13 +177,13 @@ export default function AddReportScreen() {
       >
         <TextComponent
           text="Tạo báo cáo tháng"
-          size={sizes.title}
+          size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
           styles={{ fontWeight: "bold" }}
         />
         <SpaceComponent width={10} />
         <select
           onChange={(val) => handleSelectPlan(val.target.value)}
-          className="form-select"
+          className={`form-select ${widthSmall && "form-select-sm"}`}
           aria-label="Default select example"
           style={{ width: "30%" }}
         >
@@ -196,8 +197,11 @@ export default function AddReportScreen() {
         </select>
       </RowComponent>
 
-      <div style={{ height: "90%", overflowY: "scroll" }}>
-        <table className="table table-bordered">
+      <div style={{ height: "100%", overflowY: "scroll" }}>
+        <table
+          className="table table-bordered"
+          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
+        >
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -229,7 +233,7 @@ export default function AddReportScreen() {
                       }
                       className="form-control"
                       placeholder="Nhập đánh giá"
-                      rows={6}
+                      rows={4}
                       cols={300}
                       id="floatingTextarea2"
                     ></textarea>
@@ -240,17 +244,22 @@ export default function AddReportScreen() {
         </table>
       </div>
 
-      <RowComponent justify="flex-end" styles={{ padding: 20 }}>
+      <RowComponent justify="flex-end" styles={{ padding: 10 }}>
         <button
           type="button"
           className="btn btn-primary"
           style={{
             background: disable ? colors.gray : undefined,
             borderColor: disable ? colors.gray : undefined,
+            fontSize: widthSmall ? sizes.smallTitle : sizes.title,
           }}
           onClick={disable ? undefined : handleAddReport}
         >
-          {isLoading ? <SpinnerComponent /> : <>Tạo mới</>}
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <TextComponent text="Tạo mới" color={colors.bacground} />
+          )}
         </button>
       </RowComponent>
 

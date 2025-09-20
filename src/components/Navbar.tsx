@@ -18,12 +18,30 @@ import {
   query_suggests,
   query_targets,
 } from "../constants/firebase/query/Index";
+import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { useFirestoreWithMeta } from "../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../constants/useFirestoreWithMetaCondition";
-import { FieldModel, InterventionModel, PlanModel, ReportModel, TargetModel, UserModel } from "../models";
+import {
+  FieldModel,
+  InterventionModel,
+  PlanModel,
+  ReportModel,
+  TargetModel,
+  UserModel,
+} from "../models";
 import { SuggestModel } from "../models/SuggestModel";
-import { useChildStore, useFieldStore, useInterventionStore, usePlanStore, useReportStore, useSelectTargetStore, useSuggestStore, useTargetStore, useUserStore } from "../zustand";
+import {
+  useChildStore,
+  useFieldStore,
+  useInterventionStore,
+  usePlanStore,
+  useReportStore,
+  useSelectTargetStore,
+  useSuggestStore,
+  useTargetStore,
+  useUserStore,
+} from "../zustand";
 
 export default function Navbar() {
   const { id } = useParams();
@@ -32,12 +50,11 @@ export default function Navbar() {
   const { child, setChild } = useChildStore();
   const [teachers, setTeachers] = useState<UserModel[]>([]);
   const { setTargets } = useTargetStore();
-  const { setSuggests } = useSuggestStore()
+  const { setSuggests } = useSuggestStore();
   const { setFields } = useFieldStore();
   const { setPlans } = usePlanStore();
   const { setReports } = useReportStore();
   const { setInterventions } = useInterventionStore();
-
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -51,16 +68,15 @@ export default function Navbar() {
       metaDoc: "targets",
     }
   );
-  const { data: data_suggests, loading: loading_suggests } = useFirestoreWithMeta(
-    {
+  const { data: data_suggests, loading: loading_suggests } =
+    useFirestoreWithMeta({
       key: "suggestsCache",
       query: query_suggests,
       metaDoc: "suggests",
-    }
-  );
+    });
   const { data: data_plans, loading: loading_plans } =
     useFirestoreWithMetaCondition({
-      key: 'plansCache',
+      key: "plansCache",
       metaDoc: "plans",
       id: user?.id,
       nameCollect: "plans",
@@ -68,7 +84,7 @@ export default function Navbar() {
     });
   const { data: data_reports, loading: loading_reports } =
     useFirestoreWithMetaCondition({
-      key: 'reportsCache',
+      key: "reportsCache",
       metaDoc: "reports",
       id: user?.id,
       nameCollect: "reports",
@@ -144,7 +160,7 @@ export default function Navbar() {
   return (
     <SectionComponent
       styles={{
-        padding: 20,
+        padding: "1%",
         background: colors.primary,
         display: "flex",
         flex: 1,
@@ -155,7 +171,7 @@ export default function Navbar() {
         style={{
           flex: 1,
           background: colors.primaryLight,
-          padding: 20,
+          padding: "1%",
           borderRadius: 10,
         }}
       >
@@ -166,10 +182,9 @@ export default function Navbar() {
                 alt=""
                 src="https://res.cloudinary.com/filesuploadonserver/image/upload/v1757600460/HoaBanMaiEdu/icons/HBMIcon_ujnyvq.jpg"
                 style={{
-                  height: 60,
-                  width: 60,
+                  height: 50,
+                  width: 50,
                   borderRadius: 10,
-                  marginLeft: 16,
                 }}
               />
             </Link>
@@ -177,7 +192,7 @@ export default function Navbar() {
             <TextComponent
               text="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU"
               styles={{ fontWeight: "bold" }}
-              size={sizes.title}
+              size={widthSmall ? sizes.bigText : sizes.thinTitle}
             />
           </RowComponent>
 
@@ -187,9 +202,6 @@ export default function Navbar() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRight: "1px solid",
-                borderRightColor: colors.primary,
-                paddingRight: 16,
               }}
             >
               <img
@@ -202,27 +214,37 @@ export default function Navbar() {
                   objectFit: "cover",
                 }}
               />
-              <SpaceComponent width={10} />
+              <SpaceComponent width={4} />
               <TextComponent
                 text={child?.fullName as string}
                 styles={{ fontWeight: "bold" }}
-                size={sizes.bigText}
+                size={sizes.text}
               />
             </RowComponent>
             <SpaceComponent width={10} />
-            <div>
+            <div
+              style={{
+                borderLeft: "1px solid",
+                borderLeftColor: colors.primary,
+                paddingLeft: 10,
+              }}
+            >
               <TextComponent
                 text="Giáo viên phụ trách:"
                 styles={{ fontWeight: "bold" }}
-                size={sizes.bigText}
+                size={sizes.text}
               />
-              {teachers.length > 0 &&
-                teachers.map((teacher, index) => (
-                  <TextComponent
-                    key={index}
-                    text={`${index + 1}. ${teacher.fullName}`}
-                  />
-                ))}
+              <RowComponent>
+                {teachers.length > 0 &&
+                  teachers.map((teacher, index) => (
+                    <TextComponent
+                      key={index}
+                      text={`${teacher.fullName}${
+                        index !== teachers.length - 1 ? "-" : " "
+                      }`}
+                    />
+                  ))}
+              </RowComponent>
             </div>
           </RowComponent>
 
@@ -231,7 +253,7 @@ export default function Navbar() {
               <TextComponent
                 text={user?.fullName.toUpperCase() as string}
                 color={colors.textBold}
-                size={sizes.bigText}
+                size={sizes.text}
                 styles={{ fontWeight: "bold" }}
               />
               <TextComponent
@@ -245,36 +267,34 @@ export default function Navbar() {
                 alt=""
                 src={user?.avatar}
                 style={{
-                  height: 40,
-                  width: 40,
+                  height: 36,
+                  width: 36,
                   borderRadius: 100,
                   cursor: "pointer",
+                  objectFit: "cover",
                 }}
               />
             </Link>
           </RowComponent>
         </RowComponent>
 
-        <SpaceComponent height={16} />
+        <SpaceComponent height={4} />
 
         <RowComponent
           styles={{
             flex: 1,
             alignItems: "flex-start",
             borderRadius: 10,
-            height: "90%",
+            height: "89%",
           }}
         >
-          <SectionComponent
-            styles={{ display: "flex", flex: 1, height: "100%" }}
-          >
+          <div style={{ display: "flex", flex: 1 }}>
             <RowComponent
               styles={{
                 display: "flex",
                 flexDirection: "column",
                 flex: 1,
                 justifyContent: "space-between",
-                height: "100%",
               }}
             >
               <RowComponent
@@ -328,6 +348,7 @@ export default function Navbar() {
                   onClick={(val) => setSelectTarget(val)}
                 />
               </RowComponent>
+
               <HomeItemComponent
                 title="GIỎ MỤC TIÊU"
                 icon="cart"
@@ -335,12 +356,12 @@ export default function Navbar() {
                 onClick={(val) => setSelectTarget(val)}
               />
             </RowComponent>
-          </SectionComponent>
+          </div>
 
           <SectionComponent
             styles={{
               display: "flex",
-              flex: 4,
+              flex: 5,
               background: colors.bacground,
               borderRadius: 10,
               height: "100%",

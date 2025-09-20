@@ -52,7 +52,7 @@ export default function LoginScreen() {
   return (
     <SectionComponent
       styles={{
-        padding: 100,
+        padding: '2%',
         background: colors.primary,
         display: "flex",
         flex: 1,
@@ -86,7 +86,7 @@ export default function LoginScreen() {
               background: colors.bacground,
               padding: 30,
               borderRadius: 10,
-              height: "60%",
+              height: "80%",
               width: "50%",
             }}
           >

@@ -9,9 +9,10 @@ import {
   TextComponent,
 } from "../../components";
 import { colors } from "../../constants/colors";
-import { sizes } from "../../constants/sizes";
 import { ReportModel } from "../../models";
 import { useReportStore } from "../../zustand";
+import { widthSmall } from "../../constants/reponsive";
+import { sizes } from "../../constants/sizes";
 
 export default function ReportScreen() {
   const { reports } = useReportStore();
@@ -34,7 +35,7 @@ export default function ReportScreen() {
       <RowComponent
         justify="space-between"
         styles={{
-          padding: 10,
+          padding: '1%',
           alignItems: "center",
           borderBottom: "1px solid",
           borderBottomColor: colors.gray,
@@ -57,9 +58,9 @@ export default function ReportScreen() {
             alignItems: "center",
           }}
         >
-          <AddCircle size={30} color={colors.primary} variant="Bold" />
+          <AddCircle size={widthSmall ? sizes.smallTitle : sizes.bigTitle} color={colors.primary} variant="Bold" />
           <SpaceComponent width={4} />
-          <TextComponent text="Thêm mới" size={sizes.bigText} />
+          <TextComponent text="Thêm mới"  size={widthSmall ? sizes.text: sizes.thinTitle} />
         </Link>
       </RowComponent>
 
@@ -81,16 +82,17 @@ export default function ReportScreen() {
                 reportId: _.id,
               }}
               key={index}
-              type="button"
-              className="btn "
               style={{
                 background: colors.primaryLightOpacity,
                 border: "1px solid coral",
                 fontWeight: "bold",
                 margin: 10,
+                padding: 8,
+                borderRadius: 4,
+                textDecoration:'none'
               }}
             >
-              {_.title}
+              <TextComponent text={_.title} size={widthSmall ? sizes.text: sizes.thinTitle}/>
             </Link>
           ))}
       </RowComponent>

@@ -12,6 +12,7 @@ import { colors } from "../../constants/colors";
 import { sizes } from "../../constants/sizes";
 import { PlanModel } from "../../models";
 import { usePlanStore, useSelectTargetStore } from "../../zustand";
+import { widthSmall } from "../../constants/reponsive";
 
 export default function PlanScreen() {
   const { setSelectTarget } = useSelectTargetStore();
@@ -31,7 +32,7 @@ export default function PlanScreen() {
       <RowComponent
         justify="space-between"
         styles={{
-          padding: 10,
+          padding: '1%',
           alignItems: "center",
           borderBottom: "1px solid",
           borderBottomColor: colors.gray,
@@ -55,9 +56,9 @@ export default function PlanScreen() {
           }}
           onClick={() => setSelectTarget("NGÂN HÀNG MỤC TIÊU")}
         >
-          <AddCircle size={30} color={colors.primary} variant="Bold" />
+          <AddCircle size={widthSmall ? sizes.smallTitle : sizes.bigTitle} color={colors.primary} variant="Bold" />
           <SpaceComponent width={4} />
-          <TextComponent text="Thêm mới" size={sizes.bigText} />
+          <TextComponent text="Thêm mới" size={widthSmall ? sizes.text: sizes.thinTitle} />
         </Link>
       </RowComponent>
 
@@ -79,16 +80,17 @@ export default function PlanScreen() {
                 title: _.title,
                 planId: _.id,
               }}
-              type="button"
-              className="btn "
               style={{
                 background: colors.primaryLightOpacity,
                 border: "1px solid coral",
                 fontWeight: "bold",
                 margin: 10,
+                padding: 8,
+                borderRadius: 4,
+                textDecoration:'none'
               }}
             >
-              {_.title}
+              <TextComponent text={_.title} size={widthSmall ? sizes.text: sizes.thinTitle}/>
             </Link>
           ))}
       </RowComponent>

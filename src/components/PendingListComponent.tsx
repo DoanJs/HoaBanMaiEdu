@@ -14,6 +14,7 @@ import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
 import { handleToastError, handleToastSuccess } from "../constants/handleToast";
+import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { PlanTaskModel } from "../models";
 import {
@@ -119,8 +120,8 @@ export default function PendingListComponent() {
       })
       .catch((error) => {
         setIsLoading(false);
-        handleToastError("Duyệt kế hoạch thất bại !")
-        console.log(error)
+        handleToastError("Duyệt kế hoạch thất bại !");
+        console.log(error);
       });
   };
   return (
@@ -137,11 +138,15 @@ export default function PendingListComponent() {
           borderBottomColor: colors.gray,
         }}
       >
-        <TextComponent text={`${title}`} size={32} />
+        <TextComponent
+          text={`${title}`}
+          size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
+          styles={{ fontWeight: "bold" }}
+        />
       </RowComponent>
 
-      <div style={{ maxHeight: "85%", overflowY: "scroll" }}>
-        <table className="table table-bordered">
+      <div style={{ height: widthSmall ? "80%" : "85%", overflowY: "scroll" }}>
+        <table className="table table-bordered" style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}>
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -163,7 +168,7 @@ export default function PendingListComponent() {
               text={`Góp ý từ cô ${comment.split("@Js@")[0]}: `}
               size={sizes.bigText}
               styles={{ fontWeight: "bold" }}
-            />
+          />
             <SpaceComponent height={4} />
             <RowComponent>
               <textarea
@@ -191,7 +196,7 @@ export default function PendingListComponent() {
 
       <SpaceComponent height={4} />
 
-      <RowComponent justify="space-between">
+      <RowComponent justify="space-between" >
         {["Phó Giám đốc", "Giám đốc"].includes(user?.position as string) &&
           (isComment ? (
             <button
@@ -208,7 +213,10 @@ export default function PendingListComponent() {
                 alignItems: "center",
               }}
             >
-              <SaveAdd size={20} color={colors.bacground} />
+              <SaveAdd
+                size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+                color={colors.bacground}
+              />
               <SpaceComponent width={6} />
               <TextComponent text="Lưu góp ý" color={colors.bacground} />
             </button>
@@ -223,9 +231,16 @@ export default function PendingListComponent() {
               }}
               onClick={() => setIsComment(true)}
             >
-              <AddCircle size={30} color={colors.primary} variant="Bold" />
+              <AddCircle
+                size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+                color={colors.primary}
+                variant="Bold"
+              />
               <SpaceComponent width={4} />
-              <TextComponent text="Góp ý" size={sizes.bigText} />
+              <TextComponent
+                text="Góp ý"
+                size={widthSmall ? sizes.text : sizes.bigText}
+              />
             </div>
           ))}
 
@@ -236,10 +251,14 @@ export default function PendingListComponent() {
             }}
             onClick={handleApproved}
           >
-            <ArchiveTick size={26} color={colors.primary} variant="Bold" />
+            <ArchiveTick
+              size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+              color={colors.primary}
+              variant="Bold"
+            />
             <TextComponent
               text="Duyệt"
-              size={sizes.bigText}
+              size={widthSmall ? sizes.text : sizes.bigText}
               styles={{ fontWeight: "bold" }}
             />
           </RowComponent>
@@ -259,9 +278,16 @@ export default function PendingListComponent() {
               alignItems: "center",
             }}
           >
-            <Edit2 size={20} color={colors.bacground} />
+            <Edit2
+              size={widthSmall ? sizes.text : sizes.bigText}
+              color={colors.bacground}
+            />
             <SpaceComponent width={6} />
-            <TextComponent text="Sửa" color={colors.bacground} />
+            <TextComponent
+              text="Sửa"
+              size={widthSmall ? sizes.text : sizes.bigText}
+              color={colors.bacground}
+            />
           </Link>
           <SpaceComponent width={10} />
           <button
@@ -277,9 +303,9 @@ export default function PendingListComponent() {
               alignItems: "center",
             }}
           >
-            <Trash size={20} color={colors.bacground} />
+            <Trash size={widthSmall ? sizes.text : sizes.bigText} color={colors.bacground} />
             <SpaceComponent width={6} />
-            <TextComponent text="Xóa" color={colors.bacground} />
+            <TextComponent text="Xóa" size={widthSmall ? sizes.text : sizes.bigText} color={colors.bacground} />
           </button>
         </RowComponent>
       </RowComponent>

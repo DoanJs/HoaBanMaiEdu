@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   CartItemComponent,
+  ModalAddPlanComponent,
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
@@ -20,10 +21,12 @@ import { colors } from "../../constants/colors";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocData } from "../../constants/firebase/getDocData";
+import { updateDocData } from "../../constants/firebase/updateDocData";
 import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
+import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
 import { db } from "../../firebase.config";
 import { PlanModel } from "../../models";
@@ -48,6 +51,7 @@ export default function CartScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [plan, setPlan] = useState<PlanModel>();
+  const { editPlan, plans } = usePlanStore();
 
   useEffect(() => {
     if (carts.length > 0 && title !== "") {
@@ -131,6 +135,25 @@ export default function CartScreen() {
             console.log(error);
           });
       } else {
+        if (title !== plan?.title) {
+          updateDocData({
+            nameCollect: "plans",
+            id: cartEdit,
+            valueUpdate: {
+              title,
+            },
+            metaDoc: "plans",
+          })
+            .then(() => {
+              const index = plans.findIndex((_) => _.id === cartEdit);
+              if (index !== -1) {
+                editPlan(cartEdit, { ...plans[index], title });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
         // xoa het cai cu
         const snapShot = await getDocs(
           query(
@@ -185,7 +208,10 @@ export default function CartScreen() {
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
       <RowComponent justify="space-between">
-        <div className="input-group" style={{ width: "30%" }}>
+        <div
+          className={`input-group ${widthSmall && "input-group-sm"}`}
+          style={{ width: "50%" }}
+        >
           <span className="input-group-text" id="basic-addon1">
             Tạo kế hoạch tháng
           </span>
@@ -194,7 +220,7 @@ export default function CartScreen() {
             onChange={(e) => setTitle(e.target.value)}
             type="text"
             className="form-control"
-            placeholder="VD: KH 09/2022"
+            placeholder="VD: KH 09/2025"
             aria-label="Username"
             aria-describedby="basic-addon1"
           />
@@ -210,14 +236,24 @@ export default function CartScreen() {
           }}
           onClick={() => setSelectTarget("NGÂN HÀNG MỤC TIÊU")}
         >
-          <AddCircle size={30} color={colors.primary} variant="Bold" />
+          <AddCircle
+            size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+            color={colors.primary}
+            variant="Bold"
+          />
           <SpaceComponent width={4} />
-          <TextComponent text="Thêm mục tiêu" size={sizes.bigText} />
+          <TextComponent
+            text="Thêm mục tiêu"
+            size={widthSmall ? sizes.text : sizes.thinTitle}
+          />
         </Link>
       </RowComponent>
       <SpaceComponent height={10} />
-      <div style={{ height: "85%", overflowY: "scroll" }}>
-        <table className="table table-bordered">
+      <div style={{ height: widthSmall ? "78%" : "85%", overflowY: "scroll" }}>
+        <table
+          className="table table-bordered"
+          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
+        >
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">STT</th>
@@ -245,24 +281,26 @@ export default function CartScreen() {
       >
         <button
           style={{
-            background: disable ? colors.gray : undefined,
-            borderColor: disable ? colors.gray : undefined,
+            fontSize: widthSmall ? sizes.text : sizes.bigText,
           }}
-          onClick={disable ? undefined : handleAddEditPlan}
+          // onClick={disable ? undefined : handleAddEditPlan}
           type="button"
           className="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#addPlanModal"
         >
           {isLoading ? (
             <SpinnerComponent />
           ) : cartEdit ? (
             <>Lưu</>
           ) : (
-            <>Tạo mới</>
+            <TextComponent text="Tạo mới" color={colors.bacground} />
           )}
         </button>
       </RowComponent>
 
       <LoadingOverlay show={isLoading} />
+      <ModalAddPlanComponent />
     </div>
   );
 }

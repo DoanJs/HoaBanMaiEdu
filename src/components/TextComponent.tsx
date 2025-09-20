@@ -49,17 +49,17 @@ export default function TextComponent(props: Props) {
   }
 
   return (
-      <p
-        style={{
-          display: 'flex',
-          flex: flex,
-          fontSize: size ?? fontSize,
-          color: color ?? colors.text,
-          margin: 0,
-          ...styles,
-        }}
-      >
-        {text}
-      </p>
+    <p
+      style={{
+        display: "flex",
+        flex: flex,
+        fontSize: size ?? fontSize,
+        color: color ?? colors.text,
+        margin: 0,
+        ...styles,
+      }}
+    >
+      {text}
+    </p>
   );
 }

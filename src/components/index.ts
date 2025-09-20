@@ -4,6 +4,7 @@ import CardImageComponent from "./CardImageComponent";
 import CartItemComponent from "./CartItemComponent";
 import FieldItemComponent from "./FieldItemComponent";
 import HomeItemComponent from "./HomeItemComponent";
+import ModalAddPlanComponent from "./modal/ModalAddPlanComponent";
 import ModalDeleteComponent from "./modal/ModalDeleteComponent";
 import ModalEditCallover from "./modal/ModalEditCallover";
 import ModalResetPassword from "./modal/ModalResetPassword";
@@ -26,12 +27,18 @@ import TextComponent from "./TextComponent";
 export {
   CalloverItemComponent,
   CardImageComponent,
-  CartItemComponent, FieldItemComponent,
+  CartItemComponent,
+  FieldItemComponent,
   HomeItemComponent,
-  ModalDeleteComponent, ModalEditCallover, ModalResetPassword,
+  ModalAddPlanComponent,
+  ModalDeleteComponent,
+  ModalEditCallover,
+  ModalResetPassword,
   Navbar,
   PendingItemComponent,
-  PendingListComponent, PlanItemComponent, PlanListComponent,
+  PendingListComponent,
+  PlanItemComponent,
+  PlanListComponent,
   ReportItemComponent,
   ReportListComponent,
   RowComponent,
@@ -41,6 +48,6 @@ export {
   SpinnerComponent,
   TargetComponent,
   TargetItemComponent,
-  TextComponent, ToastContainer
+  TextComponent,
+  ToastContainer,
 };
-

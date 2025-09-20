@@ -16,7 +16,7 @@ export default function CardImageComponent(props: Props) {
   return (
     <Link
       to={link}
-      state={{childInfo}}
+      state={{ childInfo }}
       style={{
         textDecoration: "none",
         cursor: "pointer",
