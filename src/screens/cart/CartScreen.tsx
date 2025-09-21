@@ -22,6 +22,7 @@ import { addDocData } from "../../constants/firebase/addDocData";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocData } from "../../constants/firebase/getDocData";
 import { updateDocData } from "../../constants/firebase/updateDocData";
+import { groupArrayWithField } from "../../constants/groupArrayWithField";
 import {
   handleToastError,
   handleToastSuccess,
@@ -84,6 +85,7 @@ export default function CartScreen() {
             title,
             childId: child.id,
             teacherIds: child.teacherIds,
+            authorId: user.id,
             status: "pending",
             comment: "",
 
@@ -99,6 +101,7 @@ export default function CartScreen() {
               title,
               childId: child.id,
               teacherIds: child.teacherIds,
+              authorId: user.id,
               status: "pending",
               comment: "",
 
@@ -112,8 +115,9 @@ export default function CartScreen() {
                   content: cart.content ?? "",
                   intervention: cart.intervention ?? "",
                   teacherIds: child.teacherIds,
+                  authorId: user.id,
                   planId: result.id,
-                  targetId: cart.id,
+                  targetId: cart.targetId,
                   childId: child.id,
 
                   createAt: serverTimestamp(),
@@ -128,6 +132,9 @@ export default function CartScreen() {
             setIsLoading(false);
             setCarts([]);
             setTitle("");
+            const promiseCartItems = carts.map((cart) =>
+              deleteDocData({ nameCollect: 'carts', id: cart.id, metaDoc: 'carts' }))
+            await Promise.all(promiseCartItems)
           })
           .catch((error) => {
             handleToastError("Thêm mới kế hoạch thất bại !");
@@ -180,8 +187,9 @@ export default function CartScreen() {
             value: {
               childId: child.id,
               planId: cartEdit,
-              targetId: cart.id,
+              targetId: cart.targetId,
               teacherIds: child.teacherIds,
+              authorId: user.id,
               content: cart.content ?? "",
               intervention: cart.intervention ?? "",
 
@@ -203,7 +211,6 @@ export default function CartScreen() {
       setSelectTarget("CHỜ DUYỆT");
     }
   };
-
   return (
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
@@ -256,9 +263,9 @@ export default function CartScreen() {
         >
           <thead>
             <tr style={{ textAlign: "center" }}>
-              <th scope="col">STT</th>
               <th scope="col">Lĩnh vực</th>
               <th scope="col">Mục tiêu</th>
+              <th scope="col">Level</th>
               <th scope="col">Mức độ hỗ trợ</th>
               <th scope="col">Nội dung</th>
               <th scope="col">Handle</th>
@@ -266,8 +273,8 @@ export default function CartScreen() {
           </thead>
           <tbody>
             {carts.length > 0 &&
-              carts.map((_, index) => (
-                <CartItemComponent key={index} index={index} cart={_} />
+              groupArrayWithField(carts, 'fieldId').map((_, index) => (
+                <CartItemComponent key={index} cart={_} />
               ))}
           </tbody>
         </table>
@@ -279,28 +286,49 @@ export default function CartScreen() {
           padding: 10,
         }}
       >
-        <button
-          style={{
-            fontSize: widthSmall ? sizes.text : sizes.bigText,
-          }}
-          // onClick={disable ? undefined : handleAddEditPlan}
-          type="button"
-          className="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#addPlanModal"
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : cartEdit ? (
-            <>Lưu</>
-          ) : (
-            <TextComponent text="Tạo mới" color={colors.bacground} />
-          )}
-        </button>
+        {
+          carts.length > 0 &&
+          (title === '' ?
+            <button
+              style={{
+                fontSize: widthSmall ? sizes.text : sizes.bigText,
+              }}
+              type="button"
+              className="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addPlanModal"
+            >
+              {isLoading ? (
+                <SpinnerComponent />
+              ) : cartEdit ? (
+                <>Lưu</>
+              ) : (
+                <TextComponent text="Tạo mới" color={colors.bacground} />
+              )}
+            </button>
+            :
+            <button
+              style={{
+                fontSize: widthSmall ? sizes.text : sizes.bigText,
+              }}
+              onClick={disable ? undefined : handleAddEditPlan}
+              type="button"
+              className="btn btn-primary"
+            >
+              {isLoading ? (
+                <SpinnerComponent />
+              ) : cartEdit ? (
+                <>Lưu</>
+              ) : (
+                <TextComponent text="Tạo mới" color={colors.bacground} />
+              )}
+            </button>)
+
+        }
       </RowComponent>
 
       <LoadingOverlay show={isLoading} />
-      <ModalAddPlanComponent />
+      <ModalAddPlanComponent title={title} setTitle={setTitle} handleAddEditPlan={handleAddEditPlan} />
     </div>
   );
 }

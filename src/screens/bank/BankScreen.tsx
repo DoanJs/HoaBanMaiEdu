@@ -6,8 +6,7 @@ import {
   RowComponent,
   SpinnerComponent,
 } from "../../components";
-import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
-import { PlanTaskModel } from "../../models";
+import { getDocsData } from "../../constants/firebase/getDocsData";
 import { useFieldStore, usePlanTaskStore, useUserStore } from "../../zustand";
 
 export default function BankScreen() {
@@ -15,25 +14,19 @@ export default function BankScreen() {
   const { user } = useUserStore();
   const { fields } = useFieldStore();
   const { setPlanTasks } = usePlanTaskStore();
-  const { data: data_planTasks, loading: loading_planTasks } =
-    useFirestoreWithMetaCondition({
-      key: "planTasksCache",
-      metaDoc: "plans",
-      id: user?.id,
-      nameCollect: "planTasks",
-      condition: [
-        where("teacherIds", "array-contains", user?.id),
-        where("childId", "==", id),
-      ],
-    });
-
   useEffect(() => {
-    if (data_planTasks) {
-      setPlanTasks(data_planTasks as PlanTaskModel[]);
+    if (id) {
+      getDocsData({
+        nameCollect: 'planTasks',
+        condition: [
+          where("teacherIds", "array-contains", user?.id),
+          where("childId", "==", id),],
+        setData: setPlanTasks
+      })
     }
-  }, [data_planTasks]);
+  }, [id]);
 
-  if (!fields && loading_planTasks) return <SpinnerComponent />;
+  if (!fields ) return <SpinnerComponent />;
   return (
     <RowComponent
       styles={{

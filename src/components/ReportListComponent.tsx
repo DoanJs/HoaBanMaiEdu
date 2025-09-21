@@ -20,18 +20,19 @@ import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
+import { groupArrayWithField } from "../constants/groupArrayWithField";
 import { handleToastError, handleToastSuccess } from "../constants/handleToast";
 import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { exportWord } from "../exportFile/WordExport";
 import { db } from "../firebase.config";
-import { ReportTaskModel } from "../models";
+import { PlanTaskModel, ReportTaskModel } from "../models";
 import {
   useChildStore,
   useFieldStore,
   useReportStore,
   useTargetStore,
-  useUserStore,
+  useUserStore
 } from "../zustand";
 import LoadingOverlay from "./LoadingOverLay";
 
@@ -50,6 +51,7 @@ export default function ReportListComponent() {
   const [isComment, setIsComment] = useState(false);
   const [text, setText] = useState("");
   const { reports, editReport } = useReportStore();
+  const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
@@ -77,7 +79,24 @@ export default function ReportListComponent() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
+  useEffect(() => {
+    if (reportTasks.length > 0) {
+      getPlanTasks(reportTasks)
+    }
+  }, [reportTasks])
 
+  const getPlanTasks = async (reportTasks: ReportTaskModel[]) => {
+    const promiseItems = reportTasks.map(async (reportTask) => {
+      const docSnap = await getDoc(doc(db, 'planTasks', reportTask.planTaskId))
+      return {
+        ...docSnap.data(),
+        id: docSnap.id
+      }
+    })
+    const result = await Promise.all(promiseItems)
+
+    setPlanTasks(result as PlanTaskModel[])
+  }
   const handleSaveReportTask = async () => {
     // luu phia firestore
     if (!disable) {
@@ -107,7 +126,7 @@ export default function ReportListComponent() {
   };
   const handleExportWordBC = async () => {
     setIsLoading(true);
-    const promiseItems = reportTasks.map(async (reportTask) => {
+    const promiseItems = handleGroupReportWithField(reportTasks).map(async (reportTask) => {
       const docSnap = await getDoc(doc(db, "planTasks", reportTask.planTaskId));
       if (docSnap.exists()) {
         return {
@@ -176,6 +195,20 @@ export default function ReportListComponent() {
         console.log(error);
       });
   };
+  const getPlanTask = (planTaskId: string, planTasks: PlanTaskModel[]) => {
+    const index = planTasks.findIndex((planTask) => planTask.id === planTaskId)
+    if (index !== -1) {
+      return planTasks[index]
+    }
+  }
+  const handleGroupReportWithField = (reportTasks: ReportTaskModel[]) => {
+    return groupArrayWithField(reportTasks.map((reportTask) => {
+      return {
+        ...reportTask,
+        fieldId: convertTargetField(getPlanTask(reportTask.planTaskId, planTasks)?.targetId as string, targets, fields).fieldId
+      }
+    }), 'fieldId')
+  }
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -215,7 +248,7 @@ export default function ReportListComponent() {
           </thead>
           <tbody style={{ textAlign: "justify" }}>
             {reportTasks &&
-              reportTasks.map((_, index) => (
+              handleGroupReportWithField(reportTasks).map((_, index) => (
                 <ReportItemComponent
                   key={index}
                   reportTask={_}
@@ -232,7 +265,7 @@ export default function ReportListComponent() {
           <>
             <TextComponent
               text={`Góp ý từ cô ${comment.split("@Js@")[0]}: `}
-              size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
+              size={widthSmall ? sizes.text : sizes.bigTitle}
               styles={{ fontWeight: "bold" }}
             />
             <SpaceComponent height={4} />

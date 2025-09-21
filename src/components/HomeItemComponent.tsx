@@ -29,7 +29,7 @@ export default function HomeItemComponent(props: Props) {
   const { carts } = useCartStore();
   const { plans } = usePlanStore();
   const { reports } = useReportStore();
-
+  
   const showUI = () => {
     let result: any;
     let navigate: string;
@@ -161,7 +161,7 @@ export default function HomeItemComponent(props: Props) {
     // eslint-disable-next-line
     let isComment: boolean = false;
     plans.concat(reports).map((_) => {
-      if (_.comment) {
+      if (_.comment && _.status === 'pending') {
         isComment = true;
       }
     })

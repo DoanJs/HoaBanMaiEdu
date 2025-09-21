@@ -1,6 +1,6 @@
 import { where } from "firebase/firestore";
 import { AddCircle, ArchiveTick, Edit2, SaveAdd, Trash } from "iconsax-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ModalDeleteComponent,
@@ -13,6 +13,7 @@ import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
+import { groupArrayWithField } from "../constants/groupArrayWithField";
 import { handleToastError, handleToastSuccess } from "../constants/handleToast";
 import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
@@ -44,6 +45,7 @@ export default function PendingListComponent() {
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(true);
+  const textareaPlanRef = useRef<any>(null);
 
   // Lấy trực tiếp từ firebase
   useEffect(() => {
@@ -72,14 +74,19 @@ export default function PendingListComponent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
 
+  useEffect(() => {
+if(isComment){
+  textareaPlanRef.current.focus()
+}
+  },[isComment])
   const handleEditPlan = () => {
     const convertPlanTasksToCarts = planTasks.map((_) => {
       const { targetId, planId, ...newPlanTask } = _;
       return {
         ...newPlanTask,
+        targetId: _.targetId,
         fieldId: convertTargetField(_.targetId, targets, fields).fieldId,
-        id: _.targetId, //targetId
-        name: convertTargetField(_.targetId, targets, fields).nameTarget,
+        // name: convertTargetField(_.targetId, targets, fields).nameTarget,
       };
     });
     setCarts(convertPlanTasksToCarts);
@@ -124,6 +131,11 @@ export default function PendingListComponent() {
         console.log(error);
       });
   };
+  const hanldeGroupPlanWithField = (planTasks: PlanTaskModel[]) => {
+    return groupArrayWithField(planTasks.map((_) => {
+      return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
+    }), 'fieldId')
+  }
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -146,7 +158,7 @@ export default function PendingListComponent() {
       </RowComponent>
 
       <div style={{ height: widthSmall ? "80%" : "85%", overflowY: "scroll" }}>
-        <table className="table table-bordered" style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}>
+        <table className="table table-bordered" style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}>
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -157,7 +169,7 @@ export default function PendingListComponent() {
           </thead>
           <tbody style={{ textAlign: "justify" }}>
             {planTasks.length > 0 &&
-              planTasks.map((_, index) => (
+              hanldeGroupPlanWithField(planTasks).map((_, index) => (
                 <PendingItemComponent key={index} planTask={_} />
               ))}
           </tbody>
@@ -168,10 +180,11 @@ export default function PendingListComponent() {
               text={`Góp ý từ cô ${comment.split("@Js@")[0]}: `}
               size={sizes.bigText}
               styles={{ fontWeight: "bold" }}
-          />
+            />
             <SpaceComponent height={4} />
             <RowComponent>
               <textarea
+                ref={textareaPlanRef}
                 style={{
                   padding: 10,
                   textAlign: "justify",

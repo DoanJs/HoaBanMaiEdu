@@ -28,6 +28,7 @@ import {
   useTargetStore,
   useUserStore,
 } from "../../zustand";
+import { groupArrayWithField } from "../../constants/groupArrayWithField";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -114,6 +115,7 @@ export default function AddReportScreen() {
             title: plan?.title.replace("KH", "BC") as string,
             childId: child.id,
             teacherIds: child.teacherIds,
+            authorId: user.id,
             planId: plan?.id as string,
             status: "pending",
             comment: "",
@@ -213,7 +215,9 @@ export default function AddReportScreen() {
           </thead>
           <tbody>
             {planTasks &&
-              planTasks.map((_, index) => (
+              groupArrayWithField(planTasks.map((_) => {
+                return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
+              }), 'fieldId').map((_, index) => (
                 <tr key={index}>
                   <th scope="row">
                     {convertTargetField(_.targetId, targets, fields).nameField}

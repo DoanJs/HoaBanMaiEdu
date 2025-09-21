@@ -32,6 +32,7 @@ import {
 } from "../models";
 import { SuggestModel } from "../models/SuggestModel";
 import {
+  useCartStore,
   useChildStore,
   useFieldStore,
   useInterventionStore,
@@ -42,6 +43,7 @@ import {
   useTargetStore,
   useUserStore,
 } from "../zustand";
+import { CartModel } from "../models/CartModel";
 
 export default function Navbar() {
   const { id } = useParams();
@@ -55,6 +57,7 @@ export default function Navbar() {
   const { setPlans } = usePlanStore();
   const { setReports } = useReportStore();
   const { setInterventions } = useInterventionStore();
+  const {setCarts} = useCartStore()
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -80,6 +83,14 @@ export default function Navbar() {
       metaDoc: "plans",
       id: user?.id,
       nameCollect: "plans",
+      condition: [where("teacherIds", "array-contains", user?.id)],
+    });
+  const { data: data_carts, loading: loading_carts } =
+    useFirestoreWithMetaCondition({
+      key: "cartsCache",
+      metaDoc: "carts",
+      id: user?.id,
+      nameCollect: "carts",
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
   const { data: data_reports, loading: loading_reports } =
@@ -117,6 +128,13 @@ export default function Navbar() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_plans, loading_plans]);
+  useEffect(() => {
+    if (!loading_carts) {
+      const items = data_carts as CartModel[];
+      setCarts(items.filter((cart) => cart.childId === child?.id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_carts, loading_carts]);
   useEffect(() => {
     if (!loading) {
       setFields(data_fields as FieldModel[]);
@@ -234,16 +252,26 @@ export default function Navbar() {
                 styles={{ fontWeight: "bold" }}
                 size={sizes.text}
               />
-              <RowComponent>
-                {teachers.length > 0 &&
-                  teachers.map((teacher, index) => (
-                    <TextComponent
-                      key={index}
-                      text={`${teacher.fullName}${
-                        index !== teachers.length - 1 ? "-" : " "
-                      }`}
-                    />
-                  ))}
+              <RowComponent styles={{alignItems:'flex-start'}}>
+                <div>
+                  {teachers.length > 0 &&
+                    teachers.map((teacher, index) =>  index < 2 &&(
+                      <TextComponent
+                        key={index}
+                        text={`${index + 1}. ${teacher.fullName}`}
+                      />
+                    ))}
+                </div>
+                <SpaceComponent width={20}/>
+                <div>
+                  {teachers.length > 0 && 
+                    teachers.map((teacher, index) => index >= 2 && (
+                      <TextComponent
+                        key={index}
+                        text={`${index + 1}. ${teacher.fullName}`}
+                      />
+                    ))}
+                </div>
               </RowComponent>
             </div>
           </RowComponent>

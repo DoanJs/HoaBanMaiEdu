@@ -11,6 +11,7 @@ import {
 import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
 import { getDocsData } from "../constants/firebase/getDocsData";
+import { groupArrayWithField } from "../constants/groupArrayWithField";
 import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { exportWord } from "../exportFile/WordExport";
@@ -47,7 +48,7 @@ export default function PlanListComponent() {
   }, [planId]);
 
   const handleExportWordKH = () => {
-    const items = planTasks.map((planTask) => {
+    const items = hanldeGroupPlanWithField(planTasks).map((planTask) => {
       return {
         field: convertTargetField(planTask.targetId, targets, fields).nameField,
         target: convertTargetField(planTask.targetId, targets, fields)
@@ -67,6 +68,11 @@ export default function PlanListComponent() {
       "/template_KH.docx"
     );
   };
+  const hanldeGroupPlanWithField = (planTasks: PlanTaskModel[]) => {
+    return groupArrayWithField(planTasks.map((_) => {
+      return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
+    }), 'fieldId')
+  }
 
   return (
     <div style={{ width: "100%" }}>
@@ -104,7 +110,7 @@ export default function PlanListComponent() {
           </thead>
           <tbody style={{ textAlign: "justify" }}>
             {planTasks.length > 0 &&
-              planTasks.map((_, index) => (
+              hanldeGroupPlanWithField(planTasks).map((_, index) => (
                 <PlanItemComponent key={index} planTask={_} />
               ))}
           </tbody>
