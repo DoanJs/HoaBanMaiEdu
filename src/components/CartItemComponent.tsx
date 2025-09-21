@@ -4,6 +4,8 @@ import Select, { SingleValue } from "react-select";
 import { RowComponent, SpaceComponent } from ".";
 import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
+import { deleteDocData } from "../constants/firebase/deleteDocData";
+import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { SuggestModel } from "../models/SuggestModel";
 import { useSuggestStore } from "../zustand";
@@ -11,15 +13,13 @@ import useCartStore from "../zustand/useCartStore";
 import useFieldStore from "../zustand/useFieldStore";
 import useInterventionStore from "../zustand/useInterventionStore";
 import useTargetStore from "../zustand/useTargetStore";
-import { widthSmall } from "../constants/reponsive";
 
 interface Props {
-  index: number;
   cart: any;
 }
 
 export default function CartItemComponent(props: Props) {
-  const { index, cart } = props;
+  const { cart } = props;
   const { fields } = useFieldStore();
   const { removeCart, editCart } = useCartStore();
   const [type, setType] = useState("");
@@ -33,10 +33,10 @@ export default function CartItemComponent(props: Props) {
     if (cart && cart.content) {
       setText(cart.content);
       const index = suggests.findIndex((suggest) => suggest.name === cart.content)
-      if(index!==-1){
+      if (index !== -1) {
         setSuggest(suggests[index])
         setType('Gợi ý')
-      }else{
+      } else {
         setType('Ý khác')
       }
     }
@@ -61,9 +61,9 @@ export default function CartItemComponent(props: Props) {
   }
   return (
     <tr>
-      <td>{index + 1}</td>
-      <th>{convertTargetField(cart.id, targets, fields).nameField}</th>
-      <td>{convertTargetField(cart.id, targets, fields).nameTarget}</td>
+      <th>{convertTargetField(cart.targetId, targets, fields).nameField}</th>
+      <td>{convertTargetField(cart.targetId, targets, fields).nameTarget}</td>
+      <td>{convertTargetField(cart.targetId, targets, fields).levelTarget}</td>
       <td style={{ width: "20%" }}>
         <select
           value={cart.intervention}
@@ -87,7 +87,7 @@ export default function CartItemComponent(props: Props) {
             className="btn btn-success"
             data-bs-dismiss="modal"
             onClick={() => setType("Gợi ý")}
-            style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}
+            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
           >
             Gợi ý
           </button>
@@ -96,7 +96,7 @@ export default function CartItemComponent(props: Props) {
             type="button"
             className="btn btn-primary"
             onClick={() => setType("Ý khác")}
-             style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}
+            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
           >
             Ý khác
           </button>
@@ -130,7 +130,10 @@ export default function CartItemComponent(props: Props) {
       <td>
         <div
           style={{ textAlign: "center", cursor: "pointer" }}
-          onClick={() => removeCart(cart.id)}
+          onClick={() => {
+            removeCart(cart.id)
+            deleteDocData({ nameCollect: 'carts', id: cart.id, metaDoc: 'carts' })
+          }}
         >
           <Trash
             size={widthSmall ? sizes.thinTitle : sizes.smallTitle}

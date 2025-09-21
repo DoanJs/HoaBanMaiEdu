@@ -1,7 +1,10 @@
+import { serverTimestamp } from "firebase/firestore";
 import { colors } from "../constants/colors";
+import { addDocData } from "../constants/firebase/addDocData";
 import { TargetModel } from "../models/TargetModel";
-import { usePlanTaskStore } from "../zustand";
+import { useChildStore, usePlanTaskStore, useUserStore } from "../zustand";
 import useCartStore from "../zustand/useCartStore";
+import { deleteDocData } from "../constants/firebase/deleteDocData";
 
 interface Props {
   index: number;
@@ -12,10 +15,12 @@ export default function TargetItemComponent(props: Props) {
   const { index, target } = props;
   const { carts, removeCart, addCart } = useCartStore();
   const { planTasks } = usePlanTaskStore();
+  const { child } = useChildStore()
+  const { user } = useUserStore()
 
   const showSelected = () => {
     let status: boolean = false;
-    const index = carts.findIndex((cart) => cart.id === target.id);
+    const index = carts.findIndex((cart) => cart.targetId === target.id);
     if (index === -1) {
       status = false;
     } else {
@@ -38,15 +43,53 @@ export default function TargetItemComponent(props: Props) {
     return isSelected;
   };
   const handleSelected = () => {
-    const index = carts.findIndex((cart) => cart.id === target.id);
-    if (index !== -1) {
-      removeCart(target.id);
-    } else {
-      addCart(target);
+    if (user && child) {
+      const index = carts.findIndex((cart) => cart.targetId === target.id);
+      if (index !== -1) {
+        removeCart(carts[index].id);
+        deleteDocData({
+          nameCollect: 'carts',
+          id: carts[index].id,
+          metaDoc: 'carts'
+        })
+      } else {
+        addDocData({
+          nameCollect: 'carts',
+          value: {
+            targetId: target.id,
+            level: target.level,
+            name: target.name,
+            fieldId: target.fieldId,
+
+            content: "",
+            intervention: "",
+            childId: child.id,
+            teacherIds: child.teacherIds,
+            author: user.id,
+
+            createAt: serverTimestamp(),
+            updateAt: serverTimestamp(),
+          },
+          metaDoc: 'carts'
+        }).then((result) => addCart({
+          ...target,
+          id: result.id,
+          targetId: target.id,
+          content: "",
+          intervention: "",
+          childId: child.id,
+          teacherIds: child.teacherIds,
+          author: user.id,
+
+          createAt: serverTimestamp(),
+          updateAt: serverTimestamp(),
+        }))
+      }
     }
   };
+
   return (
-    <tr style={{ color: isSelectedTarget() ? 'coral': colors.textBold }}>
+    <tr style={{ color: isSelectedTarget() ? 'coral' : colors.textBold }}>
       <td style={{ textAlign: "center" }}>{index + 1}</td>
       <td>
         <label className="form-check-label" htmlFor={`targetItem${target.id}`}>

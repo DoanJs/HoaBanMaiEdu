@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { colors } from "../../constants/colors"
 
-export default function ModalAddPlanComponent() {
-  const [title, setTitle] = useState('');
+interface Props {
+  title: string
+  setTitle: any
+  handleAddEditPlan: () => void
+}
+
+export default function ModalAddPlanComponent(props: Props) {
+  const { title, setTitle, handleAddEditPlan } = props
+
   return (
     <div
       className="modal fade"
@@ -25,7 +32,6 @@ export default function ModalAddPlanComponent() {
           </div>
           <div className="modal-body">
             <input
-              value={title}
               onChange={(e) => setTitle(e.target.value)}
               type="text"
               className="form-control"
@@ -42,7 +48,15 @@ export default function ModalAddPlanComponent() {
             >
               Hủy
             </button>
-            <button type="button" className="btn btn-primary">
+            <button type="button"
+              data-bs-dismiss="modal"
+              className="btn btn-primary"
+              onClick={title === '' ? undefined : handleAddEditPlan}
+              style={{
+                backgroundColor: title === '' ? colors.gray : undefined,
+                borderColor: title === '' ? colors.gray : undefined,
+              }}
+            >
               Tiếp tục
             </button>
           </div>
@@ -50,8 +64,4 @@ export default function ModalAddPlanComponent() {
       </div>
     </div>
   );
-  //   <!-- Button trigger modal -->
-  // <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlanModal">
-  //   Launch demo modal
-  // </button>
 }

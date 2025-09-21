@@ -9,6 +9,7 @@ export interface PlanTaskModel {
   planId: string;
   childId: string;
   teacherIds: string[]
+  authorId: string
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

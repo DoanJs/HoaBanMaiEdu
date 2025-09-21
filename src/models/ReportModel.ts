@@ -7,6 +7,7 @@ export interface ReportModel {
   title: string;
   childId: string
   teacherIds: string[]
+  authorId: string
   planId: string
   status: string
   comment: string

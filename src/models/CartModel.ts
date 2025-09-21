@@ -1,15 +1,18 @@
 import { FieldValue } from "firebase/firestore";
 import { TimeAtModel } from "./TimeAtModel";
 
-export interface PlanModel {
+export interface CartModel {
   id: string;
-  type: string
-  title: string
-  childId: string
+  fieldId: string;
+  level: number;
+  name: string;
+  targetId: string
+  
+  content: string;
+  intervention: string;
+  childId: string;
   teacherIds: string[]
-  authorId: string
-  status: string
-  comment: string
+  author: string
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

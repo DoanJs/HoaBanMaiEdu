@@ -9,6 +9,7 @@ export interface ReportTaskModel {
   reportId: string
   childId: string
   teacherIds: string[]
+  authorId: string
 
   createAt: TimeAtModel;
   updateAt: TimeAtModel;

@@ -8,11 +8,13 @@ export const convertTargetField = (
   let nameTarget: string = "";
   let fieldId: string = "";
   let nameField: string = ""
+  let levelTarget: number = 0
 
   const index = targets.findIndex((target) => target.id === targetId);
   if (index !== -1) {
     nameTarget = targets[index].name;
     fieldId = targets[index].fieldId;
+    levelTarget = targets[index].level
 
     const indexField = fields.findIndex(field => field.id === fieldId)
     if (indexField !== -1) {
@@ -20,5 +22,5 @@ export const convertTargetField = (
     }
   }
 
-  return { nameTarget, nameField, fieldId };
+  return { nameTarget, nameField, fieldId , levelTarget};
 };
