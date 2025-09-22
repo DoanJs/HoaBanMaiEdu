@@ -1,20 +1,22 @@
 import { Edit2 } from "iconsax-react";
-import { useEffect, useState } from "react";
 import { TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
+import { convertTargetField } from "../../constants/convertTargetAndField";
 import { sizes } from "../../constants/sizes";
-import { ChildrenModel, TargetModel, UserModel } from "../../models";
+import { FieldModel, TargetModel } from "../../models";
+import { widthSmall } from "../../constants/reponsive";
 
 interface Props {
-  target: TargetModel
+  target: TargetModel;
+  targets: TargetModel[];
+  fields: FieldModel[];
   // teachers: UserModel[]
-  // setChildEdit: any
+  setTargetdEdit: any
 }
 
 export default function AdminTargetComponent(props: Props) {
-  const { target } = props
+  const { target, targets, fields, setTargetdEdit } = props;
   // const [teacherChilds, setTeacherChilds] = useState<any[]>([]);
-
 
   // useEffect(() => {
   //   if (child && child.teacherIds.length > 0) {
@@ -29,20 +31,27 @@ export default function AdminTargetComponent(props: Props) {
   //   }
   // }, [child])
 
-
   return (
     <tr>
       <td>
-        <TextComponent text={'child.fullName'} size={sizes.bigText} />
-        <TextComponent text={`${'child.id'}`} size={sizes.bigText} />
+        {target.name}
+        <TextComponent
+          text={
+            "-->" + convertTargetField(target.id, targets, fields).nameField
+          }
+          size={sizes.bigText}
+          styles={{ fontWeight: "bold" }}
+        />
       </td>
-      <td>{
-        // teacherChilds.map((_, index) =>
-        //   <TextComponent key={index} text={`${_.fullName}`} size={sizes.bigText} />)
-      }</td>
-      <td style={{ textAlign: 'center' }}>
-        <Edit2 size={20} color={colors.green} variant="Bold"
-          style={{ cursor: 'pointer' }} onClick={() => {}} />
+      <td>{target.level}</td>
+      <td style={{ textAlign: "center" }}>
+        <Edit2
+          size={widthSmall ? sizes.bigText : sizes.title}
+          color='coral'
+          variant="Bold"
+          style={{ cursor: "pointer" }}
+          onClick={() =>setTargetdEdit(target)}
+        />
       </td>
     </tr>
   );

@@ -15,6 +15,8 @@ interface DataModel {
   id: string;
   nameCollect: string;
   itemTasks: ReportTaskModel[] | PlanTaskModel[];
+  setForm?: any
+  setEdit?: any
 }
 interface Props {
   data: DataModel;
@@ -95,8 +97,43 @@ export default function ModalDeleteComponent(props: Props) {
       setIsLoading(false)
       handleToastError('Xóa trẻ thất bại !')
     })
+  }
+  const deleteTarget = async (targetId: string) => {
+    setIsLoading(true)
+    deleteDocData({
+      nameCollect: 'targets',
+      id: targetId,
+      metaDoc: 'targets'
+    }).then(() => {
+      setIsLoading(false)
+      handleToastSuccess('Xóa mục tiêu thành công !')
+      data.setForm({nameSuggest:'', nameTarget:'', level:0, fieldId:''})
+      data.setEdit(undefined)
+    }).catch((error) => {
+      setIsLoading(false)
+      handleToastError('Xóa mục tiêu thất bại !')
+    })
 
   }
+  const deleteSuggest = async (suggestId: string) => {
+    setIsLoading(true)
+    deleteDocData({
+      nameCollect: 'suggests',
+      id: suggestId,
+      metaDoc: 'suggests'
+    }).then(() => {
+      setIsLoading(false)
+      handleToastSuccess('Xóa gợi ý thành công !')
+      data.setForm({fieldId:'', nameSuggest:''})
+      data.setEdit(undefined)
+    }).catch((error) => {
+      setIsLoading(false)
+      handleToastError('Xóa gợi ý thất bại !')
+    })
+
+  }
+
+  
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -110,6 +147,14 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "children":
         deleteChildren(data.id);
+        break;
+
+      case "targets":
+        deleteTarget(data.id);
+        break;
+
+      case "suggests":
+        deleteSuggest(data.id);
         break;
 
       default:

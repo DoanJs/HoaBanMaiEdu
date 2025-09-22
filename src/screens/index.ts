@@ -1,6 +1,6 @@
 import AdminChildren from "./admin/AdminChildren";
 import AdminScreen from "./admin/AdminScreen";
-import AdminTargetSuggest from "./admin/AdminTargetSuggest";
+import AdminTarget from "./admin/AdminTarget";
 import ForgotPasswordScreen from "./auth/ForgotPasswordScreen";
 import LoginScreen from "./auth/LoginScreen";
 import RegisterScreen from "./auth/RegisterScreen";
@@ -18,10 +18,14 @@ import SettingScreen from "./setting/SettingScreen";
 
 export {
   AddReportScreen,
+  AdminChildren,
+  AdminScreen,
+  AdminTarget,
   BankScreen,
   CalloverScreen,
   CartScreen,
   ChildrenScreen,
+  ForgotPasswordScreen,
   LoginScreen,
   MediaScreen,
   PendingScreen,
@@ -29,7 +33,5 @@ export {
   ProfileScreen,
   RegisterScreen,
   ReportScreen,
-  AdminScreen,
   SettingScreen,
-  ForgotPasswordScreen, AdminChildren, AdminTargetSuggest
 };
