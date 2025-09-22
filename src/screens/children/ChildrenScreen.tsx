@@ -21,6 +21,7 @@ import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import { auth } from "../../firebase.config";
+import { PlanModel, ReportModel } from "../../models";
 import { ChildrenModel } from "../../models/ChildrenModel";
 import useChildrenStore from "../../zustand/useChildrenStore";
 import useUserStore from "../../zustand/useUserStore";
@@ -30,6 +31,9 @@ export default function ChildrenScreen() {
   const { user } = useUserStore();
   const { children, setChildren } = useChildrenStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [plansTotal, setPlansTotal] = useState<PlanModel[]>([]);
+  const [reportsTotal, setReportsTotal] = useState<ReportModel[]>([]);
+
   const { data: data_children, loading: loading_children } =
     useFirestoreWithMetaCondition({
       key: `${user?.id}_childrenCache`,
@@ -38,12 +42,42 @@ export default function ChildrenScreen() {
       nameCollect: "children",
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
+  const { data: data_reports, loading: loading_reports } =
+    useFirestoreWithMetaCondition({
+      key: "reportsCache",
+      metaDoc: "reports",
+      id: user?.id,
+      nameCollect: "reports",
+      condition: [where("teacherIds", "array-contains", user?.id)],
+    });
+  const { data: data_plans, loading: loading_plans } =
+    useFirestoreWithMetaCondition({
+      key: "plansCache",
+      metaDoc: "plans",
+      id: user?.id,
+      nameCollect: "plans",
+      condition: [where("teacherIds", "array-contains", user?.id)],
+    });
 
   useEffect(() => {
     if (!loading_children) {
       setChildren(data_children as ChildrenModel[]);
     }
   }, [data_children, loading_children, setChildren]);
+  useEffect(() => {
+    if (!loading_reports) {
+      const items = data_reports as ReportModel[];
+      setReportsTotal(items);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_reports, loading_reports]);
+  useEffect(() => {
+    if (!loading_plans) {
+      const items = data_plans as PlanModel[];
+      setPlansTotal(items);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data_plans, loading_plans]);
 
   const handleLogout = async () => {
     setIsLoading(true);
@@ -126,8 +160,8 @@ export default function ChildrenScreen() {
                   ? "scroll"
                   : undefined
                 : children.length > 10
-                ? "scroll"
-                : undefined,
+                  ? "scroll"
+                  : undefined,
             }}
           >
             {children.length > 0 &&
@@ -136,6 +170,8 @@ export default function ChildrenScreen() {
                   key={index}
                   childInfo={_}
                   link={`home/${_.id}`}
+                  plansTotal={plansTotal}
+                  reportsTotal={reportsTotal}
                 />
               ))}
           </RowComponent>

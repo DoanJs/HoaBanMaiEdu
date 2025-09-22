@@ -5,17 +5,17 @@ import {
   Document,
   DocumentLike,
   Gallery,
-  Notification,
+  Message,
   Setting2,
-  ShoppingCart,
+  ShoppingCart
 } from "iconsax-react";
 import { Link } from "react-router-dom";
 import { SpaceComponent, TextComponent } from ".";
 import { colors } from "../constants/colors";
+import { widthSmall } from "../constants/reponsive";
 import { sizes } from "../constants/sizes";
 import { usePlanStore, useReportStore } from "../zustand";
 import useCartStore from "../zustand/useCartStore";
-import { widthSmall } from "../constants/reponsive";
 
 interface Props {
   title: string;
@@ -29,7 +29,12 @@ export default function HomeItemComponent(props: Props) {
   const { carts } = useCartStore();
   const { plans } = usePlanStore();
   const { reports } = useReportStore();
-  
+
+  const handleQuantityPending = () => {
+    const items = plans.concat(reports).filter((_) => _.status === 'pending')
+    return items
+  }
+
   const showUI = () => {
     let result: any;
     let navigate: string;
@@ -37,7 +42,7 @@ export default function HomeItemComponent(props: Props) {
       case "bank":
         result = (
           <Bank
-            size={widthSmall ? sizes.smallTitle: sizes.title}
+            size={widthSmall ? sizes.smallTitle : sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -49,7 +54,7 @@ export default function HomeItemComponent(props: Props) {
       case "plan":
         result = (
           <Document
-            size={widthSmall ? sizes.smallTitle: sizes.title}
+            size={widthSmall ? sizes.smallTitle : sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -61,7 +66,7 @@ export default function HomeItemComponent(props: Props) {
       case "chart":
         result = (
           <Chart
-            size={widthSmall ? sizes.smallTitle: sizes.title}
+            size={widthSmall ? sizes.smallTitle : sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -72,20 +77,43 @@ export default function HomeItemComponent(props: Props) {
         break;
       case "pending":
         result = (
-          <DocumentLike
-            size={widthSmall ? sizes.smallTitle: sizes.title}
-            color={
-              value === title ? colors.primaryLightOpacity : colors.textBold
-            }
-            variant="Bold"
-          />
+          <div style={{ position: 'relative' }}>
+            <DocumentLike
+              size={widthSmall ? sizes.smallTitle : sizes.title}
+              color={
+                value === title ? colors.primaryLightOpacity : colors.textBold
+              }
+              variant="Bold"
+            />
+            <div
+              style={{
+                position: "absolute",
+                top: -10,
+                right: -10,
+                background: colors.red,
+                height: 20,
+                width: 20,
+                borderRadius: 100,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TextComponent
+                text={`${handleQuantityPending().length}`}
+                size={10}
+                color={colors.bacground}
+                styles={{ fontWeight: "bold" }}
+              />
+            </div>
+          </div>
         );
         navigate = "pending";
         break;
       case "callover":
         result = (
           <Calendar1
-            size={widthSmall ? sizes.smallTitle: sizes.title}
+            size={widthSmall ? sizes.smallTitle : sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -97,7 +125,7 @@ export default function HomeItemComponent(props: Props) {
       case "image":
         result = (
           <Gallery
-            size={widthSmall ? sizes.smallTitle: sizes.title}
+            size={widthSmall ? sizes.smallTitle : sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -110,7 +138,7 @@ export default function HomeItemComponent(props: Props) {
         result = (
           <div style={{ position: "relative" }}>
             <ShoppingCart
-              size={widthSmall ? sizes.smallTitle: sizes.title}
+              size={widthSmall ? sizes.smallTitle : sizes.title}
               color={
                 value === title ? colors.primaryLightOpacity : colors.textBold
               }
@@ -144,7 +172,7 @@ export default function HomeItemComponent(props: Props) {
       default:
         result = (
           <Setting2
-            size={widthSmall ? sizes.smallTitle: sizes.title}
+            size={widthSmall ? sizes.smallTitle : sizes.title}
             color={
               value === title ? colors.primaryLightOpacity : colors.textBold
             }
@@ -178,7 +206,7 @@ export default function HomeItemComponent(props: Props) {
         display: "flex",
         alignItems: "center",
         borderRadius: 10,
-        height: widthSmall ? 50: 80,
+        height: widthSmall ? 50 : 80,
         paddingLeft: 10,
         width: "100%",
         background: value === title ? colors.primaryBold : colors.primaryLight,
@@ -201,17 +229,20 @@ export default function HomeItemComponent(props: Props) {
             alignItems: "center",
           }}
         >
-          <Notification color={colors.red} size={26} variant="Bold" />
+          <Message color={colors.red} size={26} variant="Bold" />
         </div>
       )}
       {showUI().result}
       <SpaceComponent width={6} />
-      <TextComponent
-        text={title}
-        size={widthSmall ?  sizes.text : sizes.thinTitle}
-        color={colors.text}
-        styles={{ fontWeight: "bold" }}
-      />
+      <div>
+
+        <TextComponent
+          text={title}
+          size={widthSmall ? sizes.text : sizes.thinTitle}
+          color={colors.text}
+          styles={{ fontWeight: "bold" }}
+        />
+      </div>
     </Link>
   );
 }

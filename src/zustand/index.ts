@@ -1,5 +1,6 @@
 import useCartEditStore from "./useCartEditStore";
 import useCartStore from "./useCartStore";
+import useChildrenStore from "./useChildrenStore";
 import useChildStore from "./useChildStore";
 import useFieldStore from "./useFieldStore";
 import useInterventionStore from "./useInterventionStore";
@@ -23,5 +24,5 @@ export {
   useSelectTargetStore,
   useSuggestStore,
   useTargetStore,
-  useUserStore,
+  useUserStore,useChildrenStore
 };

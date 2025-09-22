@@ -1,3 +1,4 @@
+import { convertTargetField } from "../constants/convertTargetAndField";
 import { PlanTaskModel } from "../models";
 import { useFieldStore, useTargetStore } from "../zustand";
 
@@ -10,29 +11,12 @@ export default function PlanItemComponent(props: Props) {
   const { targets } = useTargetStore();
   const { fields } = useFieldStore();
 
-  const showTarget = () => {
-    let field: string = "";
-    let name: string = "";
-    const index = targets.findIndex(
-      (target) => target.id === planTask.targetId
-    );
-    if (index !== -1) {
-      const indexField = fields.findIndex(
-        (_) => _.id === targets[index].fieldId
-      );
-      field = fields[indexField].name;
-      name = targets[index].name;
-    }
-
-    return { name, field };
-  };
-
   return (
     <tr>
-      <th scope="row">{showTarget().field}</th>
-      <td>{showTarget().name}</td>
+      <th scope="row">{convertTargetField(planTask.targetId, targets, fields).nameField}</th>
+      <td>{convertTargetField(planTask.targetId, targets, fields).nameTarget}</td>
       <td>{planTask?.intervention}</td>
-      <td style={{width:'40%'}}>{planTask?.content}</td>
+      <td style={{ width: '40%' }}>{planTask?.content}</td>
     </tr>
   );
 }
