@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { RowComponent, SearchComponent, SpaceComponent, TargetItemComponent, TextComponent } from ".";
+import { deleteDocData } from "../constants/firebase/deleteDocData";
+import { widthSmall } from "../constants/reponsive";
 import { showUIIconTarget } from "../constants/showUIIconTarget";
+import { sizes } from "../constants/sizes";
 import { TargetModel } from "../models/TargetModel";
 import { useCartStore, useTargetStore } from "../zustand";
-import { sizes } from "../constants/sizes";
-import { widthSmall } from "../constants/reponsive";
 
 export default function TargetComponent() {
   const location = useLocation();
@@ -21,17 +22,27 @@ export default function TargetComponent() {
     }
   }, [targets]);
 
-  const handleRemoveSelect = () => {
+  const handleRemoveSelect = async () => {
     const items = carts.filter((cart) => cart.fieldId !== fieldId);
+    const itemsRemove = carts.filter((cart) => cart.fieldId === fieldId)
+    
     setCarts(items);
+    const promiseItems = itemsRemove.map((_) =>
+      deleteDocData({
+        nameCollect: 'carts',
+        id: _.id,
+        metaDoc: 'carts'
+      }))
+
+    await Promise.all(promiseItems)
   };
   return (
     <div style={{ width: "100%" }}>
       <RowComponent justify="space-between" styles={{ paddingTop: 10 }}>
         <RowComponent>
-          {showUIIconTarget(title, widthSmall ? 36: 52, widthSmall ? 36: 52)}
+          {showUIIconTarget(title, widthSmall ? 36 : 52, widthSmall ? 36 : 52)}
           <SpaceComponent width={8} />
-          <TextComponent text={title.toUpperCase()} size={ widthSmall ? sizes.smallTitle : sizes.bigTitle} />
+          <TextComponent text={title.toUpperCase()} size={widthSmall ? sizes.smallTitle : sizes.bigTitle} />
         </RowComponent>
         <SearchComponent
           placeholder="Nhập mục tiêu "
@@ -47,7 +58,7 @@ export default function TargetComponent() {
           data-bs-dismiss="modal"
           onClick={handleRemoveSelect}
           style={{
-            fontSize: sizes.width < 1300 ? sizes.text : undefined
+            fontSize: widthSmall ? sizes.text : undefined
           }}
         >
           Bỏ chọn tất cả
@@ -62,7 +73,7 @@ export default function TargetComponent() {
           marginTop: 10
         }}
       >
-        <table className="table table-bordered" style={{fontSize: widthSmall ? sizes.text : sizes.bigText }}>
+        <table className="table table-bordered" style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}>
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">STT</th>

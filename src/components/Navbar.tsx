@@ -357,12 +357,12 @@ export default function Navbar() {
                   value={selectTarget}
                   onClick={(val) => setSelectTarget(val)}
                 />
-                <HomeItemComponent
+                {/* <HomeItemComponent
                   title="ĐIỂM DANH"
                   icon="callover"
                   value={selectTarget}
                   onClick={(val) => setSelectTarget(val)}
-                />
+                /> */}
                 <HomeItemComponent
                   title="HÌNH ẢNH/VIDEO"
                   icon="image"
@@ -389,7 +389,7 @@ export default function Navbar() {
           <SectionComponent
             styles={{
               display: "flex",
-              flex: 5,
+              flex: 4,
               background: colors.bacground,
               borderRadius: 10,
               height: "100%",

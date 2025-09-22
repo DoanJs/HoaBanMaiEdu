@@ -1,15 +1,15 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
+import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
 import { db } from "../../firebase.config";
 import { PlanTaskModel } from "../../models/PlanTaskModel";
 import { ReportTaskModel } from "../../models/ReportTaskModel";
+import { useUserStore } from "../../zustand";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
-import { useUserStore } from "../../zustand";
 import LoadingOverlay from "../LoadingOverLay";
-import { useState } from "react";
-import { handleToastSuccess } from "../../constants/handleToast";
 
 interface DataModel {
   id: string;
@@ -22,7 +22,7 @@ interface Props {
 
 export default function ModalDeleteComponent(props: Props) {
   const { data } = props;
-  const {user} = useUserStore()
+  const { user } = useUserStore()
   const navigate = useNavigate();
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
@@ -33,9 +33,9 @@ export default function ModalDeleteComponent(props: Props) {
     setIsLoading(true)
 
     const reportTasks = await getDocs(
-      query(collection(db, "reportTasks"), 
-      where("teacherIds", 'array-contains', user?.id),
-      where("reportId", "==", reportId))
+      query(collection(db, "reportTasks"),
+        where("teacherIds", 'array-contains', user?.id),
+        where("reportId", "==", reportId))
     );
 
     if (!reportTasks.empty) {
@@ -82,6 +82,21 @@ export default function ModalDeleteComponent(props: Props) {
     setIsLoading(false)
     navigate("../pending");
   };
+  const deleteChildren = async (childId: string) => {
+    setIsLoading(true)
+    deleteDocData({
+      nameCollect: 'children',
+      id: childId,
+      metaDoc: 'children'
+    }).then(() => {
+      setIsLoading(false)
+      handleToastSuccess('Xóa trẻ thành công !')
+    }).catch((error) => {
+      setIsLoading(false)
+      handleToastError('Xóa trẻ thất bại !')
+    })
+
+  }
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -91,6 +106,10 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "reports":
         deleteReportPending(data.id);
+        break;
+
+      case "children":
+        deleteChildren(data.id);
         break;
 
       default:
@@ -142,7 +161,7 @@ export default function ModalDeleteComponent(props: Props) {
         </div>
       </div>
 
-      <LoadingOverlay show={isLoading}/>
+      <LoadingOverlay show={isLoading} />
     </div>
   );
 }

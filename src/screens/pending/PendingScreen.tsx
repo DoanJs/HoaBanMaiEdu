@@ -1,4 +1,4 @@
-import { Notification } from "iconsax-react";
+import { Message, Notification } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -64,7 +64,7 @@ export default function PendingScreen() {
         />
       </RowComponent>
 
-      <RowComponent justify="space-between" styles={{ maxHeight: '90%', alignItems:'flex-start',overflowY: "scroll" }}>
+      <RowComponent justify="space-between" styles={{ maxHeight: '90%', alignItems: 'flex-start', overflowY: "scroll" }}>
         {/* ben ke hoach */}
         <RowComponent
           styles={{ display: "flex", flexWrap: "wrap", width: "100%" }}
@@ -98,7 +98,7 @@ export default function PendingScreen() {
                   <div
                     style={{
                       position: "absolute",
-                      top: -6,
+                      top: -10,
                       right: -10,
                       height: 20,
                       width: 20,
@@ -108,7 +108,7 @@ export default function PendingScreen() {
                       alignItems: "center",
                     }}
                   >
-                    <Notification color={colors.red} size={20} variant="Bold" />
+                    <Message color={colors.red} size={20} variant="Bold" />
                   </div>
                 )}
               </Link>
@@ -165,7 +165,7 @@ export default function PendingScreen() {
                       alignItems: "center",
                     }}
                   >
-                    <Notification color={colors.red} size={20} variant="Bold" />
+                    <Message color={colors.red} size={20} variant="Bold" />
                   </div>
                 )}
               </Link>

@@ -1,3 +1,6 @@
+import AdminChildren from "./admin/AdminChildren";
+import AdminScreen from "./admin/AdminScreen";
+import AdminTargetSuggest from "./admin/AdminTargetSuggest";
 import ForgotPasswordScreen from "./auth/ForgotPasswordScreen";
 import LoginScreen from "./auth/LoginScreen";
 import RegisterScreen from "./auth/RegisterScreen";
@@ -26,6 +29,7 @@ export {
   ProfileScreen,
   RegisterScreen,
   ReportScreen,
+  AdminScreen,
   SettingScreen,
-  ForgotPasswordScreen
+  ForgotPasswordScreen, AdminChildren, AdminTargetSuggest
 };

@@ -16,6 +16,7 @@ import { auth, db } from "./firebase.config";
 import { UserModel } from "./models/UserModel";
 import {
   AddReportScreen,
+  AdminScreen,
   BankScreen,
   CalloverScreen,
   CartScreen,
@@ -110,6 +111,17 @@ export default function App() {
           <Route path="media" element={<MediaScreen />} />
           <Route path="setting" element={<SettingScreen />} />
           <Route path="cart" element={<CartScreen />} />
+          {/* <Route path="admin" element={<AdminScreen />} /> */}
+          <Route
+          path="admin"
+          element={
+            authState.user && ['52LPPcC0ejgAWSEoWhWBCT8KHsm2'].includes(authState.user.uid ) ? (
+              <AdminScreen />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
         </Route>
         <Route path="register" element={<RegisterScreen />} />
         <Route path="forgotPassword" element={<ForgotPasswordScreen />} />
