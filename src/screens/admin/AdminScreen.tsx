@@ -7,6 +7,7 @@ import { sizes } from "../../constants/sizes";
 import AdminMeta from "./AdminMeta";
 import AdminSuggest from "./AdminSuggest";
 import AdminTeacher from "./AdminTeacher";
+import AdminBackupData from "./AdminBackupData";
 export default function AdminScreen() {
   const [selected, setSelected] = useState("TRẺ");
 
@@ -27,6 +28,9 @@ export default function AdminScreen() {
         break;
       case "META":
         ui = <AdminMeta />;
+        break;
+      case "BACKUP_DATA":
+        ui = <AdminBackupData />;
         break;
 
       default:
@@ -60,6 +64,7 @@ export default function AdminScreen() {
           // "BÁO CÁO",
           // "MỨC ĐỘ HỖ TRỢ",
           "META",
+          'BACKUP_DATA'
         ].map((_, index) => (
           <button
             key={index}
