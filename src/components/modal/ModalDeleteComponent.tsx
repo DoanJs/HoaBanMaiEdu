@@ -1,8 +1,18 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
-import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
+import {
+  handleToastError,
+  handleToastSuccess,
+} from "../../constants/handleToast";
 import { db } from "../../firebase.config";
 import { PlanTaskModel } from "../../models/PlanTaskModel";
 import { ReportTaskModel } from "../../models/ReportTaskModel";
@@ -15,8 +25,8 @@ interface DataModel {
   id: string;
   nameCollect: string;
   itemTasks: ReportTaskModel[] | PlanTaskModel[];
-  setForm?: any
-  setEdit?: any
+  setForm?: any;
+  setEdit?: any;
 }
 interface Props {
   data: DataModel;
@@ -24,7 +34,7 @@ interface Props {
 
 export default function ModalDeleteComponent(props: Props) {
   const { data } = props;
-  const { user } = useUserStore()
+  const { user } = useUserStore();
   const navigate = useNavigate();
   const { removePlan } = usePlanStore();
   const { removeReport } = useReportStore();
@@ -32,12 +42,14 @@ export default function ModalDeleteComponent(props: Props) {
 
   const deleteReportPending = async (reportId: string) => {
     removeReport(reportId);
-    setIsLoading(true)
+    setIsLoading(true);
 
     const reportTasks = await getDocs(
-      query(collection(db, "reportTasks"),
-        where("teacherIds", 'array-contains', user?.id),
-        where("reportId", "==", reportId))
+      query(
+        collection(db, "reportTasks"),
+        where("teacherIds", "array-contains", user?.id),
+        where("reportId", "==", reportId)
+      )
     );
 
     if (!reportTasks.empty) {
@@ -57,13 +69,13 @@ export default function ModalDeleteComponent(props: Props) {
       metaDoc: "reports",
     });
 
-    handleToastSuccess('Xóa báo cáo thành công !')
-    setIsLoading(false)
+    handleToastSuccess("Xóa báo cáo thành công !");
+    setIsLoading(false);
     navigate("../pending");
   };
   const deletePlanPending = async (planId: string) => {
     removePlan(planId);
-    setIsLoading(true)
+    setIsLoading(true);
 
     const promisePlanTasks = data.itemTasks.map((_) =>
       deleteDocData({
@@ -80,60 +92,108 @@ export default function ModalDeleteComponent(props: Props) {
       metaDoc: "plans",
     });
 
-    handleToastSuccess('Xóa kế hoạch thành công !')
-    setIsLoading(false)
+    handleToastSuccess("Xóa kế hoạch thành công !");
+    setIsLoading(false);
     navigate("../pending");
   };
   const deleteChildren = async (childId: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     deleteDocData({
-      nameCollect: 'children',
+      nameCollect: "children",
       id: childId,
-      metaDoc: 'children'
-    }).then(() => {
-      setIsLoading(false)
-      handleToastSuccess('Xóa trẻ thành công !')
-    }).catch((error) => {
-      setIsLoading(false)
-      handleToastError('Xóa trẻ thất bại !')
+      metaDoc: "children",
     })
-  }
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa trẻ thành công !");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa trẻ thất bại !");
+      });
+  };
   const deleteTarget = async (targetId: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     deleteDocData({
-      nameCollect: 'targets',
+      nameCollect: "targets",
       id: targetId,
-      metaDoc: 'targets'
-    }).then(() => {
-      setIsLoading(false)
-      handleToastSuccess('Xóa mục tiêu thành công !')
-      data.setForm({nameSuggest:'', nameTarget:'', level:0, fieldId:''})
-      data.setEdit(undefined)
-    }).catch((error) => {
-      setIsLoading(false)
-      handleToastError('Xóa mục tiêu thất bại !')
+      metaDoc: "targets",
     })
-
-  }
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa mục tiêu thành công !");
+        data.setForm({
+          nameSuggest: "",
+          nameTarget: "",
+          level: 0,
+          fieldId: "",
+        });
+        data.setEdit(undefined);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa mục tiêu thất bại !");
+      });
+  };
   const deleteSuggest = async (suggestId: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     deleteDocData({
-      nameCollect: 'suggests',
+      nameCollect: "suggests",
       id: suggestId,
-      metaDoc: 'suggests'
-    }).then(() => {
-      setIsLoading(false)
-      handleToastSuccess('Xóa gợi ý thành công !')
-      data.setForm({fieldId:'', nameSuggest:''})
-      data.setEdit(undefined)
-    }).catch((error) => {
-      setIsLoading(false)
-      handleToastError('Xóa gợi ý thất bại !')
+      metaDoc: "suggests",
     })
-
-  }
-
-  
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa gợi ý thành công !");
+        data.setForm({ fieldId: "", nameSuggest: "" });
+        data.setEdit(undefined);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa gợi ý thất bại !");
+      });
+  };
+  const deleteUser = async (userId: string) => {
+    setIsLoading(true);
+    deleteDocData({
+      nameCollect: "users",
+      id: userId,
+      metaDoc: "users",
+    })
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa giáo viên thành công !");
+        data.setForm({
+          fullName: "",
+          avatar: "",
+          role: "",
+          email: "",
+          position: "",
+        });
+        data.setEdit(undefined);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa giáo viên thất bại !");
+      });
+  };
+  const deleteMeta = async (metaId: string) => {
+    setIsLoading(true);
+    deleteDoc(doc(db, "Meta", metaId))
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa meta thành công !");
+        data.setForm({
+          name: "",
+          lastUpdated: Date.now(),
+        });
+        data.setEdit(undefined);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa meta thất bại !");
+      });
+  };
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -155,6 +215,14 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "suggests":
         deleteSuggest(data.id);
+        break;
+
+      case "users":
+        deleteUser(data.id);
+        break;
+
+      case "Meta":
+        deleteMeta(data.id);
         break;
 
       default:

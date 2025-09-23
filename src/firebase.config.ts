@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 // import { getAnalytics } from "firebase/analytics";
-import { connectFirestoreEmulator, getFirestore, setLogLevel } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -15,12 +15,12 @@ const firebaseConfig = {
   storageBucket: "hoabanmaiedu-23415.firebasestorage.app",
   messagingSenderId: "953698484929",
   appId: "1:953698484929:web:a2a755f90af9f8d77f8a40",
-  measurementId: "G-WJ8MJ6GHB3"
+  measurementId: "G-WJ8MJ6GHB3",
 };
 // setLogLevel("debug");
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app)
+const db = getFirestore(app);
 const auth = getAuth(app);
 // const analytics = getAnalytics(app);
-export {db, auth}
+export { auth, db };

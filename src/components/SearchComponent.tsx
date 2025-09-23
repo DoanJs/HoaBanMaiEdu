@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { widthSmall } from "../constants/reponsive";
+import { UserModel } from "../models";
 import { ChildrenModel } from "../models/ChildrenModel";
 import { PlanModel } from "../models/PlanModel";
 import { ReportModel } from "../models/ReportModel";
@@ -16,7 +17,8 @@ interface Props {
     | TargetModel[]
     | PlanModel[]
     | ReportModel[]
-    | SuggestModel[];
+    | SuggestModel[]
+    | UserModel[];
   onChange: (val: any) => void;
 }
 
@@ -52,6 +54,16 @@ export default function SearchComponent(props: Props) {
       case "searchSuggest":
         items = (arrSource as SuggestModel[]).filter((suggest) =>
           suggest.name.toLowerCase().includes(value.toLowerCase())
+        );
+        break;
+      case "searchTeacher":
+        items = (arrSource as UserModel[]).filter((teacher) =>
+          teacher.fullName.toLowerCase().includes(value.toLowerCase())
+        );
+        break;
+      case "searchMeta":
+        items = (arrSource as any[]).filter((meta) =>
+          meta.id.toLowerCase().includes(value.toLowerCase())
         );
         break;
 

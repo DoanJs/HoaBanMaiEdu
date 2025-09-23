@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase/firestore";
 import { TimeAtModel } from "./TimeAtModel";
 
 export interface UserModel {
@@ -11,6 +12,6 @@ export interface UserModel {
   role: string
   position: string
 
-  createAt: TimeAtModel;
-  updateAt: TimeAtModel;
+  createAt: TimeAtModel | FieldValue;
+  updateAt: TimeAtModel | FieldValue;
 }

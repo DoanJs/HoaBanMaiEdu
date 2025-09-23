@@ -6,6 +6,7 @@ import {
   SaveAdd,
   Trash,
 } from "iconsax-react";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -18,6 +19,7 @@ import {
 } from ".";
 import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
+import { handleTimeStampFirestore } from "../constants/convertTimeStamp";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
 import { groupArrayWithField } from "../constants/groupArrayWithField";
@@ -32,14 +34,14 @@ import {
   useFieldStore,
   useReportStore,
   useTargetStore,
-  useUserStore
+  useUserStore,
 } from "../zustand";
 import LoadingOverlay from "./LoadingOverLay";
 
 export default function ReportListComponent() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { title, reportId, status, comment } = location.state || {};
+  const { title, reportId, status, comment, report } = location.state || {};
   const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
   const [disable, setDisable] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,22 +83,22 @@ export default function ReportListComponent() {
   }, [text]);
   useEffect(() => {
     if (reportTasks.length > 0) {
-      getPlanTasks(reportTasks)
+      getPlanTasks(reportTasks);
     }
-  }, [reportTasks])
+  }, [reportTasks]);
 
   const getPlanTasks = async (reportTasks: ReportTaskModel[]) => {
     const promiseItems = reportTasks.map(async (reportTask) => {
-      const docSnap = await getDoc(doc(db, 'planTasks', reportTask.planTaskId))
+      const docSnap = await getDoc(doc(db, "planTasks", reportTask.planTaskId));
       return {
         ...docSnap.data(),
-        id: docSnap.id
-      }
-    })
-    const result = await Promise.all(promiseItems)
+        id: docSnap.id,
+      };
+    });
+    const result = await Promise.all(promiseItems);
 
-    setPlanTasks(result as PlanTaskModel[])
-  }
+    setPlanTasks(result as PlanTaskModel[]);
+  };
   const handleSaveReportTask = async () => {
     // luu phia firestore
     if (!disable) {
@@ -126,22 +128,26 @@ export default function ReportListComponent() {
   };
   const handleExportWordBC = async () => {
     setIsLoading(true);
-    const promiseItems = handleGroupReportWithField(reportTasks).map(async (reportTask) => {
-      const docSnap = await getDoc(doc(db, "planTasks", reportTask.planTaskId));
-      if (docSnap.exists()) {
-        return {
-          intervention: docSnap.data().intervention,
-          content: docSnap.data().content,
-          field: convertTargetField(docSnap.data().targetId, targets, fields)
-            .nameField,
-          target: convertTargetField(docSnap.data().targetId, targets, fields)
-            .nameTarget,
-          total: reportTask.content,
-        };
-      } else {
-        console.log(`getDoc data error`);
+    const promiseItems = handleGroupReportWithField(reportTasks).map(
+      async (reportTask) => {
+        const docSnap = await getDoc(
+          doc(db, "planTasks", reportTask.planTaskId)
+        );
+        if (docSnap.exists()) {
+          return {
+            intervention: docSnap.data().intervention,
+            content: docSnap.data().content,
+            field: convertTargetField(docSnap.data().targetId, targets, fields)
+              .nameField,
+            target: convertTargetField(docSnap.data().targetId, targets, fields)
+              .nameTarget,
+            total: reportTask.content,
+          };
+        } else {
+          console.log(`getDoc data error`);
+        }
       }
-    });
+    );
     const result = await Promise.all(promiseItems);
 
     exportWord(
@@ -196,19 +202,26 @@ export default function ReportListComponent() {
       });
   };
   const getPlanTask = (planTaskId: string, planTasks: PlanTaskModel[]) => {
-    const index = planTasks.findIndex((planTask) => planTask.id === planTaskId)
+    const index = planTasks.findIndex((planTask) => planTask.id === planTaskId);
     if (index !== -1) {
-      return planTasks[index]
+      return planTasks[index];
     }
-  }
+  };
   const handleGroupReportWithField = (reportTasks: ReportTaskModel[]) => {
-    return groupArrayWithField(reportTasks.map((reportTask) => {
-      return {
-        ...reportTask,
-        fieldId: convertTargetField(getPlanTask(reportTask.planTaskId, planTasks)?.targetId as string, targets, fields).fieldId
-      }
-    }), 'fieldId')
-  }
+    return groupArrayWithField(
+      reportTasks.map((reportTask) => {
+        return {
+          ...reportTask,
+          fieldId: convertTargetField(
+            getPlanTask(reportTask.planTaskId, planTasks)?.targetId as string,
+            targets,
+            fields
+          ).fieldId,
+        };
+      }),
+      "fieldId"
+    );
+  };
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -228,6 +241,27 @@ export default function ReportListComponent() {
           size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
           styles={{ fontWeight: "bold" }}
         />
+        <SpaceComponent width={6} />
+        <TextComponent
+          styles={{ fontStyle: "italic" }}
+          text={`Gửi lên lúc: ${moment(
+            handleTimeStampFirestore(report?.createAt)
+          ).format("HH:mm:ss_DD/MM/YYYY")}`}
+          size={widthSmall ? sizes.text : sizes.bigText}
+        />
+
+        <SpaceComponent width={10} />
+
+        {handleTimeStampFirestore(report?.createAt) !==
+          handleTimeStampFirestore(report?.updateAt) && (
+          <TextComponent
+            styles={{ fontStyle: "italic" }}
+            text={`Cập nhật lúc: ${moment(
+              handleTimeStampFirestore(report?.updateAt)
+            ).format("HH:mm:ss DD/MM/YYYY")}`}
+            size={widthSmall ? sizes.text : sizes.bigText}
+          />
+        )}
       </RowComponent>
 
       <div

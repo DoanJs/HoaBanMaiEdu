@@ -4,7 +4,9 @@ import { RowComponent, SpaceComponent, TextComponent } from "../../components";
 import { colors } from "../../constants/colors";
 import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
+import AdminMeta from "./AdminMeta";
 import AdminSuggest from "./AdminSuggest";
+import AdminTeacher from "./AdminTeacher";
 export default function AdminScreen() {
   const [selected, setSelected] = useState("TRẺ");
 
@@ -21,6 +23,10 @@ export default function AdminScreen() {
         ui = <AdminSuggest />;
         break;
       case "GIÁO VIÊN":
+        ui = <AdminTeacher />;
+        break;
+      case "META":
+        ui = <AdminMeta />;
         break;
 
       default:
@@ -50,9 +56,9 @@ export default function AdminScreen() {
           "LĨNH VỰC - MỤC TIÊU - GỢI Ý",
           "GỢI Ý",
           "GIÁO VIÊN",
-          "KẾ HOẠCH",
-          "BÁO CÁO",
-          "MỨC ĐỘ HỖ TRỢ",
+          // "KẾ HOẠCH",
+          // "BÁO CÁO",
+          // "MỨC ĐỘ HỖ TRỢ",
           "META",
         ].map((_, index) => (
           <button
@@ -67,7 +73,7 @@ export default function AdminScreen() {
           >
             <TextComponent
               text={_}
-              styles={{ fontWeight: "bold", padding: widthSmall? 4:10 }}
+              styles={{ fontWeight: "bold", padding: widthSmall ? 4 : 10 }}
               size={widthSmall ? sizes.text : sizes.bigText}
               color={selected === _ ? colors.bacground : colors.primary}
             />
