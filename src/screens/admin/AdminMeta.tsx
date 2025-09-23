@@ -1,4 +1,6 @@
+import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { AddCircle, Trash } from "iconsax-react";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import {
   ModalDeleteComponent,
@@ -11,123 +13,108 @@ import {
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { colors } from "../../constants/colors";
 import { getDocsData } from "../../constants/firebase/getDocsData";
-import { updateDocData } from "../../constants/firebase/updateDocData";
 import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
-import { FieldModel, TargetModel } from "../../models";
-import { SuggestModel } from "../../models/SuggestModel";
+import { db } from "../../firebase.config";
+import { UserModel } from "../../models";
 import { useUserStore } from "../../zustand";
-import AdminSuggestComponent from "./AdminSuggestComponent";
-import { addDocData } from "../../constants/firebase/addDocData";
-import { serverTimestamp } from "firebase/firestore";
+import AdminMetaComponent from "./AdminMetaComponent";
 
-export default function AdminSuggest() {
+export default function AdminMeta() {
   const { user } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(true);
-  const [fields, setFields] = useState<FieldModel[]>([]);
+  const [teacherEdit, setTeacherEdit] = useState<UserModel>();
   const [form, setForm] = useState({
-    nameSuggest: "",
-    fieldId: "",
+    name: "",
+    lastUpdated: Date.now(),
   });
-  const [suggests, setSuggests] = useState<SuggestModel[]>([]);
-  const [newSuggests, setNewSuggests] = useState<any[]>([]);
-  const [suggestEdit, setSuggestEdit] = useState<SuggestModel>();
+
+  // ----------------
+  const [meta, setMeta] = useState<any>([]);
+  const [newMeta, setNewMeta] = useState<any[]>([]);
+  const [metaEdit, setMetaEdit] = useState<any>();
 
   useEffect(() => {
-    if (suggestEdit) {
+    if (metaEdit) {
       setForm({
-        fieldId: suggestEdit.fieldId,
-        nameSuggest: suggestEdit.name,
+        name: metaEdit.id,
+        lastUpdated:
+          metaEdit.lastUpdated.seconds * 1000 +
+          metaEdit.lastUpdated.nanoseconds / 1e6,
       });
     }
-  }, [suggestEdit]);
-
+  }, [metaEdit]);
   useEffect(() => {
-    if (form.fieldId && form.nameSuggest) {
+    if (form.lastUpdated && form.name) {
       setDisable(false);
     } else {
       setDisable(true);
     }
   }, [form]);
-
   useEffect(() => {
     if (user) {
       getDocsData({
-        nameCollect: "suggests",
-        setData: setSuggests,
-      });
-      getDocsData({
-        nameCollect: "fields",
-        setData: setFields,
+        nameCollect: "Meta",
+        setData: setMeta,
       });
     }
   }, [user]);
-
   useEffect(() => {
-    if (suggests.length > 0) {
-      setNewSuggests(suggests);
+    if (meta.length > 0) {
+      setNewMeta(meta);
     }
-  }, [suggests]);
+  }, [meta]);
 
-  const handleSuggest = async () => {
+  const handleMeta = async () => {
+    const data = {
+      name: form.name,
+      lastUpdated: Timestamp.fromMillis(form.lastUpdated),
+    };
+
     setIsLoading(true);
-    if (suggestEdit) {
-      updateDocData({
-        nameCollect: "suggests",
-        id: suggestEdit.id,
-        valueUpdate: {
-          fieldId: form.fieldId,
-          name: form.nameSuggest,
-        },
-        metaDoc: "suggests",
+    if (metaEdit) {
+      updateDoc(doc(db, "Meta", metaEdit.id), {
+        lastUpdated: Timestamp.fromMillis(form.lastUpdated),
       })
-        .then((result) => {
+        .then(() => {
+          setMetaEdit(undefined);
           setIsLoading(false);
-          handleToastSuccess(
-            `Chỉnh sửa gợi ý thành công ! (${suggestEdit.id}) `
-          );
+          handleToastSuccess(`Chỉnh sửa meta thành công ! (${metaEdit.id}) `);
         })
-        .catch((error) => {
+        .catch(() => {
           setIsLoading(false);
-          handleToastError("Chỉnh sửa gợi ý thất bại !");
+          handleToastError("Chỉnh sửa meta thất bại !");
         });
     } else {
-      addDocData({
-        nameCollect: "suggests",
-        value: {
-          name: form.nameSuggest,
-          fieldId: form.fieldId,
-
-          createAt: serverTimestamp(),
-          updateAt: serverTimestamp(),
-        },
-        metaDoc: "suggests",
-      })
+      setDoc(
+        doc(db, "Meta", data.name),
+        { lastUpdated: data.lastUpdated },
+        { merge: true }
+      )
         .then((result) => {
-          setNewSuggests([
-            ...newSuggests,
+          setNewMeta([
+            ...newMeta,
             {
-              id: result.id,
-              name: form.nameSuggest,
-              fieldId: form.fieldId,
-              createAt: serverTimestamp(),
-              updateAt: serverTimestamp(),
+              id: data.name,
             },
           ]);
           setIsLoading(false);
-          handleToastSuccess(`Thêm gợi ý mới thành công ! (${result.id}) `);
+          handleToastSuccess(`Thêm meta mới thành công ! (${data.name}) `);
         })
-        .catch((eror) => {
+        .catch(() => {
           setIsLoading(false);
-          handleToastError("Thêm gợi ý mới thất bại !");
+          handleToastError("Thêm meta mới thất bại !");
         });
     }
-    setForm({ nameSuggest: "", fieldId: "" });
+    setForm({
+      name: "",
+      lastUpdated: Date.now(),
+    });
   };
 
   return (
@@ -142,15 +129,15 @@ export default function AdminSuggest() {
       >
         <RowComponent justify="space-between">
           <SearchComponent
-            title="Tìm gợi ý"
-            placeholder="Nhập gợi ý"
+            title="Tìm meta"
+            placeholder="Nhập meta"
             width={"75%"}
-            arrSource={suggests}
-            type="searchSuggest"
-            onChange={(val) => setNewSuggests(val)}
+            arrSource={meta}
+            type="searchMeta"
+            onChange={(val) => setNewMeta(val)}
           />
           <TextComponent
-            text={`Có ${newSuggests.length} gợi ý`}
+            text={`Có ${newMeta.length} meta`}
             styles={{ fontWeight: "bold" }}
           />
         </RowComponent>
@@ -161,18 +148,18 @@ export default function AdminSuggest() {
         >
           <thead>
             <tr style={{ textAlign: "center" }}>
-              <th scope="col">Tên gợi ý</th>
+              <th scope="col">Tên Meta</th>
+              <th scope="col">Ngày gần nhất</th>
               <th scope="col">Handle</th>
             </tr>
           </thead>
           <tbody>
-            {newSuggests.length > 0 &&
-              newSuggests.map((suggest, index) => (
-                <AdminSuggestComponent
+            {newMeta.length > 0 &&
+              newMeta.map((meta, index) => (
+                <AdminMetaComponent
                   key={index}
-                  suggest={suggest}
-                  fields={fields}
-                  setSuggestEdit={setSuggestEdit}
+                  meta={meta}
+                  setMetaEdit={setMetaEdit}
                 />
               ))}
           </tbody>
@@ -192,7 +179,7 @@ export default function AdminSuggest() {
           position: "relative",
         }}
       >
-        {suggestEdit && (
+        {metaEdit && (
           <>
             <AddCircle
               size={widthSmall ? sizes.thinTitle : sizes.title}
@@ -206,10 +193,10 @@ export default function AdminSuggest() {
               }}
               onClick={() => {
                 setForm({
-                  nameSuggest: "",
-                  fieldId: "",
+                  lastUpdated: Date.now(),
+                  name: "",
                 });
-                setSuggestEdit(undefined);
+                setMetaEdit(undefined);
               }}
             />
             <Trash
@@ -230,7 +217,7 @@ export default function AdminSuggest() {
         )}
         <RowComponent justify="center">
           <TextComponent
-            text={suggestEdit ? "Chỉnh sửa gợi ý" : "Thêm gợi ý"}
+            text={teacherEdit ? "Chỉnh sửa Meta" : "Thêm Meta"}
             size={widthSmall ? sizes.bigText : sizes.title}
             styles={{ fontWeight: "bold" }}
           />
@@ -242,22 +229,15 @@ export default function AdminSuggest() {
             className="form-label"
             style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
           >
-            Lĩnh vực:
+            Tên Meta:
           </label>
-          <select
-            value={form.fieldId}
-            className={`form-select ${widthSmall && "form-select-sm"}`}
-            aria-label="Default select example"
-            onChange={(val) => setForm({ ...form, fieldId: val.target.value })}
-          >
-            <option defaultValue={""}>Chọn</option>
-            {fields.length > 0 &&
-              fields.map((_, index) => (
-                <option key={index} value={_.id}>
-                  {_.name}
-                </option>
-              ))}
-          </select>
+          <input
+          disabled={metaEdit}
+            onChange={(val) => setForm({ ...form, name: val.target.value })}
+            type="fullName"
+            className="form-control"
+            value={form.name}
+          />
         </div>
         <div>
           <label
@@ -265,16 +245,19 @@ export default function AdminSuggest() {
             className="form-label"
             style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
           >
-            Nội dung gợi ý:
+            Chọn ngày:
           </label>
-          <textarea
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-            value={form.nameSuggest}
-            onChange={(e) => setForm({ ...form, nameSuggest: e.target.value })}
+          <input
+            onChange={(val) =>
+              setForm({
+                ...form,
+                lastUpdated: new Date(val.target.value).getTime(),
+              })
+            }
+            type="date"
             className="form-control"
-            placeholder="Nhập nội dung gợi ý"
-            rows={6}
-          ></textarea>
+            value={moment(form.lastUpdated).format("YYYY-MM-DD")}
+          />
         </div>
 
         <SpaceComponent height={10} />
@@ -288,12 +271,12 @@ export default function AdminSuggest() {
           }}
           type="button"
           className="btn btn-primary"
-          onClick={disable ? undefined : handleSuggest}
+          onClick={disable ? undefined : handleMeta}
         >
           {isLoading ? (
             <SpinnerComponent />
           ) : (
-            <>{suggestEdit ? "Cập nhật" : "Thêm mới"}</>
+            <>{metaEdit ? "Cập nhật" : "Thêm mới"}</>
           )}
         </button>
       </div>
@@ -302,11 +285,11 @@ export default function AdminSuggest() {
 
       <ModalDeleteComponent
         data={{
-          id: suggestEdit?.id as string,
-          nameCollect: "suggests",
+          id: metaEdit?.id as string,
+          nameCollect: "Meta",
           itemTasks: [],
           setForm: setForm,
-          setEdit: setSuggestEdit
+          setEdit: setMetaEdit,
         }}
       />
     </RowComponent>

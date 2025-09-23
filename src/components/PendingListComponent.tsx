@@ -1,5 +1,6 @@
 import { where } from "firebase/firestore";
 import { AddCircle, ArchiveTick, Edit2, SaveAdd, Trash } from "iconsax-react";
+import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -28,13 +29,14 @@ import {
   useUserStore,
 } from "../zustand";
 import LoadingOverlay from "./LoadingOverLay";
+import { handleTimeStampFirestore } from "../constants/convertTimeStamp";
 
 export default function PendingListComponent() {
   const navigate = useNavigate();
   const location = useLocation();
   const { fields } = useFieldStore();
   const { user } = useUserStore();
-  const { title, planId, comment } = location.state || {};
+  const { title, planId, comment, plan } = location.state || {};
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
   const { plans, editPlan } = usePlanStore();
@@ -75,10 +77,10 @@ export default function PendingListComponent() {
   }, [text]);
 
   useEffect(() => {
-if(isComment){
-  textareaPlanRef.current.focus()
-}
-  },[isComment])
+    if (isComment) {
+      textareaPlanRef.current.focus();
+    }
+  }, [isComment]);
   const handleEditPlan = () => {
     const convertPlanTasksToCarts = planTasks.map((_) => {
       const { targetId, planId, ...newPlanTask } = _;
@@ -132,18 +134,26 @@ if(isComment){
       });
   };
   const hanldeGroupPlanWithField = (planTasks: PlanTaskModel[]) => {
-    return groupArrayWithField(planTasks.map((_) => {
-      return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
-    }), 'fieldId')
-  }
+    return groupArrayWithField(
+      planTasks.map((_) => {
+        return {
+          ..._,
+          fieldId: convertTargetField(_.targetId, targets, fields).fieldId,
+        };
+      }),
+      "fieldId"
+    );
+  };
+
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
-        justify="space-between"
+        justify="flex-start"
         styles={{
           display: "flex",
           flex: 1,
           flexDirection: "row",
+          alignItems: "flex-end",
           width: "100%",
           padding: 10,
           borderBottom: "1px solid",
@@ -155,10 +165,34 @@ if(isComment){
           size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
           styles={{ fontWeight: "bold" }}
         />
+        <SpaceComponent width={6} />
+        <TextComponent
+          styles={{ fontStyle: "italic" }}
+          text={`Gửi lên lúc: ${moment(
+            handleTimeStampFirestore(plan?.createAt)
+          ).format("HH:mm:ss_DD/MM/YYYY")}`}
+          size={widthSmall ? sizes.text : sizes.bigText}
+        />
+        
+        <SpaceComponent width={10} />
+
+        {handleTimeStampFirestore(plan?.createAt) !==
+          handleTimeStampFirestore(plan?.updateAt) && (
+          <TextComponent
+            styles={{ fontStyle: "italic" }}
+            text={`Cập nhật lúc: ${moment(
+              handleTimeStampFirestore(plan?.updateAt)
+            ).format("HH:mm:ss DD/MM/YYYY")}`}
+            size={widthSmall ? sizes.text : sizes.bigText}
+          />
+        )}
       </RowComponent>
 
-      <div style={{ height: widthSmall ? "80%" : "85%", overflowY: "scroll" }}>
-        <table className="table table-bordered" style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}>
+      <div style={{ height: widthSmall ? "80%" : "84%", overflowY: "scroll" }}>
+        <table
+          className="table table-bordered"
+          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
+        >
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Lĩnh vực</th>
@@ -209,7 +243,7 @@ if(isComment){
 
       <SpaceComponent height={4} />
 
-      <RowComponent justify="space-between" >
+      <RowComponent justify="space-between">
         {["Phó Giám đốc", "Giám đốc"].includes(user?.position as string) &&
           (isComment ? (
             <button
@@ -316,9 +350,16 @@ if(isComment){
               alignItems: "center",
             }}
           >
-            <Trash size={widthSmall ? sizes.text : sizes.bigText} color={colors.bacground} />
+            <Trash
+              size={widthSmall ? sizes.text : sizes.bigText}
+              color={colors.bacground}
+            />
             <SpaceComponent width={6} />
-            <TextComponent text="Xóa" size={widthSmall ? sizes.text : sizes.bigText} color={colors.bacground} />
+            <TextComponent
+              text="Xóa"
+              size={widthSmall ? sizes.text : sizes.bigText}
+              color={colors.bacground}
+            />
           </button>
         </RowComponent>
       </RowComponent>

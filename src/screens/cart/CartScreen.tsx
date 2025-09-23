@@ -133,8 +133,13 @@ export default function CartScreen() {
             setCarts([]);
             setTitle("");
             const promiseCartItems = carts.map((cart) =>
-              deleteDocData({ nameCollect: 'carts', id: cart.id, metaDoc: 'carts' }))
-            await Promise.all(promiseCartItems)
+              deleteDocData({
+                nameCollect: "carts",
+                id: cart.id,
+                metaDoc: "carts",
+              })
+            );
+            await Promise.all(promiseCartItems);
           })
           .catch((error) => {
             handleToastError("Thêm mới kế hoạch thất bại !");
@@ -142,25 +147,24 @@ export default function CartScreen() {
             console.log(error);
           });
       } else {
-        if (title !== plan?.title) {
-          updateDocData({
-            nameCollect: "plans",
-            id: cartEdit,
-            valueUpdate: {
-              title,
-            },
-            metaDoc: "plans",
+        updateDocData({
+          nameCollect: "plans",
+          id: cartEdit,
+          valueUpdate: {
+            title,
+          },
+          metaDoc: "plans",
+        })
+          .then(() => {
+            const index = plans.findIndex((_) => _.id === cartEdit);
+            if (index !== -1) {
+              editPlan(cartEdit, { ...plans[index], title });
+            }
           })
-            .then(() => {
-              const index = plans.findIndex((_) => _.id === cartEdit);
-              if (index !== -1) {
-                editPlan(cartEdit, { ...plans[index], title });
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
+          .catch((error) => {
+            console.log(error);
+          });
+
         // xoa het cai cu
         const snapShot = await getDocs(
           query(
@@ -273,7 +277,7 @@ export default function CartScreen() {
           </thead>
           <tbody>
             {carts.length > 0 &&
-              groupArrayWithField(carts, 'fieldId').map((_, index) => (
+              groupArrayWithField(carts, "fieldId").map((_, index) => (
                 <CartItemComponent key={index} cart={_} />
               ))}
           </tbody>
@@ -286,9 +290,8 @@ export default function CartScreen() {
           padding: 10,
         }}
       >
-        {
-          carts.length > 0 &&
-          (title === '' ?
+        {carts.length > 0 &&
+          (title === "" ? (
             <button
               style={{
                 fontSize: widthSmall ? sizes.text : sizes.bigText,
@@ -306,7 +309,7 @@ export default function CartScreen() {
                 <TextComponent text="Tạo mới" color={colors.bacground} />
               )}
             </button>
-            :
+          ) : (
             <button
               style={{
                 fontSize: widthSmall ? sizes.text : sizes.bigText,
@@ -322,13 +325,16 @@ export default function CartScreen() {
               ) : (
                 <TextComponent text="Tạo mới" color={colors.bacground} />
               )}
-            </button>)
-
-        }
+            </button>
+          ))}
       </RowComponent>
 
       <LoadingOverlay show={isLoading} />
-      <ModalAddPlanComponent title={title} setTitle={setTitle} handleAddEditPlan={handleAddEditPlan} />
+      <ModalAddPlanComponent
+        title={title}
+        setTitle={setTitle}
+        handleAddEditPlan={handleAddEditPlan}
+      />
     </div>
   );
 }

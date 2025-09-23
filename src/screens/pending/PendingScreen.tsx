@@ -78,6 +78,7 @@ export default function PendingScreen() {
                   title: _.title,
                   planId: _.id,
                   comment: _.comment,
+                  plan:_
                 }}
                 style={{
                   background: colors.primaryLightOpacity,
@@ -134,6 +135,7 @@ export default function PendingScreen() {
                   reportId: _.id,
                   status: _.status,
                   comment: _.comment,
+                  report:{_}
                 }}
                 type="button"
                 className="btn "

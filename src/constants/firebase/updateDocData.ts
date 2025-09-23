@@ -12,7 +12,11 @@ export const updateDocData = async ({
   valueUpdate: any;
   metaDoc: string;
 }) => {
-  await updateDoc(doc(db, nameCollect, id), valueUpdate, { merge: true });
+  await updateDoc(
+    doc(db, nameCollect, id),
+    { ...valueUpdate, updateAt: serverTimestamp() },
+    { merge: true }
+  );
   await updateDoc(doc(db, "Meta", metaDoc), {
     lastUpdated: serverTimestamp(),
   });
