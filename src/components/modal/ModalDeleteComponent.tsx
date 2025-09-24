@@ -14,6 +14,7 @@ import {
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { db } from "../../firebase.config";
+import { CartModel } from "../../models/CartModel";
 import { PlanTaskModel } from "../../models/PlanTaskModel";
 import { ReportTaskModel } from "../../models/ReportTaskModel";
 import { useUserStore } from "../../zustand";
@@ -24,7 +25,7 @@ import LoadingOverlay from "../LoadingOverLay";
 interface DataModel {
   id: string;
   nameCollect: string;
-  itemTasks: ReportTaskModel[] | PlanTaskModel[];
+  itemTasks: ReportTaskModel[] | PlanTaskModel[] | CartModel[];
   setForm?: any;
   setEdit?: any;
 }
@@ -194,6 +195,25 @@ export default function ModalDeleteComponent(props: Props) {
         handleToastError("Xóa meta thất bại !");
       });
   };
+  const deleteCart = async (carts: CartModel[]) => {
+    setIsLoading(true);
+    const promiseItems = carts.map((cart) => deleteDocData({
+      nameCollect: 'carts',
+      id: cart.id,
+      metaDoc: 'carts'
+    }))
+
+    Promise.all(promiseItems)
+      .then(() => {
+        setIsLoading(false);
+        data.setForm([])
+        handleToastSuccess("Reset giỏ mục tiêu thành công !");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Reset giỏ mục tiêu thất bại !");
+      });
+  };
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -223,6 +243,10 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "Meta":
         deleteMeta(data.id);
+        break;
+
+      case "carts":
+        deleteCart(data.itemTasks as CartModel[]);
         break;
 
       default:

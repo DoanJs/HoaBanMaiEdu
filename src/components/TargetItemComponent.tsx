@@ -9,10 +9,11 @@ import { deleteDocData } from "../constants/firebase/deleteDocData";
 interface Props {
   index: number;
   target: TargetModel;
+  setIsLoading: any
 }
 
 export default function TargetItemComponent(props: Props) {
-  const { index, target } = props;
+  const { index, target, setIsLoading } = props;
   const { carts, removeCart, addCart } = useCartStore();
   const { planTasks } = usePlanTaskStore();
   const { child } = useChildStore()
@@ -42,17 +43,20 @@ export default function TargetItemComponent(props: Props) {
 
     return isSelected;
   };
-  const handleSelected = () => {
+  const handleSelected = async () => {
     if (user && child) {
       const index = carts.findIndex((cart) => cart.targetId === target.id);
       if (index !== -1) {
+        setIsLoading(true)
         removeCart(carts[index].id);
-        deleteDocData({
+        await deleteDocData({
           nameCollect: 'carts',
           id: carts[index].id,
           metaDoc: 'carts'
         })
+        setIsLoading(false)
       } else {
+        setIsLoading(true)
         addDocData({
           nameCollect: 'carts',
           value: {
@@ -71,19 +75,22 @@ export default function TargetItemComponent(props: Props) {
             updateAt: serverTimestamp(),
           },
           metaDoc: 'carts'
-        }).then((result) => addCart({
-          ...target,
-          id: result.id,
-          targetId: target.id,
-          content: "",
-          intervention: "",
-          childId: child.id,
-          teacherIds: child.teacherIds,
-          author: user.id,
-
-          createAt: serverTimestamp(),
-          updateAt: serverTimestamp(),
-        }))
+        }).then((result) => {
+          setIsLoading(false)
+          addCart({
+            ...target,
+            id: result.id,
+            targetId: target.id,
+            content: "",
+            intervention: "",
+            childId: child.id,
+            teacherIds: child.teacherIds,
+            author: user.id,
+  
+            createAt: serverTimestamp(),
+            updateAt: serverTimestamp(),
+          })
+        })
       }
     }
   };

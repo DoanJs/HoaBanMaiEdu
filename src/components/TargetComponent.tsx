@@ -7,6 +7,7 @@ import { showUIIconTarget } from "../constants/showUIIconTarget";
 import { sizes } from "../constants/sizes";
 import { TargetModel } from "../models/TargetModel";
 import { useCartStore, useTargetStore } from "../zustand";
+import LoadingOverlay from "./LoadingOverLay";
 
 export default function TargetComponent() {
   const location = useLocation();
@@ -14,6 +15,7 @@ export default function TargetComponent() {
   const { targets } = useTargetStore();
   const [targetsNew, setTargetsNew] = useState<TargetModel[]>([]);
   const { carts, setCarts } = useCartStore();
+  const [isLoading, setIsLoading] = useState(false);
 
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function TargetComponent() {
   }, [targets]);
 
   const handleRemoveSelect = async () => {
+    setIsLoading(true)
     const items = carts.filter((cart) => cart.fieldId !== fieldId);
     const itemsRemove = carts.filter((cart) => cart.fieldId === fieldId)
     
@@ -35,6 +38,7 @@ export default function TargetComponent() {
       }))
 
     await Promise.all(promiseItems)
+    setIsLoading(false)
   };
   return (
     <div style={{ width: "100%" }}>
@@ -88,11 +92,12 @@ export default function TargetComponent() {
                 .filter((target: TargetModel) => target.fieldId === fieldId)
                 .sort((a, b) => a.level - b.level)
                 .map((_, index) => (
-                  <TargetItemComponent index={index} key={index} target={_} />
+                  <TargetItemComponent index={index} key={index} target={_} setIsLoading={setIsLoading}/>
                 ))}
           </tbody>
         </table>
       </div>
+      <LoadingOverlay show={isLoading}/>
     </div>
   );
 }

@@ -5,12 +5,13 @@ import {
   serverTimestamp,
   where,
 } from "firebase/firestore";
-import { AddCircle } from "iconsax-react";
+import { AddCircle, CardRemove1 } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   CartItemComponent,
   ModalAddPlanComponent,
+  ModalDeleteComponent,
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
@@ -55,7 +56,7 @@ export default function CartScreen() {
   const { editPlan, plans } = usePlanStore();
 
   useEffect(() => {
-    if (carts.length > 0 && title !== "") {
+    if (carts.length > 0) {
       setDisable(false);
     } else {
       setDisable(true);
@@ -215,6 +216,24 @@ export default function CartScreen() {
       setSelectTarget("CHỜ DUYỆT");
     }
   };
+  const handleSaveCart = () => {
+    setIsLoading(true)
+    const promiseItems = carts.map((cart) => updateDocData({
+      nameCollect: 'carts',
+      id: cart.id,
+      valueUpdate: cart,
+      metaDoc: 'carts'
+    }))
+
+    Promise.all(promiseItems).then(() => {
+      setIsLoading(false)
+      handleToastSuccess('Lưu nháp giỏ hàng thành công !')
+    }).catch(error => {
+      setIsLoading(false)
+      handleToastError('Lưu nháp giỏ hàng thất bại !')
+      console.log(error)
+    })
+  }
   return (
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
@@ -236,6 +255,23 @@ export default function CartScreen() {
             aria-describedby="basic-addon1"
           />
         </div>
+
+        {
+          carts.length > 0 &&
+          <div
+            style={{ cursor: 'pointer', display: 'flex' }}
+            data-bs-dismiss="modal"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal">
+            <CardRemove1
+              size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
+              color={colors.red}
+              variant="Bold" />
+            <SpaceComponent width={4} />
+            <TextComponent text="Reset giỏ mục tiêu"
+              size={widthSmall ? sizes.text : sizes.thinTitle} />
+          </div>
+        }
         <Link
           to={"../bank"}
           style={{
@@ -292,23 +328,40 @@ export default function CartScreen() {
       >
         {carts.length > 0 &&
           (title === "" ? (
-            <button
-              style={{
-                fontSize: widthSmall ? sizes.text : sizes.bigText,
-              }}
-              type="button"
-              className="btn btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#addPlanModal"
-            >
-              {isLoading ? (
-                <SpinnerComponent />
-              ) : cartEdit ? (
-                <>Lưu</>
-              ) : (
-                <TextComponent text="Tạo mới" color={colors.bacground} />
-              )}
-            </button>
+            <>
+              <button
+                style={{
+                  fontSize: widthSmall ? sizes.text : sizes.bigText,
+                }}
+                onClick={disable ? undefined : handleSaveCart}
+                type="button"
+                className="btn btn-warning"
+              >
+                {isLoading ? (
+                  <SpinnerComponent />
+                ) : (
+                  <TextComponent text="Lưu nháp" color={colors.bacground} />
+                )}
+              </button>
+              <SpaceComponent width={20} />
+              <button
+                style={{
+                  fontSize: widthSmall ? sizes.text : sizes.bigText,
+                }}
+                type="button"
+                className="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addPlanModal"
+              >
+                {isLoading ? (
+                  <SpinnerComponent />
+                ) : cartEdit ? (
+                  <>Lưu</>
+                ) : (
+                  <TextComponent text="Gửi duyệt" color={colors.bacground} />
+                )}
+              </button>
+            </>
           ) : (
             <button
               style={{
@@ -323,7 +376,7 @@ export default function CartScreen() {
               ) : cartEdit ? (
                 <>Lưu</>
               ) : (
-                <TextComponent text="Tạo mới" color={colors.bacground} />
+                <TextComponent text="Gửi duyệt" color={colors.bacground} />
               )}
             </button>
           ))}
@@ -334,6 +387,14 @@ export default function CartScreen() {
         title={title}
         setTitle={setTitle}
         handleAddEditPlan={handleAddEditPlan}
+      />
+      <ModalDeleteComponent
+        data={{
+          id: '',
+          itemTasks: carts,
+          nameCollect: 'carts',
+          setForm: setCarts
+        }}
       />
     </div>
   );
