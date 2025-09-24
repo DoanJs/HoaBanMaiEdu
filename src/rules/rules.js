@@ -27,7 +27,7 @@
 //     match /users/{userId} {
 //       allow read: if isAdmin() || isTeacher() || isManager()
 
-//       allow write: if isAdmin(); 
+//       allow write: if isAdmin() 
 //     }
 
 //     // CHILDREN
@@ -38,7 +38,22 @@
 
 //       allow write: if isAdmin();
 //     }
+    
+//     // CARTS
+//     match /carts/{cartId} {
+//       allow read: if isAdmin() 
+//       				|| isTeacher() && request.auth.uid in resource.data.teacherIds
+//               || isManager() && request.auth.uid in resource.data.teacherIds
 
+//       allow create: if isTeacher()
+//              && request.auth.uid in request.resource.data.teacherIds
+             
+//       allow update, delete: if isTeacher()
+//              && request.auth.uid in resource.data.teacherIds
+
+//       allow write: if isAdmin();
+//     }
+    
 //     // PLANS
 //     match /plans/{planId} {
 //     	allow read: if isAdmin() 
@@ -106,6 +121,8 @@
 //          allow update, delete: if isTeacher()
 //              && request.auth.uid in resource.data.teacherIds 
 //              && getPlan(resource.data.planId).data.status == "approved";
+             
+//          allow write: if isAdmin();
 //      }
 
 //     // FIELDS
@@ -126,6 +143,12 @@
 //       allow write: if isAdmin();
 //     }
 
+//     // SUGGESTS
+//     match /suggests/{suggestId} {
+//       allow read: if isAdmin() || isTeacher() || isManager()
+//       allow write: if isAdmin();
+//     }
+
 //     // META
 //     match /Meta/{metaId} {
 //       allow read, update: if isAdmin() || isTeacher() || isManager()
@@ -133,4 +156,3 @@
 //     }
 //   }
 // }
-// // 
