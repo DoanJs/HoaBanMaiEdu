@@ -12,6 +12,7 @@ import {
 } from ".";
 import { colors } from "../constants/colors";
 import { convertTargetField } from "../constants/convertTargetAndField";
+import { handleTimeStampFirestore } from "../constants/convertTimeStamp";
 import { getDocsData } from "../constants/firebase/getDocsData";
 import { updateDocData } from "../constants/firebase/updateDocData";
 import { groupArrayWithField } from "../constants/groupArrayWithField";
@@ -29,7 +30,6 @@ import {
   useUserStore,
 } from "../zustand";
 import LoadingOverlay from "./LoadingOverLay";
-import { handleTimeStampFirestore } from "../constants/convertTimeStamp";
 
 export default function PendingListComponent() {
   const navigate = useNavigate();
@@ -145,6 +145,22 @@ export default function PendingListComponent() {
     );
   };
 
+  // useEffect(() => {
+  //   if (plan) {
+  //     getDataTest()
+  //   }
+  // }, [plan]);
+
+  // const getDataTest = async () => {
+  //   const querySnapshot = await getDocs(query(collection(db, 'planTasks'), where('planId', '==', 'K7sHIZdTmuOSYSfmiqZO')));
+  //   const items = querySnapshot.docs.map((doc) => ({
+  //     id: doc.id,
+  //     ...doc.data(),
+  //   }));
+  //   // setData(items); // In ra danh sách item
+  //   console.log("items: ", items)
+  // };
+
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
@@ -173,7 +189,7 @@ export default function PendingListComponent() {
           ).format("HH:mm:ss_DD/MM/YYYY")}`}
           size={widthSmall ? sizes.text : sizes.bigText}
         />
-        
+
         <SpaceComponent width={10} />
 
         {handleTimeStampFirestore(plan?.createAt) !==
