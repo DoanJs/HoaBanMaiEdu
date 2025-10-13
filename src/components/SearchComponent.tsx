@@ -6,24 +6,26 @@ import { PlanModel } from "../models/PlanModel";
 import { ReportModel } from "../models/ReportModel";
 import { SuggestModel } from "../models/SuggestModel";
 import { TargetModel } from "../models/TargetModel";
+import { handleChildFromId } from "../constants/handleChildFromId";
 
 interface Props {
   title: string;
   placeholder: string;
   type?: string;
   width?: number | string;
+  children?: ChildrenModel[];
   arrSource:
-    | ChildrenModel[]
-    | TargetModel[]
-    | PlanModel[]
-    | ReportModel[]
-    | SuggestModel[]
-    | UserModel[];
+  | ChildrenModel[]
+  | TargetModel[]
+  | PlanModel[]
+  | ReportModel[]
+  | SuggestModel[]
+  | UserModel[];
   onChange: (val: any) => void;
 }
 
 export default function SearchComponent(props: Props) {
-  const { title, placeholder, type, arrSource, onChange, width } = props;
+  const { title, placeholder, type, arrSource, onChange, width, children } = props;
   const [value, setValue] = useState("");
 
   useEffect(() => {
@@ -43,7 +45,8 @@ export default function SearchComponent(props: Props) {
         break;
       case "searchPlan":
         items = (arrSource as PlanModel[]).filter((plan) =>
-          plan.title.toLowerCase().includes(value.toLowerCase())
+          plan.title.toLowerCase().includes(value.toLowerCase()) ||
+          handleChildFromId(plan.childId, children as ChildrenModel[]).toLocaleLowerCase().includes(value.toLocaleLowerCase())
         );
         break;
       case "searchReport":
