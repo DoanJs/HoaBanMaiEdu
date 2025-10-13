@@ -178,6 +178,27 @@ export default function ModalDeleteComponent(props: Props) {
         handleToastError("Xóa giáo viên thất bại !");
       });
   };
+  const deletePlanApproved = async (planId: string) => {
+    setIsLoading(true);
+    deleteDocData({
+      nameCollect: "plans",
+      id: planId,
+      metaDoc: "plans",
+    })
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa kế hoạch Approved thành công !");
+        data.setForm({
+          title: "",
+          status: "pending",
+        });
+        data.setEdit(undefined);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa kế hoạch Approved thất bại !");
+      });
+  };
   const deleteMeta = async (metaId: string) => {
     setIsLoading(true);
     deleteDoc(doc(db, "Meta", metaId))
@@ -214,6 +235,7 @@ export default function ModalDeleteComponent(props: Props) {
         handleToastError("Reset giỏ mục tiêu thất bại !");
       });
   };
+  
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -247,6 +269,10 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "carts":
         deleteCart(data.itemTasks as CartModel[]);
+        break;
+
+      case "planApproveds":
+        deletePlanApproved(data.id);
         break;
 
       default:

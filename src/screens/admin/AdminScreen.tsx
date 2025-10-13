@@ -8,6 +8,7 @@ import AdminMeta from "./AdminMeta";
 import AdminSuggest from "./AdminSuggest";
 import AdminTeacher from "./AdminTeacher";
 import AdminBackupData from "./AdminBackupData";
+import AdminPlan from "./AdminPlan";
 export default function AdminScreen() {
   const [selected, setSelected] = useState("TRẺ");
 
@@ -22,6 +23,9 @@ export default function AdminScreen() {
         break;
       case "GỢI Ý":
         ui = <AdminSuggest />;
+        break;
+      case "KẾ HOẠCH":
+        ui = <AdminPlan />;
         break;
       case "GIÁO VIÊN":
         ui = <AdminTeacher />;
@@ -60,7 +64,7 @@ export default function AdminScreen() {
           "LĨNH VỰC - MỤC TIÊU - GỢI Ý",
           "GỢI Ý",
           "GIÁO VIÊN",
-          // "KẾ HOẠCH",
+          "KẾ HOẠCH",
           // "BÁO CÁO",
           // "MỨC ĐỘ HỖ TRỢ",
           "META",
