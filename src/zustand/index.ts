@@ -6,6 +6,7 @@ import useFieldStore from "./useFieldStore";
 import useInterventionStore from "./useInterventionStore";
 import usePlanStore from "./usePlanStore";
 import usePlanTaskStore from "./usePlanTaskStore";
+import useReportSavedStore from "./useReportSavedStore";
 import useReportStore from "./useReportStore";
 import useSelectTargetStore from "./useSelectTargetStore";
 import useSuggestStore from "./useSuggestStore";
@@ -24,5 +25,7 @@ export {
   useSelectTargetStore,
   useSuggestStore,
   useTargetStore,
-  useUserStore,useChildrenStore
+  useUserStore,
+  useChildrenStore,
+  useReportSavedStore
 };

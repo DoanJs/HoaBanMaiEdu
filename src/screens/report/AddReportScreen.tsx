@@ -2,6 +2,7 @@ import { serverTimestamp, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  AddReportItemComponent,
   RowComponent,
   SpaceComponent,
   SpinnerComponent,
@@ -11,24 +12,26 @@ import LoadingOverlay from "../../components/LoadingOverLay";
 import { colors } from "../../constants/colors";
 import { convertTargetField } from "../../constants/convertTargetAndField";
 import { addDocData } from "../../constants/firebase/addDocData";
+import { deleteDocData } from "../../constants/firebase/deleteDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
+import { groupArrayWithField } from "../../constants/groupArrayWithField";
 import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
-import { PlanModel, PlanTaskModel } from "../../models";
+import { PlanModel, PlanTaskModel, ReportSavedModel } from "../../models";
 import {
   useChildStore,
   useFieldStore,
   usePlanStore,
+  useReportSavedStore,
   useReportStore,
   useSelectTargetStore,
   useTargetStore,
   useUserStore,
 } from "../../zustand";
-import { groupArrayWithField } from "../../constants/groupArrayWithField";
 
 export default function AddReportScreen() {
   const navigate = useNavigate();
@@ -45,6 +48,8 @@ export default function AddReportScreen() {
   const { addReport } = useReportStore();
   const [planApprovals, setPlanApprovals] = useState<PlanModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
+  const { reportSaveds } = useReportSavedStore()
+  const [isReportSaved, setIsReportSaved] = useState(false);
 
   useEffect(() => {
     if (plans) {
@@ -63,7 +68,18 @@ export default function AddReportScreen() {
 
   useEffect(() => {
     if (planTasks) {
-      setAddReports(planTasks);
+      if (isReportSaved) {
+        setAddReports(planTasks.map((planTask: any) => {
+          const { id, ..._ } = planTask
+          return {
+            ..._,
+            reportSavedId: id,
+            id: _.planTaskId
+          }
+        }));
+      } else {
+        setAddReports(planTasks);
+      }
     }
   }, [planTasks]);
 
@@ -71,23 +87,26 @@ export default function AddReportScreen() {
     if (planId !== "") {
       const index = planApprovals.findIndex((_) => _.id === planId);
       setPlan(planApprovals[index]);
-      getDocsData({
-        nameCollect: "planTasks",
-        condition: [
-          where("teacherIds", "array-contains", user?.id),
-          where("planId", "==", planId),
-        ],
-        setData: setPlanTasks,
-      });
+
+      const items = reportSaveds.filter((reportSaved: ReportSavedModel) => reportSaved.planId === planId)
+      if (items.length > 0) {
+        setIsReportSaved(true)
+        setPlanTasks(items)
+      } else {
+        setIsReportSaved(false)
+        getDocsData({
+          nameCollect: "planTasks",
+          condition: [
+            where("teacherIds", "array-contains", user?.id),
+            where("planId", "==", planId),
+          ],
+          setData: setPlanTasks,
+        });
+      }
     } else {
       setPlanTasks([]);
       setDisable(true);
     }
-  };
-  const handleChangeValue = (data: { val: string; planTaskId: string }) => {
-    const index = addReports.findIndex((_: any) => _.id === data.planTaskId);
-    addReports[index].total = data.val;
-    setAddReports(addReports);
   };
   const handleAddReport = async () => {
     if (user && child) {
@@ -143,6 +162,18 @@ export default function AddReportScreen() {
           );
 
           await Promise.all(promiseItems);
+
+          if (isReportSaved) {
+            const promiseReportSavedtems = addReports.map((reportSaved) =>
+              deleteDocData({
+                nameCollect: "reportSaveds",
+                id: reportSaved.reportSavedId,
+                metaDoc: "reportSaveds",
+              })
+            );
+            await Promise.all(promiseReportSavedtems);
+          }
+
           handleToastSuccess("Thêm mới báo cáo thành công !");
           setIsLoading(false);
         })
@@ -155,6 +186,44 @@ export default function AddReportScreen() {
       setSelectTarget("CHỜ DUYỆT");
     }
   };
+  const handleSaveReportSaved = async () => {
+    if (isReportSaved) {
+      // xoa het them lai
+      const promiseReportSavedtems = addReports.map((reportSaved) =>
+        deleteDocData({
+          nameCollect: "reportSaveds",
+          id: reportSaved.reportSavedId,
+          metaDoc: "reportSaveds",
+        })
+      );
+      await Promise.all(promiseReportSavedtems);
+
+    }
+
+    // them moi tat ca
+    const promiseItems = addReports.map((_) => {
+      const { id, ...data } = _
+      addDocData({
+        nameCollect: 'reportSaveds',
+        value: {
+          ...data,
+          planTaskId: id,
+          total: _.total ?? ''
+        },
+        metaDoc: 'reportSaveds'
+      })
+    }
+    )
+
+    Promise.all(promiseItems).then(() => {
+      setIsLoading(false)
+      handleToastSuccess('Lưu nháp báo cáo thành công !')
+    }).catch(error => {
+      setIsLoading(false)
+      handleToastError('Lưu nháp báo cáo thất bại !')
+      console.log(error)
+    })
+  }
 
   return (
     <div
@@ -214,41 +283,40 @@ export default function AddReportScreen() {
             </tr>
           </thead>
           <tbody>
-            {planTasks &&
-              groupArrayWithField(planTasks.map((_) => {
+            {addReports &&
+              groupArrayWithField(addReports.map((_) => {
                 return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
               }), 'fieldId').map((_, index) => (
-                <tr key={index}>
-                  <th scope="row">
-                    {convertTargetField(_.targetId, targets, fields).nameField}
-                  </th>
-                  <td>
-                    {convertTargetField(_.targetId, targets, fields).nameTarget}
-                  </td>
-                  <td>{_.intervention}</td>
-                  <td>{_.content}</td>
-                  <td>
-                    <textarea
-                      onChange={(e) =>
-                        handleChangeValue({
-                          val: e.target.value,
-                          planTaskId: _.id,
-                        })
-                      }
-                      className="form-control"
-                      placeholder="Nhập đánh giá"
-                      rows={4}
-                      cols={300}
-                      id="floatingTextarea2"
-                    ></textarea>
-                  </td>
-                </tr>
+                <AddReportItemComponent
+                  key={index}
+                  addReport={_}
+                  addReports={addReports}
+                  targets={targets}
+                  fields={fields}
+                />
               ))}
           </tbody>
         </table>
       </div>
 
       <RowComponent justify="flex-end" styles={{ padding: 10 }}>
+        <button
+          type="button"
+          className="btn btn-warning"
+          style={{
+            background: disable ? colors.gray : undefined,
+            borderColor: disable ? colors.gray : undefined,
+            fontSize: widthSmall ? sizes.smallTitle : sizes.title,
+          }}
+          onClick={disable ? undefined : handleSaveReportSaved}
+        >
+          {isLoading ? (
+            <SpinnerComponent />
+          ) : (
+            <TextComponent text="Lưu nháp" color={colors.bacground} />
+          )}
+        </button>
+        <SpaceComponent width={20} />
         <button
           type="button"
           className="btn btn-primary"
