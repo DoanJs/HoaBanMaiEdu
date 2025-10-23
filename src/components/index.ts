@@ -23,6 +23,7 @@ import SpinnerComponent from "./SpinnerComponent";
 import TargetComponent from "./TargetComponent";
 import TargetItemComponent from "./TargetItemComponent";
 import TextComponent from "./TextComponent";
+import AddReportItemComponent from "./AddReportItemComponent";
 
 export {
   CalloverItemComponent,
@@ -50,4 +51,5 @@ export {
   TargetItemComponent,
   TextComponent,
   ToastContainer,
+  AddReportItemComponent
 };
