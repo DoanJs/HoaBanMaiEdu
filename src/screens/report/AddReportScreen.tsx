@@ -48,7 +48,7 @@ export default function AddReportScreen() {
   const { addReport } = useReportStore();
   const [planApprovals, setPlanApprovals] = useState<PlanModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
-  const { reportSaveds } = useReportSavedStore()
+  const { reportSaveds } = useReportSavedStore();
   const [isReportSaved, setIsReportSaved] = useState(false);
 
   useEffect(() => {
@@ -68,41 +68,59 @@ export default function AddReportScreen() {
 
   useEffect(() => {
     if (planTasks) {
-      if (isReportSaved) {
-        setAddReports(planTasks.map((planTask: any) => {
-          const { id, ..._ } = planTask
-          return {
-            ..._,
-            reportSavedId: id,
-            id: _.planTaskId
-          }
-        }));
-      } else {
-        setAddReports(planTasks);
-      }
+      // if (isReportSaved) {
+      //   setAddReports(
+      //     planTasks.map((planTask: any) => {
+      //       const { id, ..._ } = planTask;
+      //       return {
+      //         ..._,
+      //         reportSavedId: id,
+      //         id: _.planTaskId,
+      //       };
+      //     })
+      //   );
+      // } else {
+      //   setAddReports(planTasks);
+      // }
+      setAddReports(planTasks)
     }
   }, [planTasks]);
 
   const handleSelectPlan = (planId: string) => {
+    // if (planId !== "") {
+    //   const index = planApprovals.findIndex((_) => _.id === planId);
+    //   setPlan(planApprovals[index]);
+
+    //   const items = reportSaveds.filter((reportSaved: ReportSavedModel) => reportSaved.planId === planId)
+    //   if (items.length > 0) {
+    //     setIsReportSaved(true)
+    //     setPlanTasks(items)
+    //   } else {
+    //     setIsReportSaved(false)
+    //     getDocsData({
+    //       nameCollect: "planTasks",
+    //       condition: [
+    //         where("teacherIds", "array-contains", user?.id),
+    //         where("planId", "==", planId),
+    //       ],
+    //       setData: setPlanTasks,
+    //     });
+    //   }
+    // } else {
+    //   setPlanTasks([]);
+    //   setDisable(true);
+    // }
     if (planId !== "") {
       const index = planApprovals.findIndex((_) => _.id === planId);
       setPlan(planApprovals[index]);
-
-      const items = reportSaveds.filter((reportSaved: ReportSavedModel) => reportSaved.planId === planId)
-      if (items.length > 0) {
-        setIsReportSaved(true)
-        setPlanTasks(items)
-      } else {
-        setIsReportSaved(false)
-        getDocsData({
-          nameCollect: "planTasks",
-          condition: [
-            where("teacherIds", "array-contains", user?.id),
-            where("planId", "==", planId),
-          ],
-          setData: setPlanTasks,
-        });
-      }
+      getDocsData({
+        nameCollect: "planTasks",
+        condition: [
+          where("teacherIds", "array-contains", user?.id),
+          where("planId", "==", planId),
+        ],
+        setData: setPlanTasks,
+      });
     } else {
       setPlanTasks([]);
       setDisable(true);
@@ -163,16 +181,16 @@ export default function AddReportScreen() {
 
           await Promise.all(promiseItems);
 
-          if (isReportSaved) {
-            const promiseReportSavedtems = addReports.map((reportSaved) =>
-              deleteDocData({
-                nameCollect: "reportSaveds",
-                id: reportSaved.reportSavedId,
-                metaDoc: "reportSaveds",
-              })
-            );
-            await Promise.all(promiseReportSavedtems);
-          }
+          // if (isReportSaved) {
+          //   const promiseReportSavedtems = addReports.map((reportSaved) =>
+          //     deleteDocData({
+          //       nameCollect: "reportSaveds",
+          //       id: reportSaved.reportSavedId,
+          //       metaDoc: "reportSaveds",
+          //     })
+          //   );
+          //   await Promise.all(promiseReportSavedtems);
+          // }
 
           handleToastSuccess("Thêm mới báo cáo thành công !");
           setIsLoading(false);
@@ -186,44 +204,44 @@ export default function AddReportScreen() {
       setSelectTarget("CHỜ DUYỆT");
     }
   };
-  const handleSaveReportSaved = async () => {
-    if (isReportSaved) {
-      // xoa het them lai
-      const promiseReportSavedtems = addReports.map((reportSaved) =>
-        deleteDocData({
-          nameCollect: "reportSaveds",
-          id: reportSaved.reportSavedId,
-          metaDoc: "reportSaveds",
-        })
-      );
-      await Promise.all(promiseReportSavedtems);
+  // const handleSaveReportSaved = async () => {
+  //   if (isReportSaved) {
+  //     // xoa het them lai
+  //     const promiseReportSavedtems = addReports.map((reportSaved) =>
+  //       deleteDocData({
+  //         nameCollect: "reportSaveds",
+  //         id: reportSaved.reportSavedId,
+  //         metaDoc: "reportSaveds",
+  //       })
+  //     );
+  //     await Promise.all(promiseReportSavedtems);
+  //   }
 
-    }
+  //   // them moi tat ca
+  //   const promiseItems = addReports.map((_) => {
+  //     const { id, ...data } = _;
+  //     addDocData({
+  //       nameCollect: "reportSaveds",
+  //       value: {
+  //         ...data,
+  //         planTaskId: id,
+  //         total: _.total ?? "",
+  //       },
+  //       metaDoc: "reportSaveds",
+  //     });
+  //   });
 
-    // them moi tat ca
-    const promiseItems = addReports.map((_) => {
-      const { id, ...data } = _
-      addDocData({
-        nameCollect: 'reportSaveds',
-        value: {
-          ...data,
-          planTaskId: id,
-          total: _.total ?? ''
-        },
-        metaDoc: 'reportSaveds'
-      })
-    }
-    )
-
-    Promise.all(promiseItems).then(() => {
-      setIsLoading(false)
-      handleToastSuccess('Lưu nháp báo cáo thành công !')
-    }).catch(error => {
-      setIsLoading(false)
-      handleToastError('Lưu nháp báo cáo thất bại !')
-      console.log(error)
-    })
-  }
+  //   Promise.all(promiseItems)
+  //     .then(() => {
+  //       setIsLoading(false);
+  //       handleToastSuccess("Lưu nháp báo cáo thành công !");
+  //     })
+  //     .catch((error) => {
+  //       setIsLoading(false);
+  //       handleToastError("Lưu nháp báo cáo thất bại !");
+  //       console.log(error);
+  //     });
+  // };
 
   return (
     <div
@@ -284,9 +302,16 @@ export default function AddReportScreen() {
           </thead>
           <tbody>
             {addReports &&
-              groupArrayWithField(addReports.map((_) => {
-                return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
-              }), 'fieldId').map((_, index) => (
+              groupArrayWithField(
+                addReports.map((_) => {
+                  return {
+                    ..._,
+                    fieldId: convertTargetField(_.targetId, targets, fields)
+                      .fieldId,
+                  };
+                }),
+                "fieldId"
+              ).map((_, index) => (
                 <AddReportItemComponent
                   key={index}
                   addReport={_}
@@ -300,7 +325,7 @@ export default function AddReportScreen() {
       </div>
 
       <RowComponent justify="flex-end" styles={{ padding: 10 }}>
-        <button
+        {/* <button
           type="button"
           className="btn btn-warning"
           style={{
@@ -316,7 +341,7 @@ export default function AddReportScreen() {
             <TextComponent text="Lưu nháp" color={colors.bacground} />
           )}
         </button>
-        <SpaceComponent width={20} />
+        <SpaceComponent width={20} /> */}
         <button
           type="button"
           className="btn btn-primary"
