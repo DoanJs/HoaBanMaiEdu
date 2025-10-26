@@ -48,8 +48,10 @@ export default function AddReportScreen() {
   const { addReport } = useReportStore();
   const [planApprovals, setPlanApprovals] = useState<PlanModel[]>([]);
   const { setSelectTarget } = useSelectTargetStore();
-  const { reportSaveds } = useReportSavedStore()
+  const { reportSaveds, removeReportSaved, addReportSaved } =
+    useReportSavedStore();
   const [isReportSaved, setIsReportSaved] = useState(false);
+  const [planSelected, setPlanSelected] = useState("");
 
   useEffect(() => {
     if (plans) {
@@ -68,32 +70,38 @@ export default function AddReportScreen() {
 
   useEffect(() => {
     if (planTasks) {
-      if (isReportSaved) {
-        setAddReports(planTasks.map((planTask: any) => {
-          const { id, ..._ } = planTask
-          return {
-            ..._,
-            reportSavedId: id,
-            id: _.planTaskId
-          }
-        }));
-      } else {
-        setAddReports(planTasks);
-      }
+      // if (isReportSaved) {
+      //   setAddReports(
+      //     planTasks.map((planTask: any) => {
+      //       const { id, ..._ } = planTask;
+      //       return {
+      //         ..._,
+      //         reportSavedId: id,
+      //         id: _.planTaskId,
+      //       };
+      //     })
+      //   );
+      // } else {
+      //   setAddReports(planTasks);
+      // }
+      setAddReports(planTasks);
     }
   }, [planTasks]);
 
   const handleSelectPlan = (planId: string) => {
+    setPlanSelected(planId);
     if (planId !== "") {
       const index = planApprovals.findIndex((_) => _.id === planId);
       setPlan(planApprovals[index]);
 
-      const items = reportSaveds.filter((reportSaved: ReportSavedModel) => reportSaved.planId === planId)
+      const items = reportSaveds.filter(
+        (reportSaved: ReportSavedModel) => reportSaved.planId === planId
+      );
       if (items.length > 0) {
-        setIsReportSaved(true)
-        setPlanTasks(items)
+        setIsReportSaved(true);
+        setPlanTasks(items);
       } else {
-        setIsReportSaved(false)
+        setIsReportSaved(false);
         getDocsData({
           nameCollect: "planTasks",
           condition: [
@@ -107,6 +115,21 @@ export default function AddReportScreen() {
       setPlanTasks([]);
       setDisable(true);
     }
+    // if (planId !== "") {
+    //   const index = planApprovals.findIndex((_) => _.id === planId);
+    //   setPlan(planApprovals[index]);
+    //   getDocsData({
+    //     nameCollect: "planTasks",
+    //     condition: [
+    //       where("teacherIds", "array-contains", user?.id),
+    //       where("planId", "==", planId),
+    //     ],
+    //     setData: setPlanTasks,
+    //   });
+    // } else {
+    //   setPlanTasks([]);
+    //   setDisable(true);
+    // }
   };
   const handleAddReport = async () => {
     if (user && child) {
@@ -149,7 +172,7 @@ export default function AddReportScreen() {
                 reportId: result.id,
                 planId: plan?.id as string,
                 childId: child.id,
-                planTaskId: _.id,
+                planTaskId: isReportSaved ? _.planTaskId : _.id,
                 content: _.total ?? "",
                 isEdit: false,
                 teacherIds: child.teacherIds,
@@ -164,16 +187,18 @@ export default function AddReportScreen() {
           await Promise.all(promiseItems);
 
           if (isReportSaved) {
-            const promiseReportSavedtems = addReports.map((reportSaved) =>
+            const promiseReportSavedtems = addReports.map((reportSaved) => {
               deleteDocData({
                 nameCollect: "reportSaveds",
-                id: reportSaved.reportSavedId,
+                id: reportSaved.id,
                 metaDoc: "reportSaveds",
-              })
-            );
+              });
+              removeReportSaved(reportSaved.id);
+            });
             await Promise.all(promiseReportSavedtems);
           }
 
+          setIsReportSaved(false);
           handleToastSuccess("Thêm mới báo cáo thành công !");
           setIsLoading(false);
         })
@@ -187,43 +212,60 @@ export default function AddReportScreen() {
     }
   };
   const handleSaveReportSaved = async () => {
+    // console.log(addReports);
+    // console.log("reportSaveds: ", reportSaveds);
+
+    setIsLoading(true);
     if (isReportSaved) {
       // xoa het them lai
       const promiseReportSavedtems = addReports.map((reportSaved) =>
         deleteDocData({
           nameCollect: "reportSaveds",
-          id: reportSaved.reportSavedId,
+          id: reportSaved.id,
           metaDoc: "reportSaveds",
         })
       );
       await Promise.all(promiseReportSavedtems);
-
     }
 
     // them moi tat ca
     const promiseItems = addReports.map((_) => {
-      const { id, ...data } = _
+      const { id, ...data } = _;
       addDocData({
-        nameCollect: 'reportSaveds',
+        nameCollect: "reportSaveds",
         value: {
           ...data,
-          planTaskId: id,
-          total: _.total ?? ''
+          planTaskId: _.planTaskId ?? id,
+          total: _.total ?? "",
         },
-        metaDoc: 'reportSaveds'
-      })
-    }
-    )
+        metaDoc: "reportSaveds",
+      }).then((result) => {
+        removeReportSaved(_.id);
+        addReportSaved({
+          ...data,
+          planTaskId: _.planTaskId ?? id,
+          total: _.total ?? "",
+          id: result.id,
+        });
 
-    Promise.all(promiseItems).then(() => {
-      setIsLoading(false)
-      handleToastSuccess('Lưu nháp báo cáo thành công !')
-    }).catch(error => {
-      setIsLoading(false)
-      handleToastError('Lưu nháp báo cáo thất bại !')
-      console.log(error)
-    })
-  }
+        setPlanSelected("");
+        setPlanTasks([]);
+        setDisable(true);
+      });
+    });
+
+    Promise.all(promiseItems)
+      .then(() => {
+        setIsLoading(false);
+        setIsReportSaved(true);
+        handleToastSuccess("Lưu nháp báo cáo thành công !");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Lưu nháp báo cáo thất bại !");
+        console.log(error);
+      });
+  };
 
   return (
     <div
@@ -257,6 +299,7 @@ export default function AddReportScreen() {
           className={`form-select ${widthSmall && "form-select-sm"}`}
           aria-label="Default select example"
           style={{ width: "30%" }}
+          value={planSelected}
         >
           <option value={""}>Chọn kế hoạch tháng đã duyệt</option>
           {planApprovals &&
@@ -284,9 +327,16 @@ export default function AddReportScreen() {
           </thead>
           <tbody>
             {addReports &&
-              groupArrayWithField(addReports.map((_) => {
-                return { ..._, fieldId: convertTargetField(_.targetId, targets, fields).fieldId }
-              }), 'fieldId').map((_, index) => (
+              groupArrayWithField(
+                addReports.map((_) => {
+                  return {
+                    ..._,
+                    fieldId: convertTargetField(_.targetId, targets, fields)
+                      .fieldId,
+                  };
+                }),
+                "fieldId"
+              ).map((_, index) => (
                 <AddReportItemComponent
                   key={index}
                   addReport={_}
@@ -299,41 +349,46 @@ export default function AddReportScreen() {
         </table>
       </div>
 
-      <RowComponent justify="flex-end" styles={{ padding: 10 }}>
-        <button
-          type="button"
-          className="btn btn-warning"
-          style={{
-            background: disable ? colors.gray : undefined,
-            borderColor: disable ? colors.gray : undefined,
-            fontSize: widthSmall ? sizes.smallTitle : sizes.title,
-          }}
-          onClick={disable ? undefined : handleSaveReportSaved}
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : (
-            <TextComponent text="Lưu nháp" color={colors.bacground} />
-          )}
-        </button>
-        <SpaceComponent width={20} />
-        <button
-          type="button"
-          className="btn btn-primary"
-          style={{
-            background: disable ? colors.gray : undefined,
-            borderColor: disable ? colors.gray : undefined,
-            fontSize: widthSmall ? sizes.smallTitle : sizes.title,
-          }}
-          onClick={disable ? undefined : handleAddReport}
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : (
-            <TextComponent text="Tạo mới" color={colors.bacground} />
-          )}
-        </button>
-      </RowComponent>
+      {!disable && (
+        <RowComponent justify="flex-end" styles={{ padding: 10 }}>
+          <button
+            type="button"
+            className={`btn btn-${isReportSaved ? "warning" : "success"}`}
+            style={{
+              background: disable ? colors.gray : undefined,
+              borderColor: disable ? colors.gray : undefined,
+              fontSize: widthSmall ? sizes.smallTitle : sizes.title,
+            }}
+            onClick={disable ? undefined : handleSaveReportSaved}
+          >
+            {isLoading ? (
+              <SpinnerComponent />
+            ) : (
+              <TextComponent
+                text={isReportSaved ? "Cập nhập lưu nháp" : "Tạo bản lưu nháp"}
+                color={colors.bacground}
+              />
+            )}
+          </button>
+          <SpaceComponent width={20} />
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{
+              background: disable ? colors.gray : undefined,
+              borderColor: disable ? colors.gray : undefined,
+              fontSize: widthSmall ? sizes.smallTitle : sizes.title,
+            }}
+            onClick={disable ? undefined : handleAddReport}
+          >
+            {isLoading ? (
+              <SpinnerComponent />
+            ) : (
+              <TextComponent text="Tạo mới" color={colors.bacground} />
+            )}
+          </button>
+        </RowComponent>
+      )}
 
       <LoadingOverlay show={isLoading} />
     </div>
