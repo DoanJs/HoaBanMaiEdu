@@ -199,6 +199,27 @@ export default function ModalDeleteComponent(props: Props) {
         handleToastError("Xóa kế hoạch Approved thất bại !");
       });
   };
+  const deleteReportApproved = async (reportId: string) => {
+    setIsLoading(true);
+    deleteDocData({
+      nameCollect: "reports",
+      id: reportId,
+      metaDoc: "reports",
+    })
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Xóa báo cáo Approved thành công !");
+        data.setForm({
+          title: "",
+          status: "pending",
+        });
+        data.setEdit(undefined);
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Xóa báo cáo Approved thất bại !");
+      });
+  };
   const deleteMeta = async (metaId: string) => {
     setIsLoading(true);
     deleteDoc(doc(db, "Meta", metaId))
@@ -218,16 +239,18 @@ export default function ModalDeleteComponent(props: Props) {
   };
   const deleteCart = async (carts: CartModel[]) => {
     setIsLoading(true);
-    const promiseItems = carts.map((cart) => deleteDocData({
-      nameCollect: 'carts',
-      id: cart.id,
-      metaDoc: 'carts'
-    }))
+    const promiseItems = carts.map((cart) =>
+      deleteDocData({
+        nameCollect: "carts",
+        id: cart.id,
+        metaDoc: "carts",
+      })
+    );
 
     Promise.all(promiseItems)
       .then(() => {
         setIsLoading(false);
-        data.setForm([])
+        data.setForm([]);
         handleToastSuccess("Reset giỏ mục tiêu thành công !");
       })
       .catch((error) => {
@@ -235,7 +258,6 @@ export default function ModalDeleteComponent(props: Props) {
         handleToastError("Reset giỏ mục tiêu thất bại !");
       });
   };
-  
 
   const handleDelete = async () => {
     switch (data.nameCollect) {
@@ -273,6 +295,9 @@ export default function ModalDeleteComponent(props: Props) {
 
       case "planApproveds":
         deletePlanApproved(data.id);
+        break;
+      case "reportApproveds":
+        deleteReportApproved(data.id);
         break;
 
       default:
