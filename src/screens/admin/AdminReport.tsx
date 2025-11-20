@@ -1,5 +1,7 @@
+import { where } from "firebase/firestore";
 import { AddCircle, Trash } from "iconsax-react";
 import { useEffect, useState } from "react";
+import Select, { MultiValue } from "react-select";
 import {
   ModalDeleteComponent,
   RowComponent,
@@ -18,24 +20,16 @@ import {
 } from "../../constants/handleToast";
 import { widthSmall } from "../../constants/reponsive";
 import { sizes } from "../../constants/sizes";
-import {
-  ChildrenModel,
-  PlanModel,
-  PlanTaskModel,
-  UserModel,
-} from "../../models";
-import { SuggestModel } from "../../models/SuggestModel";
+import { ChildrenModel, ReportModel, ReportTaskModel, UserModel } from "../../models";
 import { useUserStore } from "../../zustand";
-import AdminPlanComponent from "./AdminPlanComponent";
-import Select, { MultiValue } from "react-select";
-import { where } from "firebase/firestore";
+import AdminReportComponent from "./AdminReportComponent";
 
 interface OptionType {
   id: string;
   fullName: string;
 }
 
-export default function AdminPlan() {
+export default function AdminReport() {
   const { user } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(true);
@@ -43,24 +37,23 @@ export default function AdminPlan() {
     title: "",
     status: "pending",
   });
-  const [suggestEdit, setSuggestEdit] = useState<SuggestModel>();
 
-  const [plans, setPlans] = useState<PlanModel[]>([]);
-  const [newPlans, setNewPlans] = useState<PlanModel[]>([]);
-  const [planEdit, setPlanEdit] = useState<PlanModel>();
+  const [reports, setReports] = useState<ReportModel[]>([]);
+  const [newReports, setNewReports] = useState<ReportModel[]>([]);
+  const [reportEdit, setReportEdit] = useState<ReportModel>();
   const [children, setChildren] = useState<ChildrenModel[]>([]);
   const [teachers, setTeachers] = useState<UserModel[]>([]);
   const [selectTeachers, setSelectTeachers] = useState<OptionType[]>([]);
-  const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
+  const [reportTasks, setReportTasks] = useState<ReportTaskModel[]>([]);
 
   useEffect(() => {
-    if (planEdit) {
+    if (reportEdit) {
       setForm({
-        title: planEdit.title,
-        status: planEdit.status,
+        title: reportEdit.title,
+        status: reportEdit.status,
       });
       setSelectTeachers(
-        planEdit.teacherIds.map((_) => {
+        reportEdit.teacherIds.map((_) => {
           const indexTeacher = teachers.findIndex(
             (teacher) => teacher.id === _
           );
@@ -68,12 +61,12 @@ export default function AdminPlan() {
         })
       );
       getDocsData({
-        nameCollect: "planTasks",
-        condition: [where("planId", "==", planEdit.id)],
-        setData: setPlanTasks,
+        nameCollect: "reportTasks",
+        condition: [where("planId", "==", reportEdit.planId)],
+        setData: setReportTasks,
       });
     }
-  }, [planEdit]);
+  }, [reportEdit]);
 
   useEffect(() => {
     if (form.status && form.title) {
@@ -86,8 +79,8 @@ export default function AdminPlan() {
   useEffect(() => {
     if (user) {
       getDocsData({
-        nameCollect: "plans",
-        setData: setPlans,
+        nameCollect: "reports",
+        setData: setReports,
       });
       getDocsData({
         nameCollect: "children",
@@ -101,47 +94,47 @@ export default function AdminPlan() {
   }, [user]);
 
   useEffect(() => {
-    if (plans.length > 0) {
-      setNewPlans(plans);
+    if (reports.length > 0) {
+      setNewReports(reports);
     }
-  }, [plans]);
+  }, [reports]);
 
   const handleSuggest = async () => {
     setIsLoading(true);
-    if (planEdit) {
+    if (reportEdit) {
       updateDocData({
-        nameCollect: "plans",
-        id: planEdit.id,
+        nameCollect: "reports",
+        id: reportEdit.id,
         valueUpdate: {
           title: form.title,
           status: form.status,
           teacherIds: selectTeachers.map((_) => _.id),
         },
-        metaDoc: "plans",
+        metaDoc: "reports",
       })
         .then((result) => {
           setIsLoading(false);
           handleToastSuccess(
-            `Chỉnh sửa kế hoạch thành công ! (${planEdit.id}) `
+            `Chỉnh sửa báo cáo thành công ! (${reportEdit.id}) `
           );
         })
         .catch((error) => {
           setIsLoading(false);
-          handleToastError("Chỉnh sửa kế hoạch thất bại !");
+          handleToastError("Chỉnh sửa báo cáo thất bại !");
         });
 
-      const promiseItems = planTasks.map((_) =>
+      const promiseItems = reportTasks.map((_) =>
         updateDocData({
-          nameCollect: "planTasks",
+          nameCollect: "reportTasks",
           id: _.id,
           valueUpdate: {
             teacherIds: selectTeachers.map((_) => _.id),
           },
-          metaDoc: "plans",
+          metaDoc: "reports",
         })
       );
 
-      await Promise.all(promiseItems)
+      await Promise.all(promiseItems);
     }
     setForm({ title: "", status: "pending" });
   };
@@ -158,16 +151,16 @@ export default function AdminPlan() {
       >
         <RowComponent justify="space-between">
           <SearchComponent
-            title="Tìm kế hoạch"
-            placeholder="Nhập kế hoạch"
+            title="Tìm báo cáo"
+            placeholder="Nhập báo cáo"
             width={"75%"}
-            arrSource={plans}
+            arrSource={reports}
             children={children}
-            type="searchPlan"
-            onChange={(val) => setNewPlans(val)}
+            type="searchReport"
+            onChange={(val) => setNewReports(val)}
           />
           <TextComponent
-            text={`Có ${newPlans.length} kế hoạch`}
+            text={`Có ${newReports.length} báo cáo`}
             styles={{ fontWeight: "bold" }}
           />
         </RowComponent>
@@ -179,19 +172,19 @@ export default function AdminPlan() {
           <thead>
             <tr style={{ textAlign: "center" }}>
               <th scope="col">Tên trẻ</th>
-              <th scope="col">Kế hoạch</th>
+              <th scope="col">Báo cáo</th>
               <th scope="col">Trạng thái</th>
               <th scope="col">Handle</th>
             </tr>
           </thead>
           <tbody>
-            {newPlans.length > 0 &&
-              newPlans.map((plan, index) => (
-                <AdminPlanComponent
+            {newReports.length > 0 &&
+              newReports.map((report, index) => (
+                <AdminReportComponent
                   key={index}
-                  plan={plan}
+                  report={report}
                   children={children}
-                  setPlantEdit={setPlanEdit}
+                  setReportEdit={setReportEdit}
                 />
               ))}
           </tbody>
@@ -199,7 +192,7 @@ export default function AdminPlan() {
       </div>
 
       <SpaceComponent width={20} />
-      {planEdit && (
+      {reportEdit && (
         <div
           style={{
             flex: 1,
@@ -226,7 +219,7 @@ export default function AdminPlan() {
                 title: "",
                 status: "pending",
               });
-              setPlanEdit(undefined);
+              setReportEdit(undefined);
             }}
           />
           <Trash
@@ -246,7 +239,7 @@ export default function AdminPlan() {
 
           <RowComponent justify="center">
             <TextComponent
-              text="Chỉnh sửa kế hoạch"
+              text="Chỉnh sửa báo cáo"
               size={widthSmall ? sizes.bigText : sizes.title}
               styles={{ fontWeight: "bold" }}
             />
@@ -258,7 +251,7 @@ export default function AdminPlan() {
               className="form-label"
               style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
             >
-              Tên kế hoạch:
+              Tên báo cáo:
             </label>
             <input
               onChange={(val) => setForm({ ...form, title: val.target.value })}
@@ -328,11 +321,11 @@ export default function AdminPlan() {
 
       <ModalDeleteComponent
         data={{
-          id: planEdit?.id as string,
-          nameCollect: "planApproveds",
+          id: reportEdit?.id as string,
+          nameCollect: "reportApproveds",
           itemTasks: [],
           setForm: setForm,
-          setEdit: setPlanEdit,
+          setEdit: setReportEdit,
         }}
       />
     </RowComponent>

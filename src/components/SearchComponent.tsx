@@ -15,17 +15,18 @@ interface Props {
   width?: number | string;
   children?: ChildrenModel[];
   arrSource:
-  | ChildrenModel[]
-  | TargetModel[]
-  | PlanModel[]
-  | ReportModel[]
-  | SuggestModel[]
-  | UserModel[];
+    | ChildrenModel[]
+    | TargetModel[]
+    | PlanModel[]
+    | ReportModel[]
+    | SuggestModel[]
+    | UserModel[];
   onChange: (val: any) => void;
 }
 
 export default function SearchComponent(props: Props) {
-  const { title, placeholder, type, arrSource, onChange, width, children } = props;
+  const { title, placeholder, type, arrSource, onChange, width, children } =
+    props;
   const [value, setValue] = useState("");
 
   useEffect(() => {
@@ -44,14 +45,21 @@ export default function SearchComponent(props: Props) {
         );
         break;
       case "searchPlan":
-        items = (arrSource as PlanModel[]).filter((plan) =>
-          plan.title.toLowerCase().includes(value.toLowerCase()) ||
-          handleChildFromId(plan.childId, children as ChildrenModel[]).toLocaleLowerCase().includes(value.toLocaleLowerCase())
+        items = (arrSource as PlanModel[]).filter(
+          (plan) =>
+            plan.title.toLowerCase().includes(value.toLowerCase()) ||
+            handleChildFromId(plan.childId, children as ChildrenModel[])
+              .toLocaleLowerCase()
+              .includes(value.toLocaleLowerCase())
         );
         break;
       case "searchReport":
-        items = (arrSource as ReportModel[]).filter((report) =>
-          report.title.toLowerCase().includes(value.toLowerCase())
+        items = (arrSource as ReportModel[]).filter(
+          (report) =>
+            report.title.toLowerCase().includes(value.toLowerCase()) ||
+            handleChildFromId(report.childId, children as ChildrenModel[])
+              .toLocaleLowerCase()
+              .includes(value.toLocaleLowerCase())
         );
         break;
       case "searchSuggest":
