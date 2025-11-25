@@ -135,7 +135,7 @@ export default function PendingScreen() {
                   reportId: _.id,
                   status: _.status,
                   comment: _.comment,
-                  report:{_}
+                  report:_
                 }}
                 type="button"
                 className="btn "

@@ -222,6 +222,7 @@ export default function ReportListComponent() {
       "fieldId"
     );
   };
+  console.log("report: ", report)
   return (
     <div style={{ width: "100%" }}>
       <RowComponent
