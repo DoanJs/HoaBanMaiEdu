@@ -115,7 +115,17 @@ export default function ReportListComponent() {
             metaDoc: "reports",
           })
         );
-        await Promise.all(promiseItems);
+
+        const updateReport = await updateDocData({
+          nameCollect: "reports",
+          id: reportId,
+          valueUpdate: {
+            updateById: user?.id,
+          },
+          metaDoc: "reports",
+        });
+
+        await Promise.all([...promiseItems, updateReport]);
         handleToastSuccess("Chỉnh sửa báo cáo thành công !");
         setIsLoading(false);
         setDisable(true);
@@ -167,13 +177,16 @@ export default function ReportListComponent() {
     editReport(reportId, {
       ...reports[indexReport],
       comment: text ? `${user?.fullName}@Js@${text}` : "",
+      updateById: user?.id,
     });
+
     await updateDocData({
       nameCollect: "reports",
       id: reportId,
       metaDoc: "reports",
       valueUpdate: {
         comment: text !== "" ? `${user?.fullName}@Js@${text}` : "",
+        updateById: user?.id,
       },
     });
     setIsLoading(false);
@@ -187,7 +200,7 @@ export default function ReportListComponent() {
     updateDocData({
       nameCollect: "reports",
       id: reportId,
-      valueUpdate: { status: "approved" },
+      valueUpdate: { status: "approved", updateById: user?.id },
       metaDoc: "reports",
     })
       .then(() => {
@@ -222,7 +235,7 @@ export default function ReportListComponent() {
       "fieldId"
     );
   };
-  console.log("report: ", report)
+
   return (
     <div style={{ width: "100%" }}>
       <RowComponent

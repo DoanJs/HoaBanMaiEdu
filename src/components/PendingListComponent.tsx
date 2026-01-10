@@ -101,12 +101,18 @@ export default function PendingListComponent() {
     editPlan(planId, {
       ...plans[indexPlan],
       comment: text ? `${user?.fullName}@Js@${text}` : "",
+      updateById: user?.id,
     });
+
+    // update phia firestore
     await updateDocData({
       nameCollect: "plans",
       id: planId,
       metaDoc: "plans",
-      valueUpdate: { comment: text ? `${user?.fullName}@Js@${text}` : "" },
+      valueUpdate: {
+        comment: text ? `${user?.fullName}@Js@${text}` : "",
+        updateById: user?.id,
+      },
     });
     setIsLoading(false);
     setDisable(true);
@@ -119,7 +125,7 @@ export default function PendingListComponent() {
     updateDocData({
       nameCollect: "plans",
       id: planId,
-      valueUpdate: { status: "approved" },
+      valueUpdate: { status: "approved", updateById: user?.id },
       metaDoc: "plans",
     })
       .then(() => {

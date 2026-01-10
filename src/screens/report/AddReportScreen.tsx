@@ -144,6 +144,7 @@ export default function AddReportScreen() {
           planId: plan?.id,
           status: "pending",
           comment: "",
+          updateById: user.id,
 
           createAt: serverTimestamp(),
           updateAt: serverTimestamp(),
@@ -161,6 +162,7 @@ export default function AddReportScreen() {
             planId: plan?.id as string,
             status: "pending",
             comment: "",
+            updateById: user.id,
 
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
