@@ -10,6 +10,7 @@ export interface PlanModel {
   authorId: string
   status: string
   comment: string
+  updateById?: string
 
   createAt: TimeAtModel | FieldValue;
   updateAt: TimeAtModel | FieldValue;

@@ -89,6 +89,7 @@ export default function CartScreen() {
             authorId: user.id,
             status: "pending",
             comment: "",
+            updateById: user.id,
 
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
@@ -105,6 +106,7 @@ export default function CartScreen() {
               authorId: user.id,
               status: "pending",
               comment: "",
+              updateById: user.id,
 
               createAt: serverTimestamp(),
               updateAt: serverTimestamp(),
@@ -153,6 +155,7 @@ export default function CartScreen() {
           id: cartEdit,
           valueUpdate: {
             title,
+            updateById: user.id,
           },
           metaDoc: "plans",
         })
@@ -217,23 +220,27 @@ export default function CartScreen() {
     }
   };
   const handleSaveCart = () => {
-    setIsLoading(true)
-    const promiseItems = carts.map((cart) => updateDocData({
-      nameCollect: 'carts',
-      id: cart.id,
-      valueUpdate: cart,
-      metaDoc: 'carts'
-    }))
+    setIsLoading(true);
+    const promiseItems = carts.map((cart) =>
+      updateDocData({
+        nameCollect: "carts",
+        id: cart.id,
+        valueUpdate: cart,
+        metaDoc: "carts",
+      })
+    );
 
-    Promise.all(promiseItems).then(() => {
-      setIsLoading(false)
-      handleToastSuccess('Lưu nháp giỏ hàng thành công !')
-    }).catch(error => {
-      setIsLoading(false)
-      handleToastError('Lưu nháp giỏ hàng thất bại !')
-      console.log(error)
-    })
-  }
+    Promise.all(promiseItems)
+      .then(() => {
+        setIsLoading(false);
+        handleToastSuccess("Lưu nháp giỏ hàng thành công !");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        handleToastError("Lưu nháp giỏ hàng thất bại !");
+        console.log(error);
+      });
+  };
   return (
     <div style={{ width: "100%" }}>
       <SpaceComponent height={10} />
@@ -256,22 +263,25 @@ export default function CartScreen() {
           />
         </div>
 
-        {
-          carts.length > 0 &&
+        {carts.length > 0 && (
           <div
-            style={{ cursor: 'pointer', display: 'flex' }}
+            style={{ cursor: "pointer", display: "flex" }}
             data-bs-dismiss="modal"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal">
+            data-bs-target="#exampleModal"
+          >
             <CardRemove1
               size={widthSmall ? sizes.smallTitle : sizes.bigTitle}
               color={colors.red}
-              variant="Bold" />
+              variant="Bold"
+            />
             <SpaceComponent width={4} />
-            <TextComponent text="Reset giỏ mục tiêu"
-              size={widthSmall ? sizes.text : sizes.thinTitle} />
+            <TextComponent
+              text="Reset giỏ mục tiêu"
+              size={widthSmall ? sizes.text : sizes.thinTitle}
+            />
           </div>
-        }
+        )}
         <Link
           to={"../bank"}
           style={{
@@ -390,10 +400,10 @@ export default function CartScreen() {
       />
       <ModalDeleteComponent
         data={{
-          id: '',
+          id: "",
           itemTasks: carts,
-          nameCollect: 'carts',
-          setForm: setCarts
+          nameCollect: "carts",
+          setForm: setCarts,
         }}
       />
     </div>
