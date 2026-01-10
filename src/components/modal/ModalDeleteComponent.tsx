@@ -13,7 +13,7 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { db } from "../../firebase.config";
+import { db, functions } from "../../firebase.config";
 import { CartModel } from "../../models/CartModel";
 import { PlanTaskModel } from "../../models/PlanTaskModel";
 import { ReportTaskModel } from "../../models/ReportTaskModel";
@@ -21,6 +21,7 @@ import { useUserStore } from "../../zustand";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
 import LoadingOverlay from "../LoadingOverLay";
+import { httpsCallable } from "firebase/functions";
 
 interface DataModel {
   id: string;
@@ -41,61 +42,96 @@ export default function ModalDeleteComponent(props: Props) {
   const { removeReport } = useReportStore();
   const [isLoading, setIsLoading] = useState(false);
 
+  // const deleteReportPending = async (reportId: string) => {
+  //   removeReport(reportId);
+  //   setIsLoading(true);
+
+  //   const reportTasks = await getDocs(
+  //     query(
+  //       collection(db, "reportTasks"),
+  //       where("teacherIds", "array-contains", user?.id),
+  //       where("reportId", "==", reportId)
+  //     )
+  //   );
+
+  //   if (!reportTasks.empty) {
+  //     const promiseReportTasks = reportTasks.docs.map((_) =>
+  //       deleteDocData({
+  //         nameCollect: "reportTasks",
+  //         id: _.id,
+  //         metaDoc: "reports",
+  //       })
+  //     );
+  //     await Promise.all(promiseReportTasks);
+  //   }
+
+  //   await deleteDocData({
+  //     nameCollect: "reports",
+  //     id: reportId,
+  //     metaDoc: "reports",
+  //   });
+
+  //   handleToastSuccess("Xóa báo cáo thành công !");
+  //   setIsLoading(false);
+  //   navigate("../pending");
+  // };
   const deleteReportPending = async (reportId: string) => {
     removeReport(reportId);
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const reportTasks = await getDocs(
-      query(
-        collection(db, "reportTasks"),
-        where("teacherIds", "array-contains", user?.id),
-        where("reportId", "==", reportId)
-      )
-    );
-
-    if (!reportTasks.empty) {
-      const promiseReportTasks = reportTasks.docs.map((_) =>
-        deleteDocData({
-          nameCollect: "reportTasks",
-          id: _.id,
-          metaDoc: "reports",
-        })
+      const deleteReport = httpsCallable<{ reportId: string }, { ok: boolean }>(
+        functions,
+        "deleteReport"
       );
-      await Promise.all(promiseReportTasks);
+
+      await deleteReport({ reportId });
+
+      // cập nhật UI sau khi backend xoá xong
+      // removeReport(reportId);
+
+      handleToastSuccess("Xóa báo cáo thành công!");
+      navigate("../pending");
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.code === "permission-denied") {
+        handleToastError("Bạn không có quyền xoá báo cáo");
+      } else {
+        handleToastError("Không thể xoá báo cáo");
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    await deleteDocData({
-      nameCollect: "reports",
-      id: reportId,
-      metaDoc: "reports",
-    });
-
-    handleToastSuccess("Xóa báo cáo thành công !");
-    setIsLoading(false);
-    navigate("../pending");
   };
   const deletePlanPending = async (planId: string) => {
     removePlan(planId);
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const promisePlanTasks = data.itemTasks.map((_) =>
-      deleteDocData({
-        nameCollect: "planTasks",
-        id: _.id,
-        metaDoc: "plans",
-      })
-    );
-    await Promise.all(promisePlanTasks);
+      const deletePlan = httpsCallable<{ planId: string }, { ok: boolean }>(
+        functions,
+        "deletePlan"
+      );
 
-    await deleteDocData({
-      nameCollect: "plans",
-      id: planId,
-      metaDoc: "plans",
-    });
+      await deletePlan({ planId });
 
-    handleToastSuccess("Xóa kế hoạch thành công !");
-    setIsLoading(false);
-    navigate("../pending");
+      // cập nhật UI sau khi backend xoá xong
+      // removePlan(planId);
+
+      handleToastSuccess("Xóa kế hoạch thành công!");
+      navigate("../pending");
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.code === "permission-denied") {
+        handleToastError("Bạn không có quyền xoá kế hoạch");
+      } else {
+        handleToastError("Không thể xoá kế hoạch");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   const deleteChildren = async (childId: string) => {
     setIsLoading(true);
