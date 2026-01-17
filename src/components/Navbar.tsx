@@ -46,6 +46,8 @@ import {
   useUserStore,
 } from "../zustand";
 import { CartModel } from "../models/CartModel";
+import useTotalPlanTaskStore from "../zustand/useTotalPlanTaskStore";
+import useTotalReportTaskStore from "../zustand/useTotalReportTaskStore";
 
 export default function Navbar() {
   const { id } = useParams();
@@ -61,6 +63,8 @@ export default function Navbar() {
   const { setInterventions } = useInterventionStore();
   const { setCarts } = useCartStore()
   const { setReportSaveds } = useReportSavedStore()
+  const {setTotalPlanTasks} = useTotalPlanTaskStore()
+  const {setTotalReportTasks} = useTotalReportTaskStore()
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -187,6 +191,21 @@ export default function Navbar() {
         nameCollect: "users",
         condition: [where("id", "in", child.teacherIds)],
         setData: setTeachers,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [child]);
+  useEffect(() => {
+    if (child) {
+      getDocsData({
+        nameCollect: 'planTasks',
+        setData: setTotalPlanTasks,
+        condition: [where('childId', '==', child.id)],
+      });
+      getDocsData({
+        nameCollect: 'reportTasks',
+        setData: setTotalReportTasks,
+        condition: [where('childId', '==', child.id)],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
