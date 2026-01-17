@@ -26,6 +26,7 @@ import {
   FieldModel,
   InterventionModel,
   PlanModel,
+  PlanTaskModel,
   ReportModel,
   ReportSavedModel,
   TargetModel,
@@ -59,12 +60,13 @@ export default function Navbar() {
   const { setSuggests } = useSuggestStore();
   const { setFields } = useFieldStore();
   const { setPlans } = usePlanStore();
-  const { setReports } = useReportStore();
+  const { setReports, reports } = useReportStore();
   const { setInterventions } = useInterventionStore();
   const { setCarts } = useCartStore()
   const { setReportSaveds } = useReportSavedStore()
   const {setTotalPlanTasks} = useTotalPlanTaskStore()
-  const {setTotalReportTasks} = useTotalReportTaskStore()
+  const {setTotalReportTasks, totalReportTasks} = useTotalReportTaskStore()
+  // const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -207,9 +209,17 @@ export default function Navbar() {
         setData: setTotalReportTasks,
         condition: [where('childId', '==', child.id)],
       });
+      // getDocsData({
+      //   nameCollect: 'planTasks',
+      //   setData: setPlanTasks,
+      //   condition: [where('childId', '==', child.id)],
+      // });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [child]);
+
+  // console.log('reports: ', reports.map((_) => _.id))
+  // console.log(totalReportTasks.filter((_) => !reports.map((r) => r.id).includes(_.reportId)))
 
   if (!user) return <SpinnerComponent />;
   return (

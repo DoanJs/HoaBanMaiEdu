@@ -82,7 +82,7 @@ export default function ModalDeleteComponent(props: Props) {
 
       const deleteReport = httpsCallable<{ reportId: string }, { ok: boolean }>(
         functions,
-        "deleteReport"
+        "deleteReport",
       );
 
       await deleteReport({ reportId });
@@ -111,7 +111,7 @@ export default function ModalDeleteComponent(props: Props) {
 
       const deletePlan = httpsCallable<{ planId: string }, { ok: boolean }>(
         functions,
-        "deletePlan"
+        "deletePlan",
       );
 
       await deletePlan({ planId });
@@ -215,46 +215,106 @@ export default function ModalDeleteComponent(props: Props) {
       });
   };
   const deletePlanApproved = async (planId: string) => {
-    setIsLoading(true);
-    deleteDocData({
-      nameCollect: "plans",
-      id: planId,
-      metaDoc: "plans",
-    })
-      .then(() => {
-        setIsLoading(false);
-        handleToastSuccess("Xóa kế hoạch Approved thành công !");
-        data.setForm({
-          title: "",
-          status: "pending",
-        });
-        data.setEdit(undefined);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        handleToastError("Xóa kế hoạch Approved thất bại !");
+    try {
+      setIsLoading(true);
+
+      const deletePlan = httpsCallable<{ planId: string }, { ok: boolean }>(
+        functions,
+        "deletePlan",
+      );
+
+      await deletePlan({ planId });
+
+      // cập nhật UI sau khi backend xoá xong
+      // removePlan(planId);
+
+      handleToastSuccess("Xóa kế hoạch Approved thành công!");
+      data.setForm({
+        title: "",
+        status: "pending",
       });
+      data.setEdit(undefined);
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.code === "permission-denied") {
+        handleToastError("Bạn không có quyền xoá kế hoạch Approved");
+      } else {
+        handleToastError("Không thể xoá kế hoạch Approved");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+    // setIsLoading(true);
+    // deleteDocData({
+    //   nameCollect: "plans",
+    //   id: planId,
+    //   metaDoc: "plans",
+    // })
+    //   .then(() => {
+    //     setIsLoading(false);
+    //     handleToastSuccess("Xóa kế hoạch Approved thành công !");
+    //     data.setForm({
+    //       title: "",
+    //       status: "pending",
+    //     });
+    //     data.setEdit(undefined);
+    //   })
+    //   .catch((error) => {
+    //     setIsLoading(false);
+    //     handleToastError("Xóa kế hoạch Approved thất bại !");
+    //   });
   };
   const deleteReportApproved = async (reportId: string) => {
-    setIsLoading(true);
-    deleteDocData({
-      nameCollect: "reports",
-      id: reportId,
-      metaDoc: "reports",
-    })
-      .then(() => {
-        setIsLoading(false);
-        handleToastSuccess("Xóa báo cáo Approved thành công !");
-        data.setForm({
-          title: "",
-          status: "pending",
-        });
-        data.setEdit(undefined);
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        handleToastError("Xóa báo cáo Approved thất bại !");
+    try {
+      setIsLoading(true);
+
+      const deleteReport = httpsCallable<{ reportId: string }, { ok: boolean }>(
+        functions,
+        "deleteReport",
+      );
+
+      await deleteReport({ reportId });
+
+      // cập nhật UI sau khi backend xoá xong
+      // removeReport(reportId);
+
+      handleToastSuccess("Xóa báo cáo Approved thành công!");
+      data.setForm({
+        title: "",
+        status: "pending",
       });
+      data.setEdit(undefined);
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.code === "permission-denied") {
+        handleToastError("Bạn không có quyền xoá báo cáo Approved");
+      } else {
+        handleToastError("Không thể xoá báo cáo Approved");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+
+    // deleteDocData({
+    //   nameCollect: "reports",
+    //   id: reportId,
+    //   metaDoc: "reports",
+    // })
+    //   .then(() => {
+    //     setIsLoading(false);
+    //     handleToastSuccess("Xóa báo cáo Approved thành công !");
+    //     data.setForm({
+    //       title: "",
+    //       status: "pending",
+    //     });
+    //     data.setEdit(undefined);
+    //   })
+    //   .catch((error) => {
+    //     setIsLoading(false);
+    //     handleToastError("Xóa báo cáo Approved thất bại !");
+    //   });
   };
   const deleteMeta = async (metaId: string) => {
     setIsLoading(true);
@@ -280,7 +340,7 @@ export default function ModalDeleteComponent(props: Props) {
         nameCollect: "carts",
         id: cart.id,
         metaDoc: "carts",
-      })
+      }),
     );
 
     Promise.all(promiseItems)
