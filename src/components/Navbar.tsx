@@ -26,7 +26,6 @@ import {
   FieldModel,
   InterventionModel,
   PlanModel,
-  PlanTaskModel,
   ReportModel,
   ReportSavedModel,
   TargetModel,
@@ -60,12 +59,12 @@ export default function Navbar() {
   const { setSuggests } = useSuggestStore();
   const { setFields } = useFieldStore();
   const { setPlans } = usePlanStore();
-  const { setReports, reports } = useReportStore();
+  const { setReports } = useReportStore();
   const { setInterventions } = useInterventionStore();
-  const { setCarts } = useCartStore()
-  const { setReportSaveds } = useReportSavedStore()
-  const {setTotalPlanTasks} = useTotalPlanTaskStore()
-  const {setTotalReportTasks, totalReportTasks} = useTotalReportTaskStore()
+  const { setCarts } = useCartStore();
+  const { setReportSaveds } = useReportSavedStore();
+  const { setTotalPlanTasks } = useTotalPlanTaskStore();
+  const { setTotalReportTasks } = useTotalReportTaskStore();
   // const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
@@ -78,7 +77,7 @@ export default function Navbar() {
       key: "targetsCache",
       query: query_targets,
       metaDoc: "targets",
-    }
+    },
   );
   const { data: data_suggests, loading: loading_suggests } =
     useFirestoreWithMeta({
@@ -155,7 +154,9 @@ export default function Navbar() {
   useEffect(() => {
     if (!loading_reportSaveds) {
       const items = data_reportSaveds as ReportSavedModel[];
-      setReportSaveds(items.filter((reportSaved) => reportSaved.childId === child?.id));
+      setReportSaveds(
+        items.filter((reportSaved) => reportSaved.childId === child?.id),
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_reportSaveds, loading_reportSaveds]);
@@ -200,23 +201,24 @@ export default function Navbar() {
   useEffect(() => {
     if (child) {
       getDocsData({
-        nameCollect: 'planTasks',
+        nameCollect: "planTasks",
         setData: setTotalPlanTasks,
-        condition: [where('childId', '==', child.id)],
+        condition: [
+          where("childId", "==", child.id),
+          where("teacherIds", "array-contains", user?.id),
+        ],
       });
       getDocsData({
-        nameCollect: 'reportTasks',
+        nameCollect: "reportTasks",
         setData: setTotalReportTasks,
-        condition: [where('childId', '==', child.id)],
+        condition: [
+          where("childId", "==", child.id),
+          where("teacherIds", "array-contains", user?.id),
+        ],
       });
-      // getDocsData({
-      //   nameCollect: 'planTasks',
-      //   setData: setPlanTasks,
-      //   condition: [where('childId', '==', child.id)],
-      // });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [child]);
+  }, [child, user]);
 
   // console.log('reports: ', reports.map((_) => _.id))
   // console.log(totalReportTasks.filter((_) => !reports.map((r) => r.id).includes(_.reportId)))
@@ -299,25 +301,31 @@ export default function Navbar() {
                 styles={{ fontWeight: "bold" }}
                 size={sizes.text}
               />
-              <RowComponent styles={{ alignItems: 'flex-start' }}>
+              <RowComponent styles={{ alignItems: "flex-start" }}>
                 <div>
                   {teachers.length > 0 &&
-                    teachers.map((teacher, index) => index < 2 && (
-                      <TextComponent
-                        key={index}
-                        text={`${index + 1}. ${teacher.fullName}`}
-                      />
-                    ))}
+                    teachers.map(
+                      (teacher, index) =>
+                        index < 2 && (
+                          <TextComponent
+                            key={index}
+                            text={`${index + 1}. ${teacher.fullName}`}
+                          />
+                        ),
+                    )}
                 </div>
                 <SpaceComponent width={20} />
                 <div>
                   {teachers.length > 0 &&
-                    teachers.map((teacher, index) => index >= 2 && (
-                      <TextComponent
-                        key={index}
-                        text={`${index + 1}. ${teacher.fullName}`}
-                      />
-                    ))}
+                    teachers.map(
+                      (teacher, index) =>
+                        index >= 2 && (
+                          <TextComponent
+                            key={index}
+                            text={`${index + 1}. ${teacher.fullName}`}
+                          />
+                        ),
+                    )}
                 </div>
               </RowComponent>
             </div>
