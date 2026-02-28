@@ -16,7 +16,7 @@ export default function PlanItemComponent(props: Props) {
       <th scope="row">{convertTargetField(planTask.targetId, targets, fields).nameField}</th>
       <td>{convertTargetField(planTask.targetId, targets, fields).nameTarget}</td>
       <td>{planTask?.intervention}</td>
-      <td style={{ width: '40%' }}>{planTask?.content}</td>
+      <td style={{ width: '40%', whiteSpace: 'pre-line' }}>{planTask?.content}</td>
     </tr>
   );
 }
