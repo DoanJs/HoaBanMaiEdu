@@ -19,7 +19,6 @@ interface Props {
 export default function CardImageComponent(props: Props) {
   const { childInfo, link, styles, imgStyles, plansTotal, reportsTotal } = props;
 
-
   const handleShowNotification = () => {
     const arrayPending = plansTotal.concat(reportsTotal).filter((_) => _.status === 'pending')
     const indexTotal = arrayPending.findIndex((_) => _.childId === childInfo.id)
@@ -30,31 +29,37 @@ export default function CardImageComponent(props: Props) {
     }
   }
   return (
-    <Link
-      to={link}
-      state={{ childInfo }}
-      style={{
-        textDecoration: "none",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        margin: 20,
-        position: 'relative',
-        ...styles,
-      }}
-    >
-      {
-        handleShowNotification() &&
-        <div style={{
-          position: 'absolute',
+  <Link
+    to={link}
+    state={{ childInfo }}
+    style={{
+      textDecoration: "none",
+      cursor: "pointer",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      margin: 20,
+      position: "relative",
+      ...styles,
+    }}
+  >
+    {/* Notification */}
+    {handleShowNotification() && (
+      <div
+        style={{
+          position: "absolute",
           top: -10,
-          right: -10
-        }}>
-          <Notification size={sizes.bigTitle} color={colors.red} variant="Bold" />
-        </div>
-      }
+          right: -10,
+          zIndex: 2,
+        }}
+      >
+        <Notification size={sizes.bigTitle} color={colors.red} variant="Bold" />
+      </div>
+    )}
+
+    {/* Avatar wrapper để overlay */}
+    <div style={{ position: "relative" }}>
       <img
         alt=""
         src={childInfo.avatar}
@@ -66,12 +71,85 @@ export default function CardImageComponent(props: Props) {
           ...imgStyles,
         }}
       />
-      <SpaceComponent height={8} />
-      <TextComponent
-        text={childInfo.fullName}
-        size={sizes.bigText}
-        styles={{ fontWeight: "bold" }}
-      />
-    </Link>
-  );
+
+      {/* Overlay khi tạm dừng */}
+      {childInfo.status && childInfo.status === 'paused' && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.6)",
+            borderRadius: 10,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
+          <div style={{ fontSize: 30 }}>🔒</div>
+
+          <TextComponent
+            text="Tạm dừng"
+            size={sizes.bigText}
+            styles={{ color: "white", fontWeight: "bold" }}
+          />
+        </div>
+      )}
+    </div>
+
+    <SpaceComponent height={8} />
+
+    <TextComponent
+      text={childInfo.fullName}
+      size={sizes.bigText}
+      styles={{ fontWeight: "bold" }}
+    />
+  </Link>
+);
+  // return (
+  //   <Link
+  //     to={link}
+  //     state={{ childInfo }}
+  //     style={{
+  //       textDecoration: "none",
+  //       cursor: "pointer",
+  //       display: "flex",
+  //       flexDirection: "column",
+  //       alignItems: "center",
+  //       justifyContent: "center",
+  //       margin: 20,
+  //       position: 'relative',
+  //       ...styles,
+  //     }}
+  //   >
+  //     {
+  //       handleShowNotification() &&
+  //       <div style={{
+  //         position: 'absolute',
+  //         top: -10,
+  //         right: -10
+  //       }}>
+  //         <Notification size={sizes.bigTitle} color={colors.red} variant="Bold" />
+  //       </div>
+  //     }
+  //     <img
+  //       alt=""
+  //       src={childInfo.avatar}
+  //       style={{
+  //         height: 200,
+  //         width: 200,
+  //         objectFit: "cover",
+  //         borderRadius: 10,
+  //         ...imgStyles,
+  //       }}
+  //     />
+  //     <SpaceComponent height={8} />
+  //     <TextComponent
+  //       text={childInfo.fullName}
+  //       size={sizes.bigText}
+  //       styles={{ fontWeight: "bold" }}
+  //     />
+  //   </Link>
+  // );
 }

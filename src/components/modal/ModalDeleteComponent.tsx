@@ -1,11 +1,5 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { deleteDoc, doc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteDocData } from "../../constants/firebase/deleteDocData";
@@ -21,7 +15,6 @@ import { useUserStore } from "../../zustand";
 import usePlanStore from "../../zustand/usePlanStore";
 import useReportStore from "../../zustand/useReportStore";
 import LoadingOverlay from "../LoadingOverLay";
-import { httpsCallable } from "firebase/functions";
 
 interface DataModel {
   id: string;
@@ -133,21 +126,54 @@ export default function ModalDeleteComponent(props: Props) {
       setIsLoading(false);
     }
   };
+  // const deleteChildren = async (childId: string) => {
+  //   setIsLoading(true);
+  //   deleteDocData({
+  //     nameCollect: "children",
+  //     id: childId,
+  //     metaDoc: "children",
+  //   })
+  //     .then(() => {
+  //       setIsLoading(false);
+  //       handleToastSuccess("Xóa trẻ thành công !");
+  //     })
+  //     .catch((error) => {
+  //       setIsLoading(false);
+  //       handleToastError("Xóa trẻ thất bại !");
+  //     });
+  // };
   const deleteChildren = async (childId: string) => {
-    setIsLoading(true);
-    deleteDocData({
-      nameCollect: "children",
-      id: childId,
-      metaDoc: "children",
-    })
-      .then(() => {
-        setIsLoading(false);
-        handleToastSuccess("Xóa trẻ thành công !");
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        handleToastError("Xóa trẻ thất bại !");
-      });
+    try {
+      setIsLoading(true);
+
+      const deleteChildDeep = httpsCallable<
+        { childId: string },
+        {
+          ok: boolean;
+          deletedChildId: string;
+          deletedPlansCount: number;
+          deletedReportsCount: number;
+        }
+      >(functions, "deleteChildDeep");
+
+      const res = await deleteChildDeep({ childId });
+
+      handleToastSuccess(
+        `Xóa trẻ thành công! Đã xóa ${res.data.deletedPlansCount} kế hoạch và ${res.data.deletedReportsCount} báo cáo.`,
+      );
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.code === "permission-denied") {
+        handleToastError("Chỉ admin mới có quyền xóa trẻ");
+      } else if (err.code === "not-found") {
+        handleToastError("Không tìm thấy trẻ");
+      } else {
+        handleToastError("Xóa trẻ thất bại");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   const deleteTarget = async (targetId: string) => {
     setIsLoading(true);
@@ -245,25 +271,6 @@ export default function ModalDeleteComponent(props: Props) {
     } finally {
       setIsLoading(false);
     }
-    // setIsLoading(true);
-    // deleteDocData({
-    //   nameCollect: "plans",
-    //   id: planId,
-    //   metaDoc: "plans",
-    // })
-    //   .then(() => {
-    //     setIsLoading(false);
-    //     handleToastSuccess("Xóa kế hoạch Approved thành công !");
-    //     data.setForm({
-    //       title: "",
-    //       status: "pending",
-    //     });
-    //     data.setEdit(undefined);
-    //   })
-    //   .catch((error) => {
-    //     setIsLoading(false);
-    //     handleToastError("Xóa kế hoạch Approved thất bại !");
-    //   });
   };
   const deleteReportApproved = async (reportId: string) => {
     try {

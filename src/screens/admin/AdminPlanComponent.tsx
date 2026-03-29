@@ -18,7 +18,7 @@ export default function AdminPlanComponent(props: Props) {
   return (
     <tr>
       <td>{handleChildFromId(plan.childId, children)}</td>
-      <td>{plan.title}</td>
+      <td>{plan.title} - {plan.id}</td>
       <td>{plan.status}</td>
       <td style={{ textAlign: "center" }}>
         <Edit2

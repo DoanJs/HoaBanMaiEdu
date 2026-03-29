@@ -24,7 +24,6 @@ import {
   PlanTaskModel,
   UserModel,
 } from "../../models";
-import { SuggestModel } from "../../models/SuggestModel";
 import { useUserStore } from "../../zustand";
 import AdminPlanComponent from "./AdminPlanComponent";
 import Select, { MultiValue } from "react-select";
@@ -43,7 +42,6 @@ export default function AdminPlan() {
     title: "",
     status: "pending",
   });
-  const [suggestEdit, setSuggestEdit] = useState<SuggestModel>();
 
   const [plans, setPlans] = useState<PlanModel[]>([]);
   const [newPlans, setNewPlans] = useState<PlanModel[]>([]);
@@ -52,6 +50,7 @@ export default function AdminPlan() {
   const [teachers, setTeachers] = useState<UserModel[]>([]);
   const [selectTeachers, setSelectTeachers] = useState<OptionType[]>([]);
   const [planTasks, setPlanTasks] = useState<PlanTaskModel[]>([]);
+
 
   useEffect(() => {
     if (planEdit) {
