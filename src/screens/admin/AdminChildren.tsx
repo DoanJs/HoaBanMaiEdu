@@ -41,6 +41,7 @@ export default function AdminChildren() {
   const [form, setForm] = useState({
     fullName: "",
     avatar: "",
+    status: "" //studying || paused , còn xóa luôn thì k cần
   });
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function AdminChildren() {
       setForm({
         fullName: childEdit.fullName,
         avatar: childEdit.avatar,
+        status: childEdit.status || "studying"
       });
       setSelectTeachers(
         childEdit.teacherIds.map((_) => {
@@ -60,7 +62,7 @@ export default function AdminChildren() {
     }
   }, [childEdit]);
   useEffect(() => {
-    if (form.avatar && form.fullName && selectTeachers.length > 0) {
+    if (form.avatar && form.fullName && selectTeachers.length > 0) { ///chổ này thời gian sau nếu trẻ đồng bộ được status thì fix lại
       setDisable(false);
     } else {
       setDisable(true);
@@ -90,6 +92,7 @@ export default function AdminChildren() {
     const data = {
       fullName: form.fullName,
       avatar: form.avatar,
+      status: form.status,
       teacherIds: selectTeachers.map((_) => _.id),
     };
 
@@ -107,7 +110,7 @@ export default function AdminChildren() {
       })
         .then((result) => {
           setIsLoading(false);
-          setForm({ fullName: "", avatar: "" });
+          setForm({ fullName: "", avatar: "" , status: ""});
           setSelectTeachers([]);
           setChildEdit(undefined);
           handleToastSuccess(
@@ -139,7 +142,7 @@ export default function AdminChildren() {
             },
           ]);
           setIsLoading(false);
-          setForm({ fullName: "", avatar: "" });
+          setForm({ fullName: "", avatar: "" , status: ""});
           setSelectTeachers([]);
           handleToastSuccess(`Thêm trẻ mới thành công ! (${result.id}) `);
         })
@@ -222,7 +225,7 @@ export default function AdminChildren() {
                 right: 10,
               }}
                onClick={() => {
-                setForm({fullName:'', avatar:''})
+                setForm({fullName:'', avatar:'', status: ""})
                 setSelectTeachers([])
                 setChildEdit(undefined)
               }}
@@ -298,6 +301,25 @@ export default function AdminChildren() {
             }}
           />
         </div>
+        <div>
+            <label
+              htmlFor="exampleFormControlInput1"
+              className="form-label"
+              style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
+            >
+              Trạng thái:
+            </label>
+            <select
+              value={form.status}
+              className={`form-select ${widthSmall && "form-select-sm"}`}
+              aria-label="Default select example"
+              onChange={(val) => setForm({ ...form, status: val.target.value })}
+            >
+              <option defaultValue={""}>Chọn</option>
+              <option value={"paused"}>Tạm dừng</option>
+              <option value={"studying"}>Đang học</option>
+            </select>
+          </div>
         <SpaceComponent height={20} />
         <button
           style={{
