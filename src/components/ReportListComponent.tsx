@@ -251,7 +251,7 @@ export default function ReportListComponent() {
         }}
       >
         <TextComponent
-          text={`${title}`}
+          text={`${title} - ${reportId}`}
           size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
           styles={{ fontWeight: "bold" }}
         />
