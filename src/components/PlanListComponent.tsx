@@ -89,7 +89,7 @@ export default function PlanListComponent() {
         }}
       >
         <TextComponent
-          text={`${title}`}
+          text={`${title} - ${planId}`}
           size={widthSmall ? sizes.thinTitle : sizes.bigTitle}
           styles={{ fontWeight: "bold" }}
         />

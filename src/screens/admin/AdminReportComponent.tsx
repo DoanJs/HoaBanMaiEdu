@@ -18,7 +18,7 @@ export default function AdminReportComponent(props: Props) {
   return (
     <tr>
       <td>{handleChildFromId(report.childId, children)}</td>
-      <td>{report.title}</td>
+      <td>{report.title} - {report.id}</td>
       <td>{report.status}</td>
       <td style={{ textAlign: "center" }}>
         <Edit2
