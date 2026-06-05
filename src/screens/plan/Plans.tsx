@@ -3,7 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { SpinnerComponent } from "../../components";
 import { handleTimeStampFirestore } from "../../constants/convertTimeStamp";
-import { formatDateSearch, getCardTheme } from "../../constants/info";
+import {
+  formatDateSearch,
+  getCardTheme,
+  getTimeValue,
+} from "../../constants/info";
 import { PlanModel } from "../../models";
 import {
   usePlanStore,
@@ -34,24 +38,48 @@ export default function ApprovedPlansBootstrapGreen() {
     }
   }, [plans]);
 
+  // const filteredPlans = useMemo(() => {
+  //   const search = keyword.trim().toLowerCase();
+
+  //   return planNews.filter((item: any) => {
+  //     const teacherName = teacherMap[item.authorId]?.fullName || "";
+
+  //     const createdTime = formatDateSearch(item.createAt);
+  //     const updatedTime = formatDateSearch(item.updateAt);
+
+  //     const content = `
+  //     ${item.title ?? ""}
+  //     ${teacherName}
+  //     ${createdTime}
+  //     ${updatedTime}
+  //   `.toLowerCase();
+
+  //     return !search || content.includes(search);
+  //   });
+  // }, [planNews, keyword, teacherMap]);
+
   const filteredPlans = useMemo(() => {
     const search = keyword.trim().toLowerCase();
 
-    return planNews.filter((item: any) => {
-      const teacherName = teacherMap[item.authorId]?.fullName || "";
+    return planNews
+      .filter((item: any) => {
+        const teacherName = teacherMap[item.authorId]?.fullName || "";
 
-      const createdTime = formatDateSearch(item.createAt);
-      const updatedTime = formatDateSearch(item.updateAt);
+        const createdTime = formatDateSearch(item.createAt);
+        const updatedTime = formatDateSearch(item.updateAt);
 
-      const content = `
-      ${item.title ?? ""}
-      ${teacherName}
-      ${createdTime}
-      ${updatedTime}
-    `.toLowerCase();
+        const content = `
+        ${item.title ?? ""}
+        ${teacherName}
+        ${createdTime}
+        ${updatedTime}
+      `.toLowerCase();
 
-      return !search || content.includes(search);
-    });
+        return !search || content.includes(search);
+      })
+      .sort((a: any, b: any) => {
+        return getTimeValue(b.createAt) - getTimeValue(a.createAt);
+      });
   }, [planNews, keyword, teacherMap]);
 
   function PlanCard({ plan }: any) {
@@ -60,43 +88,32 @@ export default function ApprovedPlansBootstrapGreen() {
       <Link
         to="../plandetail"
         onClick={() => setSelectNavbar("")}
-        state={{ plan }} className="container-fluid py-4 text-decoration-none cursor-pointer">
+        state={{ plan }}
+        className="container-fluid py-4 text-decoration-none cursor-pointer"
+      >
         <div className="plan-kh-badge">
-          <img
-            src={theme.icon}
-            alt=""
-            className="plan-kh-badge-img"
-          />
+          <img src={theme.icon} alt="" className="plan-kh-badge-img" />
         </div>
-        <div
-          className="plan-kh-card"
-          style={{ background: theme.bg }}
-        >
-
-
+        <div className="plan-kh-card" style={{ background: theme.bg }}>
           <div className="plan-kh-glass" />
           <div className="d-flex justify-content-between align-items-start">
-            <div
-              className="plan-kh-title"
-              style={{ color: theme.color }}
-            >
+            <div className="plan-kh-title" style={{ color: theme.color }}>
               {plan.type} {plan.title}
             </div>
 
             <span className="status-approved flex-shrink-0">
               <i className="bi bi-patch-check-fill me-1" />
-              {plan.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
+              {plan.status === "approved" ? "Đã duyệt" : "Chờ duyệt"}
             </span>
           </div>
-
 
           <div className="plan-kh-info">
             <i className="bi bi-send-check-fill icon-yellow" /> Ngày tạo:&ensp;
             {typeof plan?.createAt === "number"
               ? moment(plan?.createAt).format("HH:mm:ss DD/MM/YYYY")
               : moment(handleTimeStampFirestore(plan?.createAt)).format(
-                "HH:mm:ss DD/MM/YYYY",
-              )}
+                  "HH:mm:ss DD/MM/YYYY",
+                )}
           </div>
 
           <div className="plan-kh-info">
@@ -104,28 +121,31 @@ export default function ApprovedPlansBootstrapGreen() {
             {typeof plan?.updateAt === "number"
               ? moment(plan?.updateAt).format("HH:mm:ss DD/MM/YYYY")
               : moment(handleTimeStampFirestore(plan?.updateAt)).format(
-                "HH:mm:ss DD/MM/YYYY",
-              )}
+                  "HH:mm:ss DD/MM/YYYY",
+                )}
           </div>
 
           <div className="plan-kh-info">
-            <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện :
+            <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện
+            :
           </div>
 
           <div className="plan-kh-footer">
             <div className="plan-teacher-box">
               <img
                 className="plan-avatar"
-                src={teacherMap[plan.authorId]?.avatar || '/HBMEdu-icon-192x192.png'}
+                src={
+                  teacherMap[plan.authorId]?.avatar ||
+                  "/HBMEdu-icon-192x192.png"
+                }
                 alt="avatar"
               />
-              <span>
-                {teacherMap[plan.authorId]?.fullName}</span>
+              <span>{teacherMap[plan.authorId]?.fullName}</span>
             </div>
           </div>
         </div>
       </Link>
-    )
+    );
   }
 
   if (!plans) return <SpinnerComponent />;
@@ -187,7 +207,10 @@ export default function ApprovedPlansBootstrapGreen() {
         ) : (
           <div className="row g-3 g-xl-4">
             {filteredPlans.map((plan) => (
-              <div key={`${plan.id}`} className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative">
+              <div
+                key={`${plan.id}`}
+                className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative"
+              >
                 <PlanCard plan={plan} key={plan.id} />
               </div>
             ))}

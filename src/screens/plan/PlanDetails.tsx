@@ -57,9 +57,12 @@ export default function PlanDetailBootstrapGreen() {
   const { setCartEdit } = useCartEditStore();
   const [showDelete, setShowDelete] = useState(false);
   const { removePlan } = usePlanStore();
-  const { addComment, comments } = useCommentStore()
+  const { addComment, comments } = useCommentStore();
 
-  const myComments = comments.filter(cmt => cmt._id === plan.id) || []
+  // const myComments = comments.filter(cmt => cmt._id === plan.id)?.reverse() || []
+  const myComments = useMemo(() => {
+    return comments.filter((cmt) => cmt._id === plan.id).reverse();
+  }, [comments, plan.id]);
 
   const teacherMap = useMemo(() => {
     const map: any = {};
@@ -87,10 +90,14 @@ export default function PlanDetailBootstrapGreen() {
   useEffect(() => {
     if (myComments) {
       if (myComments.length > 0) {
-        setIsComment(true)
+        setIsComment(true);
       }
     }
     // eslint-disable-next-line
+  }, [myComments]);
+
+  useEffect(() => {
+    setIsComment(myComments.length > 0);
   }, [myComments]);
 
   useEffect(() => {
@@ -159,25 +166,29 @@ export default function PlanDetailBootstrapGreen() {
     setIsLoading(true);
     const newComment = {
       _id: plan.id,
-      authorId: user?.id || '',
-      childId: child?.id || '',
+      authorId: user?.id || "",
+      childId: child?.id || "",
       content: text,
       createAt: Date.now(),
       id: "",
       teacherIds: plan.teacherIds,
-      type: 'KH',
-      updateAt: Date.now()
-    }
+      type: "KH",
+      updateAt: Date.now(),
+    };
 
-    addComment(newComment)
+    addComment(newComment);
 
     await addDocData({
-      nameCollect: 'comments',
-      value: { ...newComment, createAt: serverTimestamp(), updateAt: serverTimestamp(), },
-      metaDoc: 'comments',
-    })
+      nameCollect: "comments",
+      value: {
+        ...newComment,
+        createAt: serverTimestamp(),
+        updateAt: serverTimestamp(),
+      },
+      metaDoc: "comments",
+    });
 
-    await updateDoc(doc(db, "Meta", 'comments'), {
+    await updateDoc(doc(db, "Meta", "comments"), {
       lastUpdated: serverTimestamp(),
     });
     await updateDocData({
@@ -190,8 +201,7 @@ export default function PlanDetailBootstrapGreen() {
       },
     });
 
-
-    setText("")
+    setText("");
     setIsComment(true);
     setIsLoading(false);
     setDisableComment(true);
@@ -353,8 +363,8 @@ export default function PlanDetailBootstrapGreen() {
                     {typeof plan?.createAt === "number"
                       ? moment(plan?.createAt).format("HH:mm:ss DD/MM/YYYY")
                       : moment(handleTimeStampFirestore(plan?.createAt)).format(
-                        "HH:mm:ss DD/MM/YYYY",
-                      )}
+                          "HH:mm:ss DD/MM/YYYY",
+                        )}
                   </span>
                 </div>
                 <div className="mini-info">
@@ -397,10 +407,10 @@ export default function PlanDetailBootstrapGreen() {
               <table className="table plan-table align-middle mb-0">
                 <thead>
                   <tr>
-                    <th className='area-cell'>Lĩnh vực</th>
-                    <th className='goal-cell'>Mục tiêu</th>
-                    <th className='support-cell'>Mức độ hỗ trợ</th>
-                    <th className='content-cell'>Nội dung</th>
+                    <th className="area-cell">Lĩnh vực</th>
+                    <th className="goal-cell">Mục tiêu</th>
+                    <th className="support-cell">Mức độ hỗ trợ</th>
+                    <th className="content-cell">Nội dung</th>
                   </tr>
                 </thead>
 
@@ -447,22 +457,31 @@ export default function PlanDetailBootstrapGreen() {
           </div>
 
           {isPending && isComment && (
-            <div className='d-flex align-items-start justify-content-between comment-total'>
+            <div className="d-flex align-items-start justify-content-between comment-total">
               <div className="plan-hero feedback-box flex-grow-1 mb-3 comment-content me-2">
                 <Message color="#ef4444" size={26} variant="Bold" />
 
                 <div className="ms-2">
                   <span className="text-danger-custom">
-                    Góp ý từ cô <b>{teacherMap[myComments[0]?.authorId]?.fullName || user?.fullName}</b> vào lúc {
-                      typeof myComments[0]?.createAt === "number"
-                        ? moment(myComments[0]?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                        : moment(handleTimeStampFirestore(myComments[0]?.createAt)).format(
+                    Góp ý từ cô{" "}
+                    <b>
+                      {teacherMap[myComments[0]?.authorId]?.fullName ||
+                        user?.fullName}
+                    </b>{" "}
+                    vào lúc{" "}
+                    {typeof myComments[0]?.createAt === "number"
+                      ? moment(myComments[0]?.createAt).format(
                           "HH:mm:ss DD/MM/YYYY",
                         )
-                    }:
+                      : moment(
+                          handleTimeStampFirestore(myComments[0]?.createAt),
+                        ).format("HH:mm:ss DD/MM/YYYY")}
+                    :
                   </span>
 
-                  <div className="mt-1 feedback-content">{myComments[0]?.content}</div>
+                  <div className="mt-1 feedback-content">
+                    {myComments[0]?.content}
+                  </div>
                 </div>
               </div>
 
@@ -481,14 +500,14 @@ export default function PlanDetailBootstrapGreen() {
               {["Phó Giám đốc", "Giám đốc"].includes(
                 user?.position as string,
               ) && (
-                  <button
-                    className="btn action-btn-soft"
-                    onClick={() => setShowFeedback(true)}
-                  >
-                    <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
-                    Góp ý
-                  </button>
-                )}
+                <button
+                  className="btn action-btn-soft"
+                  onClick={() => setShowFeedback(true)}
+                >
+                  <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
+                  Góp ý
+                </button>
+              )}
               {user?.role === "admin" && (
                 <button className="btn approve-btn" onClick={handleApproved}>
                   <i className="bi bi-check-circle-fill me-2" />
@@ -522,7 +541,8 @@ export default function PlanDetailBootstrapGreen() {
           <div className="custom-modal-history-comment">
             <h5 className="fw-black text-green-dark mb-2">Lịch sử góp ý</h5>
             <p className="text-green-muted small">
-              Góp ý sẽ được lưu lại phục vụ đánh giá năng lực của Quản lý chuyên môn.
+              Góp ý sẽ được lưu lại phục vụ đánh giá năng lực của Quản lý chuyên
+              môn.
             </p>
             <div className="table-responsive comment-table-wrap">
               <table className="table comment-table align-middle mb-0">
@@ -541,14 +561,20 @@ export default function PlanDetailBootstrapGreen() {
                         <tr key={`cmt-${cmt.id}-${index}`}>
                           <td>
                             {typeof cmt?.createAt === "number"
-                              ? moment(cmt?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                              : moment(handleTimeStampFirestore(cmt?.createAt)).format(
-                                "HH:mm:ss DD/MM/YYYY",
-                              )}
+                              ? moment(cmt?.createAt).format(
+                                  "HH:mm:ss DD/MM/YYYY",
+                                )
+                              : moment(
+                                  handleTimeStampFirestore(cmt?.createAt),
+                                ).format("HH:mm:ss DD/MM/YYYY")}
                           </td>
 
                           <td className="d-flex align-items-center">
-                            <img alt='avatar' src={teacherMap[cmt.authorId]?.avatar} className='comment-avatar' />
+                            <img
+                              alt="avatar"
+                              src={teacherMap[cmt.authorId]?.avatar}
+                              className="comment-avatar"
+                            />
                             <div className="fw-semibold text-green-dark">
                               {teacherMap[cmt.authorId]?.fullName}
                             </div>
@@ -568,22 +594,20 @@ export default function PlanDetailBootstrapGreen() {
               >
                 Hủy
               </button>
-              {
-                ["Phó Giám đốc", "Giám đốc"].includes(
-                  user?.position as string,
-                ) &&
-
+              {["Phó Giám đốc", "Giám đốc"].includes(
+                user?.position as string,
+              ) && (
                 <button
                   className="btn action-btn-soft"
                   onClick={() => {
-                    setHistoryComment(false)
-                    setShowFeedback(true)
+                    setHistoryComment(false);
+                    setShowFeedback(true);
                   }}
                 >
                   <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
                   Góp ý
                 </button>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -614,9 +638,7 @@ export default function PlanDetailBootstrapGreen() {
               <button
                 className="btn action-btn-primary"
                 onClick={disableComment ? undefined : handleSaveComment}
-                disabled={
-                  !text.trim() || text === myComments[0]?.content
-                }
+                disabled={!text.trim() || text === myComments[0]?.content}
               >
                 <i className="bi bi-send-check-fill me-2" />
                 Gửi góp ý

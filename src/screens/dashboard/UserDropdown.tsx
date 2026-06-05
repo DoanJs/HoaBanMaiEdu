@@ -83,7 +83,7 @@ export default function UserDropdown() {
             <div className="user-role">{user.position}</div>
           </div>
 
-          <i className={`bi bi-chevron-down ms-2 ${open ? "rotate" : ""}`} />
+          <i className={`bi bi-chevron-down ms-2 d-none d-md-block ${open ? "rotate" : ""}`} />
         </div>
 
         {/* Dropdown */}

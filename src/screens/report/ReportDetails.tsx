@@ -1,4 +1,10 @@
-import { doc, getDoc, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Message } from "iconsax-react";
 import moment from "moment";
@@ -156,9 +162,12 @@ export default function ReportDetailBootstrapGreen() {
   const [showDelete, setShowDelete] = useState(false);
   const [historyComment, setHistoryComment] = useState(false);
   const { removeReport } = useReportStore();
-  const { addComment, comments } = useCommentStore()
+  const { addComment, comments } = useCommentStore();
 
-  const myComments = comments.filter(cmt => cmt._id === report.id) || []
+  // const myComments = comments.filter(cmt => cmt._id === report.id)?.reverse() || []
+  const myComments = useMemo(() => {
+    return comments.filter((cmt) => cmt._id === report.id).reverse();
+  }, [comments, report.id]);
 
   const teacherMap = useMemo(() => {
     const map: any = {};
@@ -182,14 +191,19 @@ export default function ReportDetailBootstrapGreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [report]);
+  
+  // useEffect(() => {
+  //   if (myComments) {
+  //     if (myComments.length > 0) {
+  //       setIsComment(true);
+  //     }
+  //   }
+  //   // eslint-disable-next-line
+  // }, [myComments]);
   useEffect(() => {
-    if (myComments) {
-      if (myComments.length > 0) {
-        setIsComment(true)
-      }
-    }
-    // eslint-disable-next-line
+    setIsComment(myComments.length > 0);
   }, [myComments]);
+
   useEffect(() => {
     if (text !== myComments[0]?.content) {
       setDisableComment(false);
@@ -289,25 +303,29 @@ export default function ReportDetailBootstrapGreen() {
     setIsLoading(true);
     const newComment = {
       _id: report.id,
-      authorId: user?.id || '',
-      childId: child?.id || '',
+      authorId: user?.id || "",
+      childId: child?.id || "",
       content: text,
       createAt: Date.now(),
       id: "",
       teacherIds: report.teacherIds,
-      type: 'BC',
-      updateAt: Date.now()
-    }
+      type: "BC",
+      updateAt: Date.now(),
+    };
 
-    addComment(newComment)
+    addComment(newComment);
 
     await addDocData({
-      nameCollect: 'comments',
-      value: { ...newComment, createAt: serverTimestamp(), updateAt: serverTimestamp(), },
-      metaDoc: 'comments',
-    })
+      nameCollect: "comments",
+      value: {
+        ...newComment,
+        createAt: serverTimestamp(),
+        updateAt: serverTimestamp(),
+      },
+      metaDoc: "comments",
+    });
 
-    await updateDoc(doc(db, "Meta", 'comments'), {
+    await updateDoc(doc(db, "Meta", "comments"), {
       lastUpdated: serverTimestamp(),
     });
     await updateDocData({
@@ -320,8 +338,7 @@ export default function ReportDetailBootstrapGreen() {
       },
     });
 
-
-    setText("")
+    setText("");
     setIsComment(true);
     setIsLoading(false);
     setDisableComment(true);
@@ -477,8 +494,8 @@ export default function ReportDetailBootstrapGreen() {
                     {typeof report?.createAt === "number"
                       ? moment(report?.createAt).format("HH:mm:ss DD/MM/YYYY")
                       : moment(
-                        handleTimeStampFirestore(report?.createAt),
-                      ).format("HH:mm:ss DD/MM/YYYY")}
+                          handleTimeStampFirestore(report?.createAt),
+                        ).format("HH:mm:ss DD/MM/YYYY")}
                   </span>
                 </div>
                 <div className="mini-info">
@@ -562,22 +579,31 @@ export default function ReportDetailBootstrapGreen() {
           </div>
 
           {isPending && isComment && (
-            <div className='d-flex align-items-start justify-content-between comment-total'>
+            <div className="d-flex align-items-start justify-content-between comment-total">
               <div className="plan-hero feedback-box flex-grow-1 comment-content me-2">
                 <Message color="#ef4444" size={26} variant="Bold" />
 
                 <div className="ms-2">
                   <span className="text-danger-custom">
-                    Góp ý từ cô <b>{teacherMap[myComments[0]?.authorId]?.fullName || user?.fullName}</b> vào lúc {
-                      typeof myComments[0]?.createAt === "number"
-                        ? moment(myComments[0]?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                        : moment(handleTimeStampFirestore(myComments[0]?.createAt)).format(
+                    Góp ý từ cô{" "}
+                    <b>
+                      {teacherMap[myComments[0]?.authorId]?.fullName ||
+                        user?.fullName}
+                    </b>{" "}
+                    vào lúc{" "}
+                    {typeof myComments[0]?.createAt === "number"
+                      ? moment(myComments[0]?.createAt).format(
                           "HH:mm:ss DD/MM/YYYY",
                         )
-                    }:
+                      : moment(
+                          handleTimeStampFirestore(myComments[0]?.createAt),
+                        ).format("HH:mm:ss DD/MM/YYYY")}
+                    :
                   </span>
 
-                  <div className="mt-1 feedback-content">{myComments[0]?.content}</div>
+                  <div className="mt-1 feedback-content">
+                    {myComments[0]?.content}
+                  </div>
                 </div>
               </div>
 
@@ -596,14 +622,14 @@ export default function ReportDetailBootstrapGreen() {
               {["Phó Giám đốc", "Giám đốc"].includes(
                 user?.position as string,
               ) && (
-                  <button
-                    className="btn action-btn-soft"
-                    onClick={() => setShowFeedback(true)}
-                  >
-                    <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
-                    Góp ý
-                  </button>
-                )}
+                <button
+                  className="btn action-btn-soft"
+                  onClick={() => setShowFeedback(true)}
+                >
+                  <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
+                  Góp ý
+                </button>
+              )}
               {user?.role === "admin" && (
                 <button className="btn approve-btn" onClick={handleApproved}>
                   <i className="bi bi-check-circle-fill me-2" />
@@ -636,7 +662,8 @@ export default function ReportDetailBootstrapGreen() {
           <div className="custom-modal-history-comment">
             <h5 className="fw-black text-green-dark mb-2">Lịch sử góp ý</h5>
             <p className="text-green-muted small">
-              Góp ý sẽ được lưu lại phục vụ đánh giá năng lực của Quản lý chuyên môn.
+              Góp ý sẽ được lưu lại phục vụ đánh giá năng lực của Quản lý chuyên
+              môn.
             </p>
             <div className="table-responsive comment-table-wrap">
               <table className="table comment-table align-middle mb-0">
@@ -655,14 +682,20 @@ export default function ReportDetailBootstrapGreen() {
                         <tr key={`cmt-${cmt.id}-${index}`}>
                           <td>
                             {typeof cmt?.createAt === "number"
-                              ? moment(cmt?.createAt).format("HH:mm:ss DD/MM/YYYY")
-                              : moment(handleTimeStampFirestore(cmt?.createAt)).format(
-                                "HH:mm:ss DD/MM/YYYY",
-                              )}
+                              ? moment(cmt?.createAt).format(
+                                  "HH:mm:ss DD/MM/YYYY",
+                                )
+                              : moment(
+                                  handleTimeStampFirestore(cmt?.createAt),
+                                ).format("HH:mm:ss DD/MM/YYYY")}
                           </td>
 
                           <td className="d-flex align-items-center">
-                            <img alt='avatar' src={teacherMap[cmt.authorId]?.avatar} className='comment-avatar' />
+                            <img
+                              alt="avatar"
+                              src={teacherMap[cmt.authorId]?.avatar}
+                              className="comment-avatar"
+                            />
                             <div className="fw-semibold text-green-dark">
                               {teacherMap[cmt.authorId]?.fullName}
                             </div>
@@ -682,22 +715,20 @@ export default function ReportDetailBootstrapGreen() {
               >
                 Hủy
               </button>
-              {
-                ["Phó Giám đốc", "Giám đốc"].includes(
-                  user?.position as string,
-                ) &&
-
+              {["Phó Giám đốc", "Giám đốc"].includes(
+                user?.position as string,
+              ) && (
                 <button
                   className="btn action-btn-soft"
                   onClick={() => {
-                    setHistoryComment(false)
-                    setShowFeedback(true)
+                    setHistoryComment(false);
+                    setShowFeedback(true);
                   }}
                 >
                   <i className="bi bi-chat-left-dots-fill me-2 icon-yellow" />
                   Góp ý
                 </button>
-              }
+              )}
             </div>
           </div>
         </div>

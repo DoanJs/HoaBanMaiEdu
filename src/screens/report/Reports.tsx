@@ -3,7 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { SpinnerComponent } from "../../components";
 import { handleTimeStampFirestore } from "../../constants/convertTimeStamp";
-import { formatDateSearch, getCardTheme } from "../../constants/info";
+import {
+  formatDateSearch,
+  getCardTheme,
+  getTimeValue,
+} from "../../constants/info";
 import { ReportModel } from "../../models";
 import {
   useReportStore,
@@ -34,29 +38,50 @@ export default function ApprovedReportBootstrapGreen() {
     }
   }, [reports]);
 
+  // const filteredReports = useMemo(() => {
+  //   const search = keyword.trim().toLowerCase();
+
+  //   return reportNews.filter((item: any) => {
+  //     const teacherName = teacherMap[item.authorId]?.fullName || "";
+
+  //     const createdTime = formatDateSearch(item.createAt);
+  //     const updatedTime = formatDateSearch(item.updateAt);
+
+  //     const content = `
+  //     ${item.title ?? ""}
+  //     ${teacherName}
+  //     ${createdTime}
+  //     ${updatedTime}
+  //   `.toLowerCase();
+
+  //     return !search || content.includes(search);
+  //   });
+  // }, [reportNews, keyword, teacherMap]);
   const filteredReports = useMemo(() => {
     const search = keyword.trim().toLowerCase();
 
-    return reportNews.filter((item: any) => {
-      const teacherName = teacherMap[item.authorId]?.fullName || "";
+    return reportNews
+      .filter((item: any) => {
+        const teacherName = teacherMap[item.authorId]?.fullName || "";
 
-      const createdTime = formatDateSearch(item.createAt);
-      const updatedTime = formatDateSearch(item.updateAt);
+        const createdTime = formatDateSearch(item.createAt);
+        const updatedTime = formatDateSearch(item.updateAt);
 
-      const content = `
-      ${item.title ?? ""}
-      ${teacherName}
-      ${createdTime}
-      ${updatedTime}
-    `.toLowerCase();
+        const content = `
+        ${item.title ?? ""}
+        ${teacherName}
+        ${createdTime}
+        ${updatedTime}
+      `.toLowerCase();
 
-      return !search || content.includes(search);
-    });
+        return !search || content.includes(search);
+      })
+      .sort((a: any, b: any) => {
+        return getTimeValue(b.createAt) - getTimeValue(a.createAt);
+      });
   }, [reportNews, keyword, teacherMap]);
 
-
   function ReportCard({ report }: any) {
-
     const theme = getCardTheme(report.id);
 
     return (
@@ -64,43 +89,31 @@ export default function ApprovedReportBootstrapGreen() {
         to="../reportdetail"
         onClick={() => setSelectNavbar("")}
         state={{ report }}
-        className="container-fluid py-4 text-decoration-none cursor-pointer">
+        className="container-fluid py-4 text-decoration-none cursor-pointer"
+      >
         <div className="report-kh-badge">
-          <img
-            src={theme.icon}
-            alt=""
-            className="report-kh-badge-img"
-          />
+          <img src={theme.icon} alt="" className="report-kh-badge-img" />
         </div>
-        <div
-          className="report-kh-card"
-          style={{ background: theme.bg }}
-        >
-
-
+        <div className="report-kh-card" style={{ background: theme.bg }}>
           <div className="report-kh-glass" />
           <div className="d-flex justify-content-between align-items-start">
-            <div
-              className="report-kh-title"
-              style={{ color: theme.color }}
-            >
+            <div className="report-kh-title" style={{ color: theme.color }}>
               {report.type} {report.title}
             </div>
 
             <span className="status-approved flex-shrink-0">
               <i className="bi bi-patch-check-fill me-1" />
-              {report.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
+              {report.status === "approved" ? "Đã duyệt" : "Chờ duyệt"}
             </span>
           </div>
-
 
           <div className="report-kh-info">
             <i className="bi bi-send-check-fill icon-yellow" /> Ngày tạo:&ensp;
             {typeof report?.createAt === "number"
               ? moment(report?.createAt).format("HH:mm:ss DD/MM/YYYY")
               : moment(handleTimeStampFirestore(report?.createAt)).format(
-                "HH:mm:ss DD/MM/YYYY",
-              )}
+                  "HH:mm:ss DD/MM/YYYY",
+                )}
           </div>
 
           <div className="report-kh-info">
@@ -108,28 +121,31 @@ export default function ApprovedReportBootstrapGreen() {
             {typeof report?.updateAt === "number"
               ? moment(report?.updateAt).format("HH:mm:ss DD/MM/YYYY")
               : moment(handleTimeStampFirestore(report?.updateAt)).format(
-                "HH:mm:ss DD/MM/YYYY",
-              )}
+                  "HH:mm:ss DD/MM/YYYY",
+                )}
           </div>
 
           <div className="report-kh-info">
-            <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện :
+            <i className="bi bi-person-check-fill me-1 icon-red" /> Gv thực hiện
+            :
           </div>
 
           <div className="report-kh-footer">
             <div className="report-teacher-box">
               <img
                 className="report-avatar"
-                src={teacherMap[report.authorId]?.avatar || '/HBMEdu-icon-192x192.png'}
+                src={
+                  teacherMap[report.authorId]?.avatar ||
+                  "/HBMEdu-icon-192x192.png"
+                }
                 alt=""
               />
-              <span>
-                {teacherMap[report.authorId]?.fullName}</span>
+              <span>{teacherMap[report.authorId]?.fullName}</span>
             </div>
           </div>
         </div>
       </Link>
-    )
+    );
   }
 
   if (!reports) return <SpinnerComponent />;
@@ -178,13 +194,18 @@ export default function ApprovedReportBootstrapGreen() {
             <i className="bi bi-search fs-1 d-block mb-3 icon-yellow" />
             Không tìm thấy báo cáo phù hợp.
           </div>
-        ) : <div className="row g-3 g-xl-4">
-          {filteredReports.map((report) => (
-
-            <div className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative" >
-              <ReportCard report={report} key={`report-${report.id}-index`} />
-            </div>))}
-        </div>}
+        ) : (
+          <div className="row g-3 g-xl-4">
+            {filteredReports.map((report) => (
+              <div
+                className="col-12 col-sm-6 col-lg-4 col-xl-3 position-relative"
+                key={`report-${report.id}-index`}
+              >
+                <ReportCard report={report} />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
     </>
   );

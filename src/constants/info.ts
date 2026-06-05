@@ -1,3 +1,5 @@
+import { FieldValue } from "firebase/firestore";
+
 // types:
 export interface PlanCardTheme {
   bg: string;
@@ -6,16 +8,13 @@ export interface PlanCardTheme {
 }
 
 // variables:
-export const CENTER_NAME =
-  "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU";
-export const FIRST_NAME =
-  "TRUNG TÂM CAN THIỆP SỚM";
-export const LAST_NAME =
-  "HOA BAN MAI EDU";
+export const CENTER_NAME = "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU";
+export const FIRST_NAME = "TRUNG TÂM CAN THIỆP SỚM";
+export const LAST_NAME = "HOA BAN MAI EDU";
 // export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
-export const activeCategoryDefault = "gGNJ5mQZRSxkSW4qAu6F";//HoaBanMaiEdu
+export const activeCategoryDefault = "gGNJ5mQZRSxkSW4qAu6F"; //HoaBanMaiEdu
 export const indexedDBName = "HBMEdu";
-export const ADMINID = "52LPPcC0ejgAWSEoWhWBCT8KHsm2";//HoaBanMaiEdu
+export const ADMINID = "52LPPcC0ejgAWSEoWhWBCT8KHsm2"; //HoaBanMaiEdu
 // export const ADMINID = "QeCNbJPVLwVwy01S3hB3dgALsRm1";//HoaBanMaiEdu-Mobile
 const planCardThemes = [
   {
@@ -60,30 +59,30 @@ const planCardThemes = [
   },
 ];
 //HoaBanMaiEdu
-// export const fieldOrder = [
-//     "gGNJ5mQZRSxkSW4qAu6F", // Ngôn ngữ hiểu
-//     "3EUhuJoxzHauQpx1pPxq", // Ngôn ngữ diễn đạt
-//     "zfnX1X3wvP46rRF3k4gB", // Chỉnh âm
-//     "j6fFXTUD1D6rym4UmKkV", // Nhận thức
-//     "cyg1PnZ4snHm583dFBzp", // Vận động tinh
-//     "qw6gesBxUmEgEDow153O", // Cá nhân xã hội
-//     "Nji6cMUy0TcZ1Tw8B2iG", // Tập trung chú ý
-//     "48UQhGWIQECsi8lAd7Sc", // Hành vi
-//   ];
+export const fieldOrder = [
+  "gGNJ5mQZRSxkSW4qAu6F", // Ngôn ngữ hiểu
+  "3EUhuJoxzHauQpx1pPxq", // Ngôn ngữ diễn đạt
+  "zfnX1X3wvP46rRF3k4gB", // Chỉnh âm
+  "j6fFXTUD1D6rym4UmKkV", // Nhận thức
+  "cyg1PnZ4snHm583dFBzp", // Vận động tinh
+  "qw6gesBxUmEgEDow153O", // Cá nhân xã hội
+  "Nji6cMUy0TcZ1Tw8B2iG", // Tập trung chú ý
+  "48UQhGWIQECsi8lAd7Sc", // Hành vi
+];
 
 // HoaMaiMaiEdu-Mobile
-export const fieldOrder = [
-    "VwWwTwTaRGrvnjIgFq1y", // Ngôn ngữ hiểu
-    "0RptPhhmbwDhyXFstiet", // Ngôn ngữ diễn đạt
-    "Jr5TN0Q2XH1zOGN9oT1f", // Nhận thức
-    "7GDprhycm7vmjdbuDiny", // Vận động tinh
-    "EvH8IShW7sUs0ojOHrfo", // Vận động thô
-    "XV4FJbN7cv4UXpN2tOqR", // Cá nhân xã hội
-    "r34oZoUXxuOq8FBEQkf8", // Tập trung chú ý
-    "ZeOjbxP7naiU0pAAK6q2", // Kỹ năng xã hội
-    "gxZsB2xYu0IiJel5Ni5z", // Kỹ năng chơi
-    "jOdWy1TwAzuEy1lRXT7i", // Kỹ năng bắt chước
-  ];
+// export const fieldOrder = [
+//     "VwWwTwTaRGrvnjIgFq1y", // Ngôn ngữ hiểu
+//     "0RptPhhmbwDhyXFstiet", // Ngôn ngữ diễn đạt
+//     "Jr5TN0Q2XH1zOGN9oT1f", // Nhận thức
+//     "7GDprhycm7vmjdbuDiny", // Vận động tinh
+//     "EvH8IShW7sUs0ojOHrfo", // Vận động thô
+//     "XV4FJbN7cv4UXpN2tOqR", // Cá nhân xã hội
+//     "r34oZoUXxuOq8FBEQkf8", // Tập trung chú ý
+//     "ZeOjbxP7naiU0pAAK6q2", // Kỹ năng xã hội
+//     "gxZsB2xYu0IiJel5Ni5z", // Kỹ năng chơi
+//     "jOdWy1TwAzuEy1lRXT7i", // Kỹ năng bắt chước
+//   ];
 // functions:
 export const getCurrentMonth = () => {
   const now = new Date();
@@ -92,10 +91,13 @@ export const getCurrentMonth = () => {
 
   return `${month}/${year}`;
 };
-export const formatDateSearch = (time: any) => {
-  if (!time) return "";
 
-  const date = time.toDate ? time.toDate() : new Date(time);
+export const formatDateSearch = (time: any) => {
+  const timeMs = getTimeMs(time);
+
+  if (!timeMs) return "";
+
+  const date = new Date(timeMs);
 
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -140,10 +142,57 @@ export const calculateAgeDetail = (birthStr: string) => {
 
   return { years, months, days };
 };
-export const getCardTheme = (id: string): PlanCardTheme  => {
-  const hash = id
-    .split("")
-    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+export const getCardTheme = (id: string): PlanCardTheme => {
+  const hash = id.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
 
   return planCardThemes[hash % planCardThemes.length];
+};
+type TimeAtModel = {
+  seconds: number;
+  nanoseconds: number;
+};
+
+export const getTimeValue = (time: number | TimeAtModel | FieldValue) => {
+  if (typeof time === "number") {
+    return time;
+  }
+
+  if (time && typeof time === "object" && "seconds" in time) {
+    return time.seconds * 1000 + time.nanoseconds / 1_000_000;
+  }
+
+  return 0;
+};
+
+export const getTimeMs = (time: any): number => {
+  if (!time) return 0;
+
+  // Firestore Timestamp instance
+  if (typeof time.toMillis === "function") {
+    return time.toMillis();
+  }
+
+  // Firestore Timestamp có toDate()
+  if (typeof time.toDate === "function") {
+    return time.toDate().getTime();
+  }
+
+  // Dạng { seconds, nanoseconds }
+  if (
+    typeof time === "object" &&
+    "seconds" in time &&
+    typeof time.seconds === "number"
+  ) {
+    return time.seconds * 1000 + (time.nanoseconds ?? 0) / 1_000_000;
+  }
+
+  // Date.now() hoặc timestamp number
+  if (typeof time === "number") {
+    return time;
+  }
+
+  // string date nếu có
+  const parsed = new Date(time).getTime();
+
+  return Number.isNaN(parsed) ? 0 : parsed;
 };
