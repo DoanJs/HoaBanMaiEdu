@@ -1,61 +1,42 @@
 import { doc, setDoc, Timestamp, updateDoc } from "firebase/firestore";
-import { AddCircle, Trash } from "iconsax-react";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import {
-  ModalDeleteComponent,
-  RowComponent,
-  SearchComponent,
-  SpaceComponent,
-  SpinnerComponent,
-  TextComponent,
-} from "../../components";
+import { useEffect, useMemo, useState } from "react";
 import LoadingOverlay from "../../components/LoadingOverLay";
-import { colors } from "../../constants/colors";
+import { handleTimeStampFirestore } from "../../constants/convertTimeStamp";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { widthSmall } from "../../constants/reponsive";
-import { sizes } from "../../constants/sizes";
 import { db } from "../../firebase.config";
-import { UserModel } from "../../models";
 import { useUserStore } from "../../zustand";
-import AdminMetaComponent from "./AdminMetaComponent";
 
 export default function AdminMeta() {
   const { user } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [disable, setDisable] = useState(true);
-  const [teacherEdit, setTeacherEdit] = useState<UserModel>();
   const [form, setForm] = useState({
     name: "",
-    lastUpdated: Date.now(),
+    lastUpdated: "",
   });
-
-  // ----------------
-  const [meta, setMeta] = useState<any>([]);
-  const [newMeta, setNewMeta] = useState<any[]>([]);
+  const [keyword, setKeyword] = useState("");
+  const [meta, setMeta] = useState<any[]>([]);
   const [metaEdit, setMetaEdit] = useState<any>();
 
   useEffect(() => {
     if (metaEdit) {
+      const ms =
+        metaEdit.lastUpdated.seconds * 1000 +
+        metaEdit.lastUpdated.nanoseconds / 1e6;
+
+      const dateStr = new Date(ms).toISOString().slice(0, 10); // ✅ đúng format
+
       setForm({
         name: metaEdit.id,
-        lastUpdated:
-          metaEdit.lastUpdated.seconds * 1000 +
-          metaEdit.lastUpdated.nanoseconds / 1e6,
+        lastUpdated: dateStr, // ❗ phải là string
       });
     }
   }, [metaEdit]);
-  useEffect(() => {
-    if (form.lastUpdated && form.name) {
-      setDisable(false);
-    } else {
-      setDisable(true);
-    }
-  }, [form]);
+
   useEffect(() => {
     if (user) {
       getDocsData({
@@ -64,234 +45,220 @@ export default function AdminMeta() {
       });
     }
   }, [user]);
-  useEffect(() => {
-    if (meta.length > 0) {
-      setNewMeta(meta);
-    }
-  }, [meta]);
+
+  const filteredMetas = useMemo(() => {
+    const search = keyword.trim().toLowerCase();
+
+    return meta.filter((item: any) => {
+      const content = `
+        ${item.id ?? ""}
+        ${item.lastChangeType ?? ""}
+        ${item.lastUpdated ?? ""}
+      `.toLowerCase();
+
+      return !search || content.includes(search);
+    });
+  }, [meta, keyword]);
+
+  const handleCloseEdit = () => {
+    setMetaEdit(undefined);
+    setForm({
+      name: "",
+      lastUpdated: "",
+    });
+  };
+
+  const isDisabled = !form.name.trim() || !form.lastUpdated;
 
   const handleMeta = async () => {
     const data = {
-      name: form.name,
-      lastUpdated: Timestamp.fromMillis(form.lastUpdated),
+      name: form.name.trim(),
+      lastUpdated: Timestamp.fromDate(new Date(form.lastUpdated)), // ✅ đúng
     };
 
+    if (!data.name) {
+      handleToastError("Vui lòng nhập tên meta!");
+      return;
+    }
+
     setIsLoading(true);
+
     if (metaEdit) {
       updateDoc(doc(db, "Meta", metaEdit.id), {
-        lastUpdated: Timestamp.fromMillis(form.lastUpdated),
+        lastUpdated: data.lastUpdated,
       })
         .then(() => {
-          setMetaEdit(undefined);
-          setIsLoading(false);
-          handleToastSuccess(`Chỉnh sửa meta thành công ! (${metaEdit.id}) `);
+          setMeta((prev: any) =>
+            prev.map((meta: any) =>
+              meta.id === metaEdit.id
+                ? {
+                    ...meta,
+                    lastUpdated: data.lastUpdated,
+                  }
+                : meta,
+            ),
+          );
+
+          handleToastSuccess(`Cập nhật meta thành công! (${metaEdit.id})`);
+          handleCloseEdit();
         })
         .catch(() => {
+          handleToastError("Chỉnh sửa meta thất bại!");
+        })
+        .finally(() => {
           setIsLoading(false);
-          handleToastError("Chỉnh sửa meta thất bại !");
         });
     } else {
       setDoc(
         doc(db, "Meta", data.name),
-        { lastUpdated: data.lastUpdated },
-        { merge: true }
+        {
+          lastUpdated: data.lastUpdated,
+        },
+        { merge: true },
       )
-        .then((result) => {
-          setNewMeta([
-            ...newMeta,
+        .then(() => {
+          setMeta((prev: any) => [
+            ...prev,
             {
               id: data.name,
+              lastUpdated: data.lastUpdated,
             },
           ]);
-          setIsLoading(false);
-          handleToastSuccess(`Thêm meta mới thành công ! (${data.name}) `);
+
+          handleToastSuccess(`Thêm meta mới thành công! (${data.name})`);
+
+          handleCloseEdit();
         })
         .catch(() => {
+          handleToastError("Thêm meta mới thất bại!");
+        })
+        .finally(() => {
           setIsLoading(false);
-          handleToastError("Thêm meta mới thất bại !");
         });
     }
-    setForm({
-      name: "",
-      lastUpdated: Date.now(),
-    });
   };
 
   return (
-    <RowComponent
-      styles={{
-        alignItems: "flex-start",
-        height: widthSmall ? "85%" : "90%",
-      }}
-    >
-      <div
-        style={{ flex: 2, height: "100%", overflowY: "scroll", padding: 16 }}
-      >
-        <RowComponent justify="space-between">
-          <SearchComponent
-            title="Tìm meta"
-            placeholder="Nhập meta"
-            width={"75%"}
-            arrSource={meta}
-            type="searchMeta"
-            onChange={(val) => setNewMeta(val)}
-          />
-          <TextComponent
-            text={`Có ${newMeta.length} meta`}
-            styles={{ fontWeight: "bold" }}
-          />
-        </RowComponent>
-        <SpaceComponent height={8} />
-        <table
-          className="table table-bordered"
-          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-        >
-          <thead>
-            <tr style={{ textAlign: "center" }}>
-              <th scope="col">Tên Meta</th>
-              <th scope="col">Ngày gần nhất</th>
-              <th scope="col">Handle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {newMeta.length > 0 &&
-              newMeta.map((meta, index) => (
-                <AdminMetaComponent
-                  key={index}
-                  meta={meta}
-                  setMetaEdit={setMetaEdit}
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
-
-      <SpaceComponent width={20} />
-
-      <div
-        style={{
-          flex: 1,
-          background: colors.primaryLight,
-          padding: "6px 10px",
-          borderRadius: 10,
-          height: "100%",
-          overflowY: "scroll",
-          position: "relative",
-        }}
-      >
-        {metaEdit && (
-          <>
-            <AddCircle
-              size={widthSmall ? sizes.thinTitle : sizes.title}
-              color="coral"
-              variant="Bold"
-              style={{
-                cursor: "pointer",
-                position: "absolute",
-                top: 10,
-                right: 10,
-              }}
-              onClick={() => {
-                setForm({
-                  lastUpdated: Date.now(),
-                  name: "",
-                });
-                setMetaEdit(undefined);
-              }}
-            />
-            <Trash
-              size={widthSmall ? sizes.thinTitle : sizes.title}
-              color={colors.red}
-              variant="Bold"
-              style={{
-                cursor: "pointer",
-                position: "absolute",
-                top: 10,
-                left: 10,
-              }}
-              data-bs-dismiss="modal"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            />
-          </>
-        )}
-        <RowComponent justify="center">
-          <TextComponent
-            text={teacherEdit ? "Chỉnh sửa Meta" : "Thêm Meta"}
-            size={widthSmall ? sizes.bigText : sizes.title}
-            styles={{ fontWeight: "bold" }}
-          />
-        </RowComponent>
-
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Tên Meta:
-          </label>
-          <input
-          disabled={metaEdit}
-            onChange={(val) => setForm({ ...form, name: val.target.value })}
-            type="fullName"
-            className="form-control"
-            value={form.name}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Chọn ngày:
-          </label>
-          <input
-            onChange={(val) =>
-              setForm({
-                ...form,
-                lastUpdated: new Date(val.target.value).getTime(),
-              })
+    <>
+      <div className="admin-target-page">
+        <div className="row g-3 g-xl-4 admin-content">
+          <div
+            className={
+              metaEdit
+                ? "col-12 col-xl-8 admin-table-col"
+                : "col-12 col-xl-8 admin-table-col"
             }
-            type="date"
-            className="form-control"
-            value={moment(form.lastUpdated).format("YYYY-MM-DD")}
-          />
-        </div>
+          >
+            <div className="page-panel p-3 p-md-4 h-100 d-flex flex-column">
+              <div className="search-box mb-3 d-flex align-items-center justify-content-between">
+                <div className="search-left">
+                  <i className="bi bi-search me-2 text-muted" />
+                  <input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    className="form-control search-input"
+                    placeholder="Nhập tên meta"
+                  />
+                </div>
 
-        <SpaceComponent height={10} />
-        <button
-          style={{
-            width: "100%",
-            background: disable ? colors.gray : colors.orange,
-            borderColor: disable ? colors.gray : colors.orange,
-            fontWeight: "bold",
-            fontSize: widthSmall ? sizes.text : sizes.bigText,
-          }}
-          type="button"
-          className="btn btn-primary"
-          onClick={disable ? undefined : handleMeta}
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : (
-            <>{metaEdit ? "Cập nhật" : "Thêm mới"}</>
-          )}
-        </button>
+                <div className="child-count">
+                  Có {filteredMetas.length} meta
+                </div>
+              </div>
+
+              <div className="table-responsive">
+                {filteredMetas.length === 0 ? (
+                  <div className="empty-state">
+                    <i className="bi bi-search empty-icon" />
+                    <div className="empty-text">
+                      Không tìm thấy meta phù hợp.
+                    </div>
+                  </div>
+                ) : (
+                  <table className="table plans-table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Tên Meta</th>
+                        <th>Ngày gần nhất</th>
+                        <th>Handle</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {filteredMetas.map((meta: any) => (
+                        <tr key={meta.id}>
+                          <td>{meta.id}</td>
+
+                          <td>
+                            {moment(
+                              handleTimeStampFirestore(meta.lastUpdated),
+                            ).format("HH:mm:ss DD/MM/YYYY")}
+                          </td>
+
+                          <td className="text-center">
+                            <button
+                              className="icon-btn icon-edit"
+                              onClick={() => setMetaEdit(meta)}
+                            >
+                              <i className="bi bi-pencil-fill" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 col-xl-4 admin-form-col">
+            <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
+              {metaEdit && (
+                <button
+                  className="icon-btn icon-add position-absolute"
+                  style={{ top: 12, right: 12 }}
+                  onClick={handleCloseEdit}
+                  disabled={isLoading}
+                >
+                  <i className="bi bi-x-lg" />
+                </button>
+              )}
+
+              <h4 className="text-center fw-bold mb-3">
+                {metaEdit ? "Chỉnh sửa Meta" : "Thêm Meta"}
+              </h4>
+
+              <label className="form-label">Tên Meta:</label>
+              <input
+                className="form-control mb-2"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+
+              <label className="form-label">Chọn ngày:</label>
+              <input
+                type="date"
+                className="form-control mb-2"
+                value={form.lastUpdated}
+                onChange={
+                  (e) => setForm({ ...form, lastUpdated: e.target.value }) // ❗ KHÔNG dùng Number
+                }
+              />
+
+              <button
+                className="btn action-btn-primary w-100"
+                disabled={isDisabled}
+                onClick={handleMeta}
+              >
+                {metaEdit ? "Cập nhật" : "Thêm mới"}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <LoadingOverlay show={isLoading} />
-
-      <ModalDeleteComponent
-        data={{
-          id: metaEdit?.id as string,
-          nameCollect: "Meta",
-          itemTasks: [],
-          setForm: setForm,
-          setEdit: setMetaEdit,
-        }}
-      />
-    </RowComponent>
+    </>
   );
 }

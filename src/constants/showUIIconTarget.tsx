@@ -1,98 +1,32 @@
-import {
-  Alphabet,
-  Chat,
-  Ear,
-  Eye,
-  Hearts,
-  Light,
-  Puzzle,
-  Universal,
-} from "../assets/icons";
-import { colors } from "./colors";
-
-export const showUIIconTarget = (title: string, width?: number, height?: number) => {
+export const showUIIconTarget = (title: string) => {
   let result: any;
   switch (title) {
     case "Ngôn ngữ hiểu":
-      result = (
-        <Ear
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
+      result = "ngonnguhieu.png";
       break;
     case "Ngôn ngữ diễn đạt":
-      result = (
-        <Chat
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
+      result = "ngonngudiendat.png";
       break;
     case "Nhận thức":
-      result = (
-        <Light
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
-
+      result = "nhanthuc.png";
       break;
     case "Vận động tinh":
-      result = (
-        <Puzzle
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
-      break;
-    case "Chỉnh âm":
-      result = (
-        <Alphabet
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
+      result = "vandongtinh.png";
       break;
     case "Cá nhân xã hội":
-      result = (
-        <Hearts
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
+      result = "canhanxahoi.png";
+      break;
+    case "Chỉnh âm":
+      result = "chinham.png";
       break;
     case "Hành vi":
-      result = (
-        <Universal
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
+      result = "hanhvi.png";
+      break;
+    case "Tập trung chú ý":
+      result = "taptrungchuy.png";
       break;
     default:
-      result = (
-        <Eye
-          className="w-6 h-6 fill-current"
-          fill={colors.textBold}
-          width={width ?? 80}
-          height={height ?? 80}
-        />
-      );
+      result = "HBMEdu-icon-512x512.png";
       break;
   }
   return result;

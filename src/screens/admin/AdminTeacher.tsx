@@ -1,16 +1,7 @@
 import { serverTimestamp } from "firebase/firestore";
-import { AddCircle, Trash } from "iconsax-react";
-import { useEffect, useState } from "react";
-import {
-  ModalDeleteComponent,
-  RowComponent,
-  SearchComponent,
-  SpaceComponent,
-  SpinnerComponent,
-  TextComponent,
-} from "../../components";
+import { httpsCallable } from "firebase/functions";
+import { useEffect, useMemo, useState } from "react";
 import LoadingOverlay from "../../components/LoadingOverLay";
-import { colors } from "../../constants/colors";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { updateDocData } from "../../constants/firebase/updateDocData";
@@ -18,46 +9,28 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { widthSmall } from "../../constants/reponsive";
-import { sizes } from "../../constants/sizes";
-import { validateEmail } from "../../constants/validateEmailPhone";
-import { UserModel } from "../../models";
+import { functions } from "../../firebase.config";
 import { useUserStore } from "../../zustand";
-import AdminTeacherComponent from "./AdminTeacherComponent";
 
 export default function AdminTeacher() {
   const { user } = useUserStore();
+
+  const [teacherEdit, setTeacherEdit] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
-  const [disable, setDisable] = useState(true);
-  const [teachers, setTeachers] = useState<UserModel[]>([]);
-  const [newTeachers, setNewTeachers] = useState<any[]>([]);
-  const [teacherEdit, setTeacherEdit] = useState<UserModel>();
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [keyword, setKeyword] = useState("");
+  const [showDelete, setShowDelete] = useState(false);
+
   const [form, setForm] = useState({
+    id: "",
     fullName: "",
     avatar: "",
-    role: "",
     email: "",
     position: "",
+    role: "",
+    telegramChatId: "",
   });
 
-  useEffect(() => {
-    if (teacherEdit) {
-      setForm({
-        fullName: teacherEdit.fullName,
-        avatar: teacherEdit.avatar,
-        role: teacherEdit.role,
-        email: teacherEdit.email,
-        position: teacherEdit.position,
-      });
-    }
-  }, [teacherEdit]);
-  useEffect(() => {
-    if (form.fullName && validateEmail(form.email)) {
-      setDisable(false);
-    } else {
-      setDisable(true);
-    }
-  }, [form]);
   useEffect(() => {
     if (user) {
       getDocsData({
@@ -66,300 +39,455 @@ export default function AdminTeacher() {
       });
     }
   }, [user]);
+
+  const filteredTeachers = useMemo(() => {
+    const search = keyword.trim().toLowerCase();
+
+    return teachers.filter((item) => {
+      const content = `
+        ${item.id ?? ""}
+        ${item.fullName ?? ""}
+        ${item.position ?? ""}
+        ${item.role ?? ""}
+      `.toLowerCase();
+
+      return !search || content.includes(search);
+    });
+  }, [teachers, keyword]);
+
+  const isDisabled =
+    !form.fullName.trim() || !form.email.trim() || !form.position || !form.role;
+
   useEffect(() => {
-    if (teachers.length > 0) {
-      setNewTeachers(teachers);
+    if (teacherEdit) {
+      setForm({
+        id: teacherEdit.id || "",
+        fullName: teacherEdit.fullName || "",
+        avatar: teacherEdit.avatar || "",
+        email: teacherEdit.email || "",
+        position: teacherEdit.position || "",
+        role: teacherEdit.role || "",
+        telegramChatId: teacherEdit.telegramChatId || "",
+      });
     }
-  }, [teachers]);
+  }, [teacherEdit]);
+
+  const handleCreateNew = () => {
+    setTeacherEdit(undefined);
+    setForm({
+      id: "",
+      fullName: "",
+      avatar: "",
+      email: "",
+      position: "",
+      role: "",
+      telegramChatId: "",
+    });
+  };
 
   const handleTeacher = async () => {
     const data = {
-      ...form,
-      role: form.role !== "" ? form.role : "teacher",
-      position: form.position !== "" ? form.position : "Chuyên viên tâm lý",
-      phone: "",
+      fullName: form.fullName,
+      avatar: form.avatar,
+      email: form.email,
+      position: form.position,
+      role: form.role,
+      telegramChatId: "",
       shortName: "",
-      birth: serverTimestamp(),
-      createAt: serverTimestamp(),
-      updateAt: serverTimestamp(),
+      phone: "",
+      birth: "",
+      id: form.id,
     };
 
     setIsLoading(true);
+
     if (teacherEdit) {
       updateDocData({
         nameCollect: "users",
         id: teacherEdit.id,
-        valueUpdate: form,
+        valueUpdate: {
+          ...data,
+          updateAt: serverTimestamp(),
+        },
         metaDoc: "users",
       })
         .then(() => {
-          setTeacherEdit(undefined);
-          setIsLoading(false);
-          handleToastSuccess(
-            `Chỉnh sửa giáo viên thành công ! (${teacherEdit.id}) `
+          setTeachers((prev) =>
+            prev.map((teacher) =>
+              teacher.id === teacherEdit.id
+                ? {
+                    ...teacher,
+                    ...data,
+                    updateAt: new Date(),
+                  }
+                : teacher,
+            ),
           );
+
+          handleToastSuccess(
+            `Chỉnh sửa giáo viên thành công! (${teacherEdit.fullName || teacherEdit.name})`,
+          );
+
+          handleCreateNew();
         })
         .catch(() => {
+          handleToastError("Chỉnh sửa giáo viên thất bại!");
+        })
+        .finally(() => {
           setIsLoading(false);
-          handleToastError("Chỉnh sửa giáo viên thất bại !");
         });
     } else {
       addDocData({
         nameCollect: "users",
-        value: data,
-        metaDoc: "suggests",
+        value: {
+          ...data,
+          telegramChatId: "",
+          createAt: serverTimestamp(),
+          updateAt: serverTimestamp(),
+        },
+        metaDoc: "users",
+        customId: data.id,
       })
         .then((result) => {
-          setNewTeachers([
-            ...newTeachers,
+          setTeachers((prev) => [
+            ...prev,
             {
               ...data,
-              id: result.id,
+              id: form.id,
+              telegramChatId: "",
+              createAt: new Date(),
+              updateAt: new Date(),
             },
           ]);
-          setIsLoading(false);
-          handleToastSuccess(`Thêm giáo viên mới thành công ! (${result.id}) `);
+
+          handleToastSuccess(`Thêm giáo viên mới thành công! (${result.id})`);
+          handleCreateNew();
         })
         .catch(() => {
+          handleToastError("Thêm giáo viên mới thất bại!");
+        })
+        .finally(() => {
           setIsLoading(false);
-          handleToastError("Thêm giáo viên mới thất bại !");
         });
     }
-    setForm({
-      fullName: "",
-      avatar: "",
-      role: "",
-      email: "",
-      position: "",
-    });
+  };
+  // XÓA GIÁO VIÊN
+  // const handleDeleteTeacher = async () => {
+  //   if (!teacherEdit) return;
+
+  //   setShowDelete(false);
+  //   try {
+  //     setIsLoading(true);
+
+  //     const deleteTeacherDeep = httpsCallable<
+  //       { teacherId: string },
+  //       {
+  //         ok: boolean;
+  //         removedTeacherId: string;
+  //         affectedDocs: number;
+  //       }
+  //     >(functions, "deleteTeacherDeep");
+
+  //     const res = await deleteTeacherDeep({ teacherId: teacherEdit.id });
+
+  //     // ✅ cập nhật UI ngay
+  //     setTeachers((prev) =>
+  //       prev.filter((teacher) => teacher.id !== teacherEdit.id),
+  //     );
+
+  //     // reset form
+  //     handleCreateNew();
+
+  //     handleToastSuccess(
+  //       `Xóa giáo viên thành công! Đã xóa ${res.data.affectedDocs} mục có liên quan.`,
+  //     );
+  //   } catch (err: any) {
+  //     console.error(err);
+
+  //     if (err.code === "permission-denied") {
+  //       handleToastError("Chỉ admin mới có quyền xóa giáo viên");
+  //     } else if (err.code === "not-found") {
+  //       handleToastError("Không tìm thấy giáo viên");
+  //     } else {
+  //       handleToastError("Xóa giáo viên thất bại");
+  //     }
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  const handleDeleteTeacher = async () => {
+    if (!teacherEdit) return;
+
+    setShowDelete(false);
+    setIsLoading(true);
+
+    try {
+      const deleteTeacherDeep = httpsCallable<
+        { teacherId: string },
+        {
+          ok: boolean;
+          deletedTeacherId: string;
+          updatedCount: number;
+          synced: {
+            children?: { removedTeacherIds: number };
+            carts?: { removedTeacherIds: number; clearedAuthorId: number };
+            plans?: { removedTeacherIds: number; clearedAuthorId: number };
+            planTasks?: { removedTeacherIds: number; clearedAuthorId: number };
+            reports?: { removedTeacherIds: number; clearedAuthorId: number };
+            reportTasks?: {
+              removedTeacherIds: number;
+              clearedAuthorId: number;
+            };
+            reportSaveds?: {
+              removedTeacherIds: number;
+              clearedAuthorId: number;
+            };
+          };
+        }
+      >(functions, "deleteTeacherDeep");
+
+      const res = await deleteTeacherDeep({
+        teacherId: teacherEdit.id,
+      });
+
+      setTeachers((prev) =>
+        prev.filter((teacher) => teacher.id !== teacherEdit.id),
+      );
+
+      handleCreateNew();
+
+      handleToastSuccess(
+        `Xóa giáo viên thành công! Đã cập nhật ${res.data.updatedCount} mục liên quan.`,
+      );
+
+      console.log("Chi tiết dữ liệu đã cập nhật:", res.data.synced);
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.code === "functions/permission-denied") {
+        handleToastError("Chỉ admin mới có quyền xóa giáo viên");
+      } else if (err.code === "functions/not-found") {
+        handleToastError("Không tìm thấy giáo viên");
+      } else if (err.code === "functions/unauthenticated") {
+        handleToastError("Bạn cần đăng nhập lại");
+      } else {
+        handleToastError("Xóa giáo viên thất bại");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <RowComponent
-      styles={{
-        alignItems: "flex-start",
-        height: widthSmall ? "85%" : "90%",
-      }}
-    >
-      <div
-        style={{ flex: 2, height: "100%", overflowY: "scroll", padding: 16 }}
-      >
-        <RowComponent justify="space-between">
-          <SearchComponent
-            title="Tìm giáo viên"
-            placeholder="Nhập giáo viên"
-            width={"75%"}
-            arrSource={teachers}
-            type="searchTeacher"
-            onChange={(val) => setNewTeachers(val)}
-          />
-          <TextComponent
-            text={`Có ${newTeachers.length} giáo viên`}
-            styles={{ fontWeight: "bold" }}
-          />
-        </RowComponent>
-        <SpaceComponent height={8} />
-        <table
-          className="table table-bordered"
-          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-        >
-          <thead>
-            <tr style={{ textAlign: "center" }}>
-              <th scope="col">Tên giáo viên</th>
-              <th scope="col">Quyền</th>
-              <th scope="col">Handle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {newTeachers.length > 0 &&
-              newTeachers.map((teacher, index) => (
-                <AdminTeacherComponent
-                  key={index}
-                  teacher={teacher}
-                  setTeacherEdit={setTeacherEdit}
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
+    <>
+      <div className="admin-target-page">
+        <div className="row g-3 g-xl-4 admin-content">
+          {/* TABLE */}
+          <div className="col-12 col-xl-8 admin-table-col">
+            <div className="page-panel p-3 p-md-4 h-100 d-flex flex-column">
+              <div className="search-box mb-3 d-flex align-items-center justify-content-between">
+                <div className="search-left d-flex align-items-center">
+                  <i className="bi bi-search me-2 text-muted" />
+                  <input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    className="form-control search-input"
+                    placeholder="Nhập tên giáo viên, quyền hạn"
+                  />
+                </div>
 
-      <SpaceComponent width={20} />
+                <div className="child-count">
+                  Có {filteredTeachers.length} giáo viên
+                </div>
+              </div>
 
-      <div
-        style={{
-          flex: 1,
-          background: colors.primaryLight,
-          padding: "6px 10px",
-          borderRadius: 10,
-          height: "100%",
-          overflowY: "scroll",
-          position: "relative",
-        }}
-      >
-        {teacherEdit && (
-          <>
-            <AddCircle
-              size={widthSmall ? sizes.thinTitle : sizes.title}
-              color="coral"
-              variant="Bold"
-              style={{
-                cursor: "pointer",
-                position: "absolute",
-                top: 10,
-                right: 10,
-              }}
-              onClick={() => {
-                setForm({
-                  fullName: "",
-                  avatar: "",
-                  role: "",
-                  email: "",
-                  position: "",
-                });
-                setTeacherEdit(undefined);
-              }}
-            />
-            <Trash
-              size={widthSmall ? sizes.thinTitle : sizes.title}
-              color={colors.red}
-              variant="Bold"
-              style={{
-                cursor: "pointer",
-                position: "absolute",
-                top: 10,
-                left: 10,
-              }}
-              data-bs-dismiss="modal"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            />
-          </>
-        )}
-        <RowComponent justify="center">
-          <TextComponent
-            text={teacherEdit ? "Chỉnh sửa giáo viên" : "Thêm giáo viên"}
-            size={widthSmall ? sizes.bigText : sizes.title}
-            styles={{ fontWeight: "bold" }}
-          />
-        </RowComponent>
+              <div className="table-responsive">
+                {filteredTeachers.length === 0 ? (
+                  <div className="empty-state">
+                    <i className="bi bi-search empty-icon"></i>
+                    <div className="empty-text">
+                      Không tìm thấy giáo viên phù hợp.
+                    </div>
+                  </div>
+                ) : (
+                  <table className="table plans-table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Tên giáo viên</th>
+                        <th>Quyền</th>
+                        <th>Handle</th>
+                      </tr>
+                    </thead>
 
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Họ và tên:
-          </label>
-          <input
-            onChange={(val) => setForm({ ...form, fullName: val.target.value })}
-            type="fullName"
-            className="form-control"
-            value={form.fullName}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Avatar:
-          </label>
-          <input
-            onChange={(val) => setForm({ ...form, avatar: val.target.value })}
-            type="fullName"
-            className="form-control"
-            value={form.avatar}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Email:
-          </label>
-          <input
-            onChange={(val) => setForm({ ...form, email: val.target.value })}
-            type="fullName"
-            className="form-control"
-            value={form.email}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Vị trí:
-          </label>
-          <select
-            value={form.position}
-            className={`form-select ${widthSmall && "form-select-sm"}`}
-            aria-label="Default select example"
-            onChange={(val) => setForm({ ...form, position: val.target.value })}
-          >
-            <option defaultValue={""}>Chọn</option>
-            <option value={"Giám đốc"}>Giám đốc</option>
-            <option value={"Phó Giám đốc"}>Phó Giám đốc</option>
-            <option value={"Chuyên viên tâm lý"}>Chuyên viên tâm lý</option>
-          </select>
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Quyền:
-          </label>
-          <select
-            value={form.role}
-            className={`form-select ${widthSmall && "form-select-sm"}`}
-            aria-label="Default select example"
-            onChange={(val) => setForm({ ...form, role: val.target.value })}
-          >
-            <option defaultValue={""}>Chọn</option>
-            <option value={"admin"}>Admin</option>
-            <option value={"teacher"}>Giáo viên</option>
-          </select>
-        </div>
+                    <tbody>
+                      {filteredTeachers.map((teacher) => (
+                        <tr key={teacher.id}>
+                          <td>
+                            <div>{teacher.fullName}</div>
+                            <b>{teacher.id}</b>
+                          </td>
 
-        <SpaceComponent height={10} />
-        <button
-          style={{
-            width: "100%",
-            background: disable ? colors.gray : colors.orange,
-            borderColor: disable ? colors.gray : colors.orange,
-            fontWeight: "bold",
-            fontSize: widthSmall ? sizes.text : sizes.bigText,
-          }}
-          type="button"
-          className="btn btn-primary"
-          onClick={disable ? undefined : handleTeacher}
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : (
-            <>{teacherEdit ? "Cập nhật" : "Thêm mới"}</>
-          )}
-        </button>
+                          <td>{teacher.role}</td>
+
+                          <td>
+                            <button
+                              className="icon-btn icon-edit"
+                              onClick={() => setTeacherEdit(teacher)}
+                            >
+                              <i className="bi bi-pencil-fill"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* FORM */}
+          <div className="col-12 col-xl-4 admin-form-col">
+            <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
+              {teacherEdit && (
+                <button
+                  className="icon-btn icon-delete position-absolute"
+                  style={{ top: 12, left: 12 }}
+                  onClick={() => setShowDelete(true)}
+                >
+                  <i className="bi bi-trash-fill"></i>
+                </button>
+              )}
+              {teacherEdit && (
+                <button
+                  className="icon-btn icon-add position-absolute"
+                  style={{ top: 12, right: 12 }}
+                  onClick={handleCreateNew}
+                >
+                  <i className="bi bi-plus-lg"></i>
+                </button>
+              )}
+
+              <h4 className="text-center fw-bold mb-3">
+                {teacherEdit ? "Chỉnh sửa giáo viên" : "Thêm giáo viên"}
+              </h4>
+
+              <label className="form-label">ID giáo viên:</label>
+              <input
+                disabled={teacherEdit}
+                className="form-control mb-2"
+                placeholder="Liên hệ admin để lấy ID giáo viên"
+                value={form.id}
+                onChange={(e) => setForm({ ...form, id: e.target.value })}
+              />
+              <label className="form-label">Họ và tên:</label>
+              <input
+                className="form-control mb-2"
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+              />
+
+              <label className="form-label">Avatar:</label>
+              <input
+                className="form-control mb-2"
+                value={form.avatar}
+                onChange={(e) => setForm({ ...form, avatar: e.target.value })}
+              />
+
+              <label className="form-label">Email:</label>
+              <input
+                className="form-control mb-2"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                disabled={teacherEdit}
+              />
+
+              <label className="form-label">Vị trí:</label>
+              <select
+                className="form-select mb-2"
+                value={form.position}
+                onChange={(e) => setForm({ ...form, position: e.target.value })}
+              >
+                <option value="">Chọn</option>
+                <option value="Giám đốc">Giám đốc</option>
+                <option value="Phó Giám đốc">Phó Giám đốc</option>
+                <option value="Chuyên viên Tâm lý">Chuyên viên Tâm lý</option>
+              </select>
+
+              <label className="form-label">Quyền:</label>
+              <select
+                className="form-select mb-3"
+                value={form.role}
+                onChange={(e) => setForm({ ...form, role: e.target.value })}
+              >
+                <option value="">Chọn</option>
+                <option value="teacher">teacher</option>
+                <option value="admin">admin</option>
+              </select>
+
+              <label className="form-label">TelegramChatId:</label>
+              <input
+                className="form-control mb-2"
+                value={form.telegramChatId}
+                onChange={(e) =>
+                  setForm({ ...form, telegramChatId: e.target.value })
+                }
+              />
+
+              <button
+                className="btn action-btn-primary w-100"
+                disabled={isDisabled || isLoading}
+                onClick={handleTeacher}
+              >
+                {teacherEdit ? "Cập nhật" : "Thêm mới"}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <LoadingOverlay show={isLoading} />
 
-      <ModalDeleteComponent
-        data={{
-          id: teacherEdit?.id as string,
-          nameCollect: "users",
-          itemTasks: [],
-          setForm: setForm,
-          setEdit: setTeacherEdit,
-        }}
-      />
-    </RowComponent>
+      {showDelete && teacherEdit && (
+        <div className="custom-modal-backdrop">
+          <div className="custom-modal">
+            <h5 className="fw-black text-danger mb-2">
+              Xác nhận xoá giáo viên
+            </h5>
+
+            <p className="text-green-muted small">
+              Hành động này sẽ xoá toàn bộ nội dung liên quan đến giáo viên và không thể khôi
+              phục.
+            </p>
+
+            <div className="plan-delete-box mt-2">
+              <div className="small">
+                <strong>Tên giáo viên:</strong> {teacherEdit.fullName}
+              </div>
+              <div className="small">
+                <strong>Mã giáo viên:</strong> {teacherEdit.id}
+              </div>
+            </div>
+
+            <div className="d-flex gap-2 justify-content-end mt-3">
+              <button
+                className="btn action-btn-soft"
+                onClick={() => setShowDelete(false)}
+              >
+                Huỷ
+              </button>
+
+              <button
+                className="btn action-btn-danger"
+                onClick={handleDeleteTeacher}
+              >
+                <i className="bi bi-trash me-2" />
+                Xoá giáo viên
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

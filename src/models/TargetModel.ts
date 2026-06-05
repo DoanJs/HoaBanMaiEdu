@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase/firestore";
 import { TimeAtModel } from "./TimeAtModel";
 
 export interface TargetModel {
@@ -5,7 +6,8 @@ export interface TargetModel {
   fieldId: string;
   name: string;
   level: number;
+  content?: string;
 
-  createAt: TimeAtModel;
-  updateAt: TimeAtModel;
+  createAt: TimeAtModel | FieldValue | number;
+  updateAt: TimeAtModel | FieldValue | number;
 }

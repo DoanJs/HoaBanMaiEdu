@@ -1,101 +1,55 @@
-import { ReactNode, useState } from "react";
-import { AdminChildren, AdminTarget } from "..";
-import { RowComponent, SpaceComponent, TextComponent } from "../../components";
-import { colors } from "../../constants/colors";
-import { widthSmall } from "../../constants/reponsive";
-import { sizes } from "../../constants/sizes";
-import AdminMeta from "./AdminMeta";
-import AdminSuggest from "./AdminSuggest";
-import AdminTeacher from "./AdminTeacher";
+import { useState } from "react";
+import "./admin.css";
 import AdminBackupData from "./AdminBackupData";
+import AdminChildren from "./AdminChildren";
+import AdminField from "./AdminField";
+import AdminMeta from "./AdminMeta";
 import AdminPlan from "./AdminPlan";
 import AdminReport from "./AdminReport";
-export default function AdminScreen() {
-  const [selected, setSelected] = useState("TRẺ");
+import AdminSuggest from "./AdminSuggest";
+import AdminTarget from "./AdminTarget";
+import AdminTeacher from "./AdminTeacher";
 
-  const showScreenAdmin = (key: string) => {
-    let ui: ReactNode;
-    switch (key) {
-      case "TRẺ":
-        ui = <AdminChildren />;
-        break;
-      case "LĨNH VỰC - MỤC TIÊU - GỢI Ý":
-        ui = <AdminTarget />;
-        break;
-      case "GỢI Ý":
-        ui = <AdminSuggest />;
-        break;
-      case "KẾ HOẠCH":
-        ui = <AdminPlan />;
-        break;
-      case "BÁO CÁO":
-        ui = <AdminReport />;
-        break;
-      case "GIÁO VIÊN":
-        ui = <AdminTeacher />;
-        break;
-      case "META":
-        ui = <AdminMeta />;
-        break;
-      case "BACKUP_DATA":
-        ui = <AdminBackupData />;
-        break;
-
-      default:
-        break;
-    }
-
-    return ui;
-  };
+export default function AdminAllInOne() {
+  const [tab, setTab] = useState("adminchildren");
 
   return (
-    <div
-      style={{
-        paddingTop: "1%",
-        width: "100%",
-      }}
-    >
-      <RowComponent
-        styles={{
-          width: "100%",
-          borderBottom: "1px solid",
-          borderBottomColor: colors.gray,
-          paddingBottom: 10,
-        }}
-      >
-        {[
-          "TRẺ",
-          "LĨNH VỰC - MỤC TIÊU - GỢI Ý",
-          "GỢI Ý",
-          "GIÁO VIÊN",
-          "KẾ HOẠCH",
-          "BÁO CÁO",
-          // "MỨC ĐỘ HỖ TRỢ",
-          "META",
-          'BACKUP_DATA'
-        ].map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setSelected(_)}
-            style={{
-              borderWidth: 0,
-              borderRadius: 6,
-              background: selected === _ ? colors.primary : colors.bacground,
-              borderColor: "coral",
-            }}
-          >
-            <TextComponent
-              text={_}
-              styles={{ fontWeight: "bold", padding: widthSmall ? 4 : 10 }}
-              size={widthSmall ? sizes.text : sizes.bigText}
-              color={selected === _ ? colors.bacground : colors.primary}
-            />
-          </button>
-        ))}
-      </RowComponent>
-      <SpaceComponent height={4} />
+    <>
+      <section className="container-fluid px-3 px-md-4 px-xl-4 py-4 py-xl-4">
+        {/* ===== TAB HEADER ===== */}
+        <div className="qx-tabs mb-3">
+          {[
+            { key: "adminchildren", label: "TRẺ" },
+            { key: "adminteacher", label: "GIÁO VIÊN" },
+            { key: "adminfield", label: "LĨNH VỰC" },
+            { key: "admintarget", label: "MỤC TIÊU" },
+            // { key: "adminsuggest", label: "GỢI Ý" },
+            { key: "adminplan", label: "KẾ HOẠCH" },
+            { key: "adminreport", label: "BÁO CÁO" },
+            { key: "adminmeta", label: "META" },
+            { key: "adminbackupdata", label: "BACKUP_DATA" },
+          ].map((item) => (
+            <button
+              key={item.key}
+              className={`qx-tab ${tab === item.key ? "active" : ""}`}
+              onClick={() => setTab(item.key)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
 
-      {showScreenAdmin(selected)}
-    </div>
+        {/* ===== CONTENT ===== */}
+        {tab === "adminchildren" && <AdminChildren />}
+        {tab === "adminfield" && <AdminField />}
+        {tab === "admintarget" && <AdminTarget />}
+        {tab === "adminsuggest" && <AdminSuggest />}
+        {tab === "adminplan" && <AdminPlan />}
+        {tab === "adminreport" && <AdminReport />}
+        {tab === "adminteacher" && <AdminTeacher />}
+        {tab === "adminmeta" && <AdminMeta />}
+        {tab === "adminbackupdata" && <AdminBackupData />}
+      </section>
+    </>
   );
 }

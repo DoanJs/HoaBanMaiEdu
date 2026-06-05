@@ -15,92 +15,110 @@ export { }
 //   // console.log(targetsNNDD)
 // }
 
+// const addDataToFirebase = async () => {
 
-// const handleCreateData = async () => {
-//   const dataNNDD = targetsNNDD.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: '3EUhuJoxzHauQpx1pPxq',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataCA = targetsCA.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: 'zfnX1X3wvP46rRF3k4gB',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataCNXH = targetsCNXH.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: 'qw6gesBxUmEgEDow153O',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataHV = targetsHV.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: '48UQhGWIQECsi8lAd7Sc',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataNNH = targetsNNH.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: 'gGNJ5mQZRSxkSW4qAu6F',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataNT = targetsNT.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: 'j6fFXTUD1D6rym4UmKkV',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataTTCY = targetsTTCY.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: 'Nji6cMUy0TcZ1Tw8B2iG',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
-//   const dataVDT = targetsVDT.map((_) => {
-//     return {
-//       ..._,
-//       fieldId: 'cyg1PnZ4snHm583dFBzp',
-//       createAt: serverTimestamp(),
-//       updateAt: serverTimestamp(),
-//     }
-//   })
+//     const dataCNXH = targetsCNXH.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'XV4FJbN7cv4UXpN2tOqR',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataKNBC = targetsKNBC.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'jOdWy1TwAzuEy1lRXT7i',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataKNC = targetsKNC.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'gxZsB2xYu0IiJel5Ni5z',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataKNXH= targetsKNXH.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'ZeOjbxP7naiU0pAAK6q2',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataNNDD = targetsNNDD.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: '0RptPhhmbwDhyXFstiet',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataNNH = targetsNNH.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'VwWwTwTaRGrvnjIgFq1y',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataNT = targetsNT.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'Jr5TN0Q2XH1zOGN9oT1f',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataTTCY = targetsTTCY.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'r34oZoUXxuOq8FBEQkf8',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataVDT = targetsVDT.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: '7GDprhycm7vmjdbuDiny',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
+//     const dataVDTho = targetsVDTho.map((_) => {
+//       return {
+//         ..._,
+//         fieldId: 'EvH8IShW7sUs0ojOHrfo',
+//         createAt: serverTimestamp(),
+//         updateAt: serverTimestamp(),
+//       }
+//     })
 
-//   const datas = [
-//     ...dataCA,
-//     ...dataCNXH,
-//     ...dataHV,
-//     ...dataNNDD,
-//     ...dataNNH,
-//     ...dataNT,
-//     ...dataTTCY,
-//     ...dataVDT
-//   ]
-//   // const promiseItems = datas.map((_) => addDocData({
-//   //   nameCollect: 'targets',
-//   //   value: _,
-//   //   metaDoc: 'targets'
-//   // }))
+//     const datas = [
+//       ...dataCNXH,
+//       ...dataKNBC,
+//       ...dataKNC,
+//       ...dataKNXH,
+//       ...dataNNDD,
+//       ...dataNNH,
+//       ...dataNT,
+//       ...dataTTCY,
+//       ...dataVDT,
+//       ...dataVDTho
+//     ]
+//     // const promiseItems = datas.map((_) => addDocData({
+//     //   nameCollect: 'targets',
+//     //   value: _,
+//     //   metaDoc: 'targets'
+//     // }))
 
-//   // await Promise.all(promiseItems)
-//   console.log('Completed')
-// }
+//     // await Promise.all(promiseItems)
+//     console.log('Completed')
+//   };
 
 // // ---------------
 

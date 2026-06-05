@@ -4,7 +4,7 @@ import {
   getDoc,
   getDocs,
   query,
-  QueryConstraint,
+  QueryConstraint
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { db } from "../firebase.config";

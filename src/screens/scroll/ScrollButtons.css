@@ -1,0 +1,90 @@
+/* ScrollButtons.css */
+
+.scroll-buttons {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Nút chung */
+.scroll-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  border: none;
+  font-size: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.25s ease;
+}
+
+/* Hover */
+.scroll-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Nút trắng */
+.scroll-btn-light {
+  background: rgba(255, 255, 255, 0.92);
+  color: #00795d;
+  border: 1px solid #d7eee2;
+  backdrop-filter: blur(6px);
+
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.scroll-btn-light:hover {
+  background: #008566;
+  color: #ffffff;
+}
+
+/* Nút xanh */
+.scroll-btn-primary {
+  background: #008566;
+  color: #ffffff;
+
+  box-shadow: 0 10px 25px rgba(0, 133, 102, 0.25);
+}
+
+.scroll-btn-primary:hover {
+  background: #006b53;
+  color: #ffffff;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+  .scroll-buttons {
+    right: 18px;
+    bottom: 20px;
+  }
+
+  .scroll-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    border-radius: 16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .scroll-buttons {
+    right: 14px;
+    bottom: 16px;
+    gap: 10px;
+  }
+
+  .scroll-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+    border-radius: 14px;
+  }
+}

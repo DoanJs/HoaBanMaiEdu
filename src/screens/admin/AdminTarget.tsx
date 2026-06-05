@@ -1,16 +1,6 @@
 import { serverTimestamp } from "firebase/firestore";
-import { AddCircle, Trash } from "iconsax-react";
-import { useEffect, useState } from "react";
-import {
-  ModalDeleteComponent,
-  RowComponent,
-  SearchComponent,
-  SpaceComponent,
-  SpinnerComponent,
-  TextComponent,
-} from "../../components";
+import { useEffect, useMemo, useState } from "react";
 import LoadingOverlay from "../../components/LoadingOverLay";
-import { colors } from "../../constants/colors";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { updateDocData } from "../../constants/firebase/updateDocData";
@@ -18,49 +8,23 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { widthSmall } from "../../constants/reponsive";
-import { sizes } from "../../constants/sizes";
 import { FieldModel, TargetModel } from "../../models";
 import { useUserStore } from "../../zustand";
-import AdminTargetComponent from "./AdminTargetComponent";
-interface OptionType {
-  id: string;
-  fullName: string;
-}
+import "./admintarget.css";
 
 export default function AdminTarget() {
   const { user } = useUserStore();
   const [targetEdit, setTargetEdit] = useState<TargetModel>();
   const [isLoading, setIsLoading] = useState(false);
-  const [disable, setDisable] = useState(true);
-
-  const [targets, setTargets] = useState<TargetModel[]>([]);
-  const [newTargets, setNewTargets] = useState<any[]>([]);
+  const [targets, setTargets] = useState<any[]>([]);
   const [fields, setFields] = useState<FieldModel[]>([]);
+  const [keyword, setKeyword] = useState("");
   const [form, setForm] = useState({
     nameTarget: "",
-    nameSuggest: "",
     level: 0,
     fieldId: "",
+    content: "",
   });
-
-  useEffect(() => {
-    if (targetEdit) {
-      setForm({
-        nameTarget: targetEdit.name,
-        fieldId: targetEdit.fieldId,
-        nameSuggest: "",
-        level: targetEdit.level,
-      });
-    }
-  }, [targetEdit]);
-  useEffect(() => {
-    if (form.fieldId && ((form.nameTarget && form.level) || form.nameSuggest)) {
-      setDisable(false);
-    } else {
-      setDisable(true);
-    }
-  }, [form]);
 
   useEffect(() => {
     if (user) {
@@ -75,29 +39,87 @@ export default function AdminTarget() {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (targets.length > 0) {
-      setNewTargets(targets);
-    }
-  }, [targets]);
+  const isDisabled =
+    !form.fieldId.trim() || !form.nameTarget?.trim() || !form.level;
 
-  const handleTargetField = async () => {
+  useEffect(() => {
+    if (targetEdit) {
+      setForm({
+        nameTarget: targetEdit.name,
+        fieldId: targetEdit.fieldId,
+        level: targetEdit.level,
+        content: targetEdit.content || "",
+      });
+    }
+  }, [targetEdit]);
+
+  const fieldMap = useMemo(() => {
+    const map: any = {};
+    fields.forEach((t) => {
+      map[t.id] = t.name;
+    });
+    return map;
+  }, [fields]);
+
+  const filteredTargets = useMemo(() => {
+    const search = keyword.trim().toLowerCase();
+
+    return targets.filter((item) => {
+      // lấy tên field từ fieldId
+      const fieldName = fieldMap[item.fieldId] || "";
+
+      const content = `
+      ${item.id ?? ""}
+      ${item.name ?? ""}
+      ${fieldName}
+      level: ${item.level ?? ""}
+    `.toLowerCase();
+
+      return !search || content.includes(search);
+    });
+  }, [targets, keyword, fieldMap]);
+
+  const handleCreateNew = () => {
+    setTargetEdit(undefined);
+    setForm({ nameTarget: "", level: 0, fieldId: "", content: "" });
+  };
+  const handleTarget = async () => {
+    const data = {
+      name: form.nameTarget,
+      level: form.level,
+      fieldId: form.fieldId,
+      content: form.content,
+    };
+
     setIsLoading(true);
     if (targetEdit) {
       updateDocData({
         nameCollect: "targets",
         id: targetEdit.id,
         valueUpdate: {
-          fieldId: form.fieldId,
-          name: form.nameTarget,
-          level: form.level,
+          ...data,
+          updateAt: serverTimestamp(),
         },
         metaDoc: "targets",
       })
         .then((result) => {
+          // cập nhật UI ngay
+          setTargets((prev) =>
+            prev.map((target) =>
+              target.id === targetEdit.id
+                ? {
+                  ...target,
+                  ...data,
+                  updateAt: new Date(),
+                }
+                : target,
+            ),
+          );
+
           setIsLoading(false);
+          setTargetEdit(undefined);
           handleToastSuccess(
-            `Chỉnh sửa mục tiêu thành công ! (${targetEdit.id}) `
+            `Chỉnh sửa mục tiêu thành công ! (${targetEdit.id}) `,
           );
         })
         .catch((error) => {
@@ -105,285 +127,223 @@ export default function AdminTarget() {
           handleToastError("Chỉnh sửa mục tiêu thất bại !");
         });
     } else {
-      if (form.nameTarget && form.level) {
-        addDocData({
-          nameCollect: "targets",
-          value: {
-            name: form.nameTarget,
-            fieldId: form.fieldId,
-            level: form.level,
+      addDocData({
+        nameCollect: "targets",
+        value: {
+          ...data,
 
-            createAt: serverTimestamp(),
-            updateAt: serverTimestamp(),
-          },
-          metaDoc: "targets",
+          createAt: serverTimestamp(),
+          updateAt: serverTimestamp(),
+        },
+        metaDoc: "targets",
+      })
+        .then((result) => {
+          setTargets((prev) => [
+            ...prev,
+            {
+              ...data,
+              id: result.id,
+              createAt: new Date(),
+              updateAt: new Date(),
+            },
+          ]);
+
+          setIsLoading(false);
+          handleToastSuccess(`Thêm mục tiêu mới thành công ! (${result.id}) `);
         })
-          .then((result) => {
-            setNewTargets([
-              ...newTargets,
-              {
-                id: result.id,
-                name: form.nameTarget,
-                fieldId: form.fieldId,
-                level: form.level,
+        .catch((eror) => {
+          setIsLoading(false);
+          handleToastError("Thêm mục tiêu mới thất bại !");
+        });
+      //   if (form.nameSuggest) {
+      //     addDocData({
+      //       nameCollect: "suggests",
+      //       value: {
+      //         name: form.nameSuggest,
+      //         fieldId: form.fieldId,
 
-                createAt: serverTimestamp(),
-                updateAt: serverTimestamp(),
-              },
-            ]);
-            setIsLoading(false);
-            handleToastSuccess(
-              `Thêm mục tiêu mới thành công ! (${result.id}) `
-            );
-          })
-          .catch((eror) => {
-            setIsLoading(false);
-            handleToastError("Thêm mục tiêu mới thất bại !");
-          });
-      }
-      if (form.nameSuggest) {
-        addDocData({
-          nameCollect: "suggests",
-          value: {
-            name: form.nameSuggest,
-            fieldId: form.fieldId,
-
-            createAt: serverTimestamp(),
-            updateAt: serverTimestamp(),
-          },
-          metaDoc: "suggests",
-        })
-          .then((result) => {
-            setIsLoading(false);
-            handleToastSuccess(`Thêm gợi ý mới thành công ! (${result.id}) `);
-          })
-          .catch((eror) => {
-            setIsLoading(false);
-            handleToastError("Thêm gợi ý mới thất bại !");
-          });
-      }
+      //         createAt: serverTimestamp(),
+      //         updateAt: serverTimestamp(),
+      //       },
+      //       metaDoc: "suggests",
+      //     })
+      //       .then((result) => {
+      //         setIsLoading(false);
+      //         handleToastSuccess(`Thêm gợi ý mới thành công ! (${result.id}) `);
+      //       })
+      //       .catch((eror) => {
+      //         setIsLoading(false);
+      //         handleToastError("Thêm gợi ý mới thất bại !");
+      //       });
+      //   }
     }
-    setForm({ nameSuggest: "", nameTarget: "", fieldId: "", level: 0 });
+
+    setForm({ nameTarget: "", fieldId: "", level: 0, content: "" });
   };
 
   return (
-    <RowComponent
-      styles={{
-        alignItems: "flex-start",
-        height: widthSmall ? "85%" : "90%",
-      }}
-    >
-      <div
-        style={{ flex: 2, height: "100%", overflowY: "scroll", padding: 16 }}
-      >
-        <RowComponent justify="space-between">
-          <SearchComponent
-            title="Tìm mục tiêu"
-            placeholder="Nhập mục tiêu"
-            width={"75%"}
-            arrSource={targets}
-            type="searchTarget"
-            onChange={(val) => setNewTargets(val)}
-          />
-          <TextComponent
-            text={`Có ${newTargets.length} mục tiêu`}
-            styles={{ fontWeight: "bold" }}
-          />
-        </RowComponent>
-        <SpaceComponent height={8} />
-        <table
-          className="table table-bordered"
-          style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-        >
-          <thead>
-            <tr style={{ textAlign: "center" }}>
-              <th scope="col">Tên mục tiêu</th>
-              <th scope="col">Level</th>
-              <th scope="col">Handle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {newTargets.length > 0 &&
-              newTargets.map((target, index) => (
-                <AdminTargetComponent
-                  key={index}
-                  target={target}
-                  targets={newTargets}
-                  fields={fields}
-                  setTargetdEdit={setTargetEdit}
-                />
-              ))}
-          </tbody>
-        </table>
-      </div>
+    <>
+      <div className="admin-target-page">
+        <div className="row g-3 g-xl-4 admin-content">
+          {/* TABLE */}
+          <div className="col-12 col-xl-8 admin-table-col">
+            <div className="page-panel p-3 p-md-4 h-100 d-flex flex-column">
+              <div className="search-box mb-3 d-flex align-items-center justify-content-between">
+                <div className="search-left d-flex align-items-center">
+                  <i className="bi bi-search me-2 text-muted" />
+                  <input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    className="form-control search-input"
+                    placeholder="Nhập mục tiêu, lĩnh vực, level: 2 ..."
+                  />
+                </div>
 
-      <SpaceComponent width={20} />
+                <div className="child-count">
+                  Có {filteredTargets.length} mục tiêu
+                </div>
+              </div>
 
-      <div
-        style={{
-          flex: 1,
-          background: colors.primaryLight,
-          padding: "6px 10px",
-          borderRadius: 10,
-          height: "100%",
-          overflowY: "scroll",
-          position: "relative",
-        }}
-      >
-        {targetEdit && (
-          <>
-            <AddCircle
-              size={widthSmall ? sizes.thinTitle : sizes.title}
-              color="coral"
-              variant="Bold"
-              style={{
-                cursor: "pointer",
-                position: "absolute",
-                top: 10,
-                right: 10,
-              }}
-              onClick={() => {
-                setForm({nameSuggest:'', nameTarget:'', level:0, fieldId:''})
-                setTargetEdit(undefined)
-              }}
-            />
-            <Trash
-              size={widthSmall ? sizes.thinTitle : sizes.title}
-              color={colors.red}
-              variant="Bold"
-              style={{
-                cursor: "pointer",
-                position: "absolute",
-                top: 10,
-                left: 10,
-              }}
-              data-bs-dismiss="modal"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            />
-          </>
-        )}
-        <RowComponent justify="center">
-          <TextComponent
-            text={targetEdit ? "Chỉnh sửa mục tiêu" : "Thêm mục tiêu"}
-            size={widthSmall ? sizes.bigText : sizes.title}
-            styles={{ fontWeight: "bold" }}
-          />
-        </RowComponent>
+              <div className="table-responsive">
+                {filteredTargets.length === 0 ? (
+                  <div className="empty-state">
+                    <i className="bi bi-search empty-icon"></i>
+                    <div className="empty-text">
+                      Không tìm thấy mục tiêu phù hợp.
+                    </div>
+                  </div>
+                ) : (
+                  <table className="table plans-table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Tên mục tiêu</th>
+                        <th>Level</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
 
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Lĩnh vực:
-          </label>
-          <select
-            value={form.fieldId}
-            className={`form-select ${widthSmall && "form-select-sm"}`}
-            aria-label="Default select example"
-            onChange={(val) => setForm({ ...form, fieldId: val.target.value })}
-          >
-            <option defaultValue={""}>Chọn</option>
-            {fields.length > 0 &&
-              fields.map((_, index) => (
-                <option key={index} value={_.id}>
-                  {_.name}
-                </option>
-              ))}
-          </select>
+                    <tbody>
+                      {filteredTargets.map((target) => (
+                        <tr key={target.id}>
+                          <td>
+                            <div>{target.name}</div>
+                            <button className={`btn add-goal-btn`}>
+                              {fieldMap[target.fieldId]}
+                            </button>
+                            <b> {target.id}</b>
+                          </td>
+
+                          <td>{target.level}</td>
+
+                          <td>
+                            <button
+                              className="icon-btn icon-edit"
+                              onClick={() => setTargetEdit(target)}
+                            >
+                              <i className="bi bi-pencil-fill"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* FORM */}
+          <div className="col-12 col-xl-4 admin-form-col">
+            <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
+              {/* {targetEdit && (
+                <button
+                  className="icon-btn icon-delete position-absolute"
+                  style={{ top: 12, left: 12 }}
+                  onClick={() => setShowDelete(true)}
+                >
+                  <i className="bi bi-trash-fill"></i>
+                </button>
+              )} */}
+
+              {targetEdit && (
+                <button
+                  className="icon-btn icon-add position-absolute"
+                  style={{ top: 12, right: 12 }}
+                  onClick={handleCreateNew}
+                >
+                  <i className="bi bi-plus-lg"></i>
+                </button>
+              )}
+
+              <h4 className="text-center fw-bold mb-3">
+                {targetEdit ? "Chỉnh sửa mục tiêu" : "Thêm mục tiêu mới"}
+              </h4>
+
+              <label className="form-label">Lĩnh vực:</label>
+              <select
+                className="form-select mb-2"
+                value={form.fieldId}
+                onChange={(e) => setForm({ ...form, fieldId: e.target.value })}
+              >
+                <option defaultValue={""}>Chọn</option>
+                {fields.length > 0 &&
+                  fields.map((_, index) => (
+                    <option key={index} value={_.id}>
+                      {_.name}
+                    </option>
+                  ))}
+              </select>
+
+              <label className="form-label">Nội dung mục tiêu:</label>
+              <textarea
+                className="form-control mb-2"
+                rows={6}
+                value={form.nameTarget}
+                onChange={(e) =>
+                  setForm({ ...form, nameTarget: e.target.value })
+                }
+                placeholder="Nhập nội dung mục tiêu"
+              />
+
+              <label className="form-label">Level mục tiêu</label>
+              <select
+                className="form-select mb-2"
+                value={form.level}
+                onChange={(e) =>
+                  setForm({ ...form, level: Number(e.target.value) })
+                }
+              >
+                <option defaultValue={""}>Chọn</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
+
+              <label className="form-label">Gợi ý cho mục tiêu:</label>
+              <textarea
+                className="form-control mb-3"
+                rows={6}
+                value={form.content}
+                onChange={(e) =>
+                  setForm({ ...form, content: e.target.value })
+                }
+                placeholder="Nhập nội dung gợi ý"
+              />
+
+              <button
+                className="btn action-btn-primary w-100"
+                disabled={isDisabled}
+                onClick={handleTarget}
+              >
+                {targetEdit ? "Cập nhật" : "Đăng ký"}
+              </button>
+            </div>
+          </div>
         </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Nội dung mục tiêu:
-          </label>
-          <textarea
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-            value={form.nameTarget}
-            onChange={(e) => setForm({ ...form, nameTarget: e.target.value })}
-            className="form-control"
-            placeholder="Nhập nội dung mục tiêu"
-            rows={6}
-          ></textarea>
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Level mục tiêu
-          </label>
-          <select
-            value={form.level}
-            className={`form-select ${widthSmall && "form-select-sm"}`}
-            aria-label="Default select example"
-            onChange={(val) =>
-              setForm({ ...form, level: Number(val.target.value) })
-            }
-          >
-            <option defaultValue={""}>Chọn</option>
-            <option value={1}> {1}</option>
-            <option value={2}> {2}</option>
-            <option value={3}> {3}</option>
-            <option value={4}> {4}</option>
-          </select>
-        </div>
-        <div>
-          <label
-            htmlFor="exampleFormControlInput1"
-            className="form-label"
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-          >
-            Gợi ý cho mục tiêu:
-          </label>
-
-          <textarea
-            disabled={targetEdit ? true : false}
-            style={{ fontSize: widthSmall ? sizes.text : sizes.bigText }}
-            value={form.nameSuggest}
-            onChange={(e) => setForm({ ...form, nameSuggest: e.target.value })}
-            className="form-control"
-            placeholder="Nhập nội dung gợi ý"
-            rows={6}
-          ></textarea>
-        </div>
-
-        <SpaceComponent height={10} />
-        <button
-          style={{
-            width: "100%",
-            background: disable ? colors.gray : colors.orange,
-            borderColor: disable ? colors.gray : colors.orange,
-            fontWeight: "bold",
-            fontSize: widthSmall ? sizes.text : sizes.bigText,
-          }}
-          type="button"
-          className="btn btn-primary"
-          onClick={disable ? undefined : handleTargetField}
-        >
-          {isLoading ? (
-            <SpinnerComponent />
-          ) : (
-            <>{targetEdit ? "Cập nhật" : "Thêm mới"}</>
-          )}
-        </button>
       </div>
 
       <LoadingOverlay show={isLoading} />
-
-      <ModalDeleteComponent
-        data={{
-          id: targetEdit?.id as string,
-          nameCollect: "targets",
-          itemTasks: [],
-        }}
-      />
-    </RowComponent>
+    </>
   );
 }

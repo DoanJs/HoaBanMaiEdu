@@ -1,0 +1,414 @@
+/* ======================================================
+   DESIGN TOKENS
+====================================================== */
+
+:root {
+  --green-950: #052e22;
+  --green-900: #064e3b;
+  --green-700: #047857;
+  --green-600: #059669;
+
+  --green-100: #dcfce7;
+  --green-50: #f0fdf4;
+
+  --yellow: #f5b700;
+  --yellow-soft: #fff7d6;
+
+  --red: #ef4444;
+
+  --text-muted: #4f7b68;
+
+  --line: rgba(6, 95, 70, 0.12);
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 6px 12px rgba(6, 95, 70, 0.05);
+  --shadow-md: 0 12px 28px rgba(6, 95, 70, 0.08);
+  --shadow-lg: 0 18px 40px rgba(6, 95, 70, 0.12);
+}
+
+/* ======================================================
+   BASE
+====================================================== */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #dff7e8;
+  color: #1f2937;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.fw-black {
+  font-weight: 800;
+}
+
+.text-green-dark {
+  color: var(--green-900);
+}
+
+.text-green-muted {
+  color: var(--text-muted);
+}
+
+/* ======================================================
+   PAGE
+====================================================== */
+
+.page-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.page-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+
+.action-btn-primary {
+  border: none;
+  border-radius: var(--radius-md);
+
+  padding: 11px 18px;
+
+  background: var(--green-700);
+  color: white;
+
+  font-weight: 700;
+
+  transition: 0.2s ease;
+}
+
+.action-btn-primary:hover {
+  background: var(--green-900);
+  color: white;
+}
+
+/* ======================================================
+   SEARCH
+====================================================== */
+
+.search-box {
+  position: relative;
+}
+
+.search-box i {
+  position: absolute;
+
+  top: 50%;
+  left: 16px;
+
+  transform: translateY(-50%);
+
+  color: var(--green-600);
+}
+
+.search-input {
+  height: 52px;
+
+  padding-left: 44px;
+
+  border-radius: var(--radius-md);
+
+  border: 1px solid rgba(6, 95, 70, 0.18);
+}
+
+.search-input:focus {
+  border-color: var(--green-600);
+
+  box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.12);
+}
+/* ======================================================
+   PLAN CARD
+====================================================== */
+
+.plan-kh-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 220px;
+  height: 100%;
+
+  padding: 30px 20px 24px 20px;
+
+  overflow: hidden;
+
+  border-radius: 14px 14px 30px 14px;
+
+  color: var(--green-950);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.06),
+    0 10px 20px rgba(0, 0, 0, 0.08),
+    0 18px 36px rgba(0, 0, 0, 0.06);
+}
+
+.plan-kh-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.08),
+    0 18px 36px rgba(0, 0, 0, 0.12);
+}
+
+.plan-kh-badge {
+  position: absolute;
+
+  top: 10%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 20;
+  overflow:auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 64px;
+  height: 64px;
+
+  border-radius: 50%;
+
+  /* background: #fff; */
+
+  /* border: 3px solid rgba(255,255,255,.9); */
+
+  /* box-shadow:
+    0 8px 18px rgba(0,0,0,.12),
+    0 2px 6px rgba(0,0,0,.08); */
+}
+
+.plan-kh-badge-img {
+  width: 60px;
+  height: 60px;
+
+  object-fit: contain;
+}
+/* ======================================================
+   LỚP PHỦ ÁNH SÁNG
+====================================================== */
+
+.plan-kh-card > * {
+  position: relative;
+  z-index: 5;
+}
+
+.plan-kh-card .plan-kh-glass {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.55) 0%,
+      rgba(255,255,255,.18) 45%,
+      rgba(255,255,255,.04) 100%
+    );
+}
+
+/* ======================================================
+   BÓNG CỦA GÓC GẤP
+====================================================== */
+
+.plan-kh-card::before {
+  content: "";
+
+  position: absolute;
+
+  right: 0;
+  bottom: 0;
+
+  width: 54px;
+  height: 54px;
+
+  z-index: 2;
+
+  background: rgba(0,0,0,.12);
+
+  clip-path: polygon(
+    100% 0,
+    0 100%,
+    100% 100%
+  );
+
+  filter: blur(4px);
+}
+
+/* ======================================================
+   GÓC GIẤY GẤP
+====================================================== */
+
+.plan-kh-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: 0;
+  bottom: 0;
+
+  width: 46px;
+  height: 46px;
+
+  z-index: 3;
+
+  clip-path: polygon(
+    100% 0,
+    0 100%,
+    100% 100%
+  );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.75) 40%,
+      rgba(0,0,0,.08) 100%
+    );
+
+  box-shadow:
+    -6px -6px 10px rgba(0,0,0,.12),
+    inset 2px 2px 4px rgba(255,255,255,.95);
+}
+
+/* ======================================================
+   TITLE
+====================================================== */
+
+.plan-kh-title {
+  margin-bottom: 18px;
+
+  font-size: 1.25rem;
+  font-weight: 800;
+
+  line-height: 1.3;
+}
+
+/* ======================================================
+   INFO
+====================================================== */
+
+.plan-kh-info {
+  margin-bottom: 10px;
+
+  font-size: .9rem;
+  font-weight: 500;
+
+  opacity: .95;
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+
+.plan-kh-footer {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  /* margin-top: auto; */
+
+  /* padding-top: 16px; */
+}
+
+/* ======================================================
+   TEACHER
+====================================================== */
+
+.plan-teacher-box {
+  display: flex;
+  align-items: center;
+
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.plan-avatar {
+  width: 32px;
+  height: 32px;
+
+  margin-right: 10px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 2px solid rgba(255,255,255,.5);
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.15);
+}
+
+/* ======================================================
+   MORE BUTTON
+====================================================== */
+
+.plan-more-btn {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  font-size: 1.1rem;
+  font-weight: 700;
+
+  transition: .2s;
+}
+
+.plan-more-btn:hover {
+  background: rgba(255,255,255,.25);
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 768px) {
+  .plan-kh-card {
+    min-height: auto;
+  }
+
+  .plan-kh-title {
+    font-size: 1.05rem;
+  }
+
+  .plan-kh-badge-img {
+    width: 50px;
+    height: 50px;
+  }
+}

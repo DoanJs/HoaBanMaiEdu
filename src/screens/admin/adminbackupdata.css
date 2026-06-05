@@ -1,0 +1,11 @@
+.action-btn-primary-green {
+  background: #20c997;
+  color: #fff;
+  border: none;
+  font-weight: bold;
+}
+
+.action-btn-primary-green:hover {
+  background: #1ba87e;
+  color: #fff;
+}

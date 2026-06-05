@@ -13,6 +13,6 @@ export interface ReportModel {
   comment: string
   updateById?: string
   
-  createAt: TimeAtModel | FieldValue;
-  updateAt: TimeAtModel | FieldValue;
+  createAt: TimeAtModel | FieldValue | number;
+  updateAt: TimeAtModel | FieldValue | number;
 }

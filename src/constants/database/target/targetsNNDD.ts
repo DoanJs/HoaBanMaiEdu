@@ -1,80 +1,473 @@
 export default [
-    { name: 'Con thực hiện hành động “với tay” có mục đích để yêu cầu đồ chơi/đồ ăn mà con thích. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Con chủ động phát ra âm bi bô có mục đích để yêu cầu đồ vật mà con thích. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày tuần	', level: 1 },
-    { name: 'Con yêu cầu sự giúp đỡ bằng cách đặt đồ vật vào tay người lớn. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Con lần lượt phát ra âm với người đang giao tiếp với trẻ. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Con thể hiện sự từ chối bằng cách đẩy đồ vật ra xa hoặc đưa đồ vật đó cho người khác. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Con thực hiện hành động "Chỉ tay" vào một đồ vật mà trẻ mong muốn ở khoảng cách gần. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Trẻ giao tiếp mắt với cô để có được đồ vật mong muốn khi người lớn đang cầm/giữ đồ vật đó. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Khi cô đưa ra 2 đồ vật vật, trẻ biết chỉ tay vào đồ vật mà trẻ lựa chọn giữa hai đồ vật ở khoảng cách trước mặt. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Khi cô đưa ra 2 đồ vật vật, trẻ biết chỉ tay vào đồ vật mà trẻ lựa chọn giữa hai đồ vật ở khoảng cách xa 2-3m. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.', level: 1 },
-    { name: 'Con có thể kết hợp lời nói như chuỗi âm thanh "aaa-baba..." và mắt nhìn khi đưa ra yêu cầu với cô. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày	', level: 1 },
-    { name: 'Con cười hoặc phát ra âm thanh ê a để đáp lại và duy trì sự tương tác với người lớn trong khi chơi. (VD: Khi cô làm biểu cảm rồi nhìn vào mắt con và cười kèm theo lời nói ê ê - con nhìn cô rồi cười vỗ tay theo, có thể kèm âm thanh “a a” đáp lại). Con thực hiện được 6/10 cơ hội, duy trì liên tiếp trong 3 ngày được tính là đạt	', level: 1 },
-    { name: 'Con biết thể hiện cảm xúc bằng cách tỏ ra hào hứng (mỉm cười, vẫy tay, cử động cơ thể…) và đưa mắt quay đầu nhìn vào người nói/vị trí phát ra âm thanh… (VD: Khi nghe hát con dừng hoạt động đang chơi- đưa mắt nhìn hướng về phía người hát/cười, lắc lư người…). Con thực hiện được 6/10 cơ hội, duy trì liên tiếp trong 3 ngày được tính là đạt', level: 1 },
-    { name: 'Con có thể hướng mắt nhìn vào 1 trong 2 đồ vật để thể hiện sự lựa chọn khi người lớn đưa vật ra trước mặt. (VD: Khi cô đưa quả bóng và ô tô, con hướng mắt nhìn chăm chú vào ô tô để thể hiện muốn chơi ô tô). Con thực hiện được 6/10 cơ hội, duy trì liên tiếp trong 3 ngày được tính là đạt', level: 1 },
-    { name: 'Con biết kéo tay người lớn để ra hiệu yêu cầu muốn tiếp tục hoạt động yêu thích khi hoạt động đó bị dừng lại. (VD: Khi đang cùng chơi đẩy tàu hỏa, cô dừng lại hoạt động, con kéo tay cô để ra hiệu muốn đẩy tiếp). Con thực hiện được 6/10 cơ hội, duy trì liên tiếp trong 3 ngày được tính là đạt.	', level: 1 },
-    { name: 'Con có thể lặp lại được hành động đưa - nhận 2-3 lần trong một chuỗi tương tác ngắn. (VD: Cô cầm bóng lăn về phía con- con nhận bóng và trả lại- tiếp tục cô lăn qua lại con). Con thực hiện được 6/10 cơ hội, duy trì liên tiếp trong 3 ngày được tính là đạt	', level: 1 },
-    { name: 'Con có thể luân phiên chơi theo lượt trên cùng trò chơi tương tác đơn giản. (VD: Cô đẩy xe qua cho con- con đẩy xe lại cho cô…). Con thực hiện được 6/10 cơ hội, duy trì liên tiếp trong 3 ngày được tính là đạt	', level: 1 },
-    { name: 'Con có thể lặp lại các âm bập bẹ (không nhất thiết phải là từ có nghĩa). Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Con có thể lặp lại được 5 - 7 phụ âm thường xuyên. Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày.	', level: 1 },
-    { name: 'Con nói được 6-10 từ đơn đúng trong ngữ cảnh quen thuộc hàng ngày. (VD “bánh/đi/mở/giúp..) Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày	', level: 2 },
-    { name: 'Chủ động nói các động từ phù hợp với hành động của con trong khi chơi. (VD: lăn, đi, dừng…) Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày	', level: 2 },
-    { name: 'Sử dụng đúng ngữ cảnh 20 từ đơn để gọi tên của đối tượng, động vật, con người. (VD : xe, bò, cá, cô…). Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày	', level: 2 },
-    { name: 'Con có thể dán nhãn các đồ vật và tranh ảnh phù hợp. (VD : thấy hình ảnh xe - con sẽ gọi tên “xe”). Tần suất 6/10 lượt giao tiếp, duy trì trong 3 ngày	', level: 2 },
-    { name: 'Khi tham gia hát hoặc nghe nhạc quen thuộc, trẻ phát âm theo giai điệu với ngữ điệu đa dạng (cao, thấp, lên, xuống) trong ít nhất 6/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Khi nghe bài “Con cò bé bé”, trẻ phát ra “a… a…” theo giai điệu lên xuống.	', level: 2 },
-    { name: 'Trẻ sử dụng từ đơn lẻ (VD: “ăn”, “không”) kết hợp với ánh mắt giao tiếp để thể hiện yêu cầu hoặc từ chối trong ít nhất 6/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Trẻ nhìn vào quả bóng và nói “bóng”; hoặc nhìn vào đồ ăn không thích, nói “không”.	', level: 2 },
-    { name: 'Khi chơi với đồ vật, trẻ phát ra âm/từ phù hợp với hành động đang diễn ra trong ít nhất 6/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Khi đẩy xe, trẻ nói “bíp bíp”; khi mở cửa, trẻ nói “mở”.	', level: 2 },
-    { name: 'Khi được hỏi “đây là ai?”, trẻ phát âm gần đúng tên gọi của 3 người quen thuộc (ba, mẹ, bản thân…) trong ít nhất 6/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Khi nhìn thấy mẹ, trẻ nói “mẹ”.	', level: 2 },
-    { name: 'Khi không muốn hoặc từ chối điều gì, trẻ lắc đầu đồng thời nói “không” trong ít nhất 6/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Khi không muốn uống sữa, trẻ lắc đầu và nói “không”.	', level: 2 },
-    { name: 'Khi muốn xác nhận hoặc đồng ý, trẻ gật đầu đồng thời nói “có” trong ít nhất 6/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Khi được hỏi “Con muốn chơi cái này không?”, trẻ gật đầu và nói “có”	', level: 2 },
-    { name: 'Khi nhìn thấy sự vật không quen thuộc, trẻ chủ động hỏi (hoặc gần như hỏi) “cái gì kia?” để tìm thông tin trong ít nhất 4/10 cơ hội, và duy trì trong 1 tuần. Ví dụ: Khi nhìn thấy con chim ngoài cửa sổ, trẻ chỉ tay và nói “cái gì kia?	', level: 2 },
-    { name: 'Con có thể nói được cụm 2 từ “Xin cô/ cho con” khi có nhu cầu xin/ mượn đồ từ người khác. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con chủ động nói được từ đôi “Cô mở/ cô giúp” khi con có nhu cầu cần giúp đỡ. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con chủ động nói 1 số nhu cầu cơ bản của bản thân bằng từ đôi (ví dụ: đi đái, uống nước, ăn bánh,….). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con có thể nói được cụm 3 từ “  xin cô/ cho con+ tên vật” khi có nhu cầu xin/ mượn đồ chơi từ người khác. Con đạt 6/10 cơ hội, duy trì trong 3 ngày. (VD: Xin cô - máy bay)	', level: 3 },
-    { name: 'Con có thể sử dụng cụm 2 -3 từ để bình luận về sự vật, sự việc khi tham gia hoạt động cùng người khác. Con đạt 6/10 cơ hội, duy trì trong 3 ngày. (VD: Bạn khóc rồi/ Bánh ngon quá)	', level: 3 },
-    { name: 'Con có thể sử dụng dạng sở hữu “Của con/ của bạn,..”  để trả lời câu hỏi về tính sở hữu đồ vật. (Ví dụ: xe của ai?- của con,..). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con có thể trả lời được câu hỏi “ Ai? ” qua tranh ảnh/ qua các tình huống thực tế. Con đạt 6/10 cơ hội, duy trì trong 3 ngày. (VD: Cô hỏi ai đây - con trả lời “Bác sĩ)	', level: 3 },
-    { name: 'Con có thể trả lời được câu hỏi có/ không tồn tại của vật/ người ( ví dụ: Có con bò ở đây không? – dạ có, có cô Lài ở đây không? – dạ không?,…) Con đạt 6/10 cơ hội, duy trì trong 3 ngày.', level: 3 },
-    { name: 'Con có thể sử dụng cụm 2-3 từ để trả lời các câu hỏi “Cái gì?”. (VD: Đây là bò - Đây là xe) Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con có thể sử dụng cụm 2-3 từ để trả lời các câu hỏi “Ở đâu? ” (VD: Ở trên bàn- Ở trong hộp). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con biết đặt câu hỏi “Ai đây?” khi muốn biết tên của đối tượng qua tranh/ thực tế. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con biết đặt câu hỏi “Cái gì đây?” khi có nhu cầu muốn biết tên của vật. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.', level: 3 },
-    { name: 'Con biết đặt câu hỏi “Tên vật + ở đâu?” khi muốn biết vị trí của một vật con cần tìm. Con đạt 6/10 cơ hội, duy trì trong 3 ngày. (VD : Xe ở đâu / bóng ở đâu)	', level: 3 },
-    { name: 'Con biết trả lời câu hỏi về thông tin đơn giản của bản thân ( ví dụ: tên, tuổi, …). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.', level: 3 },
-    { name: 'Con biết sử dụng giới từ “Trên - dưới”  để trả lời vị trí của một vật khi được hỏi bằng cụm 2-3 từ ( Ví dụ: cô hỏi cô để con bò ở đâu? - Con trả lời: trên bàn). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.', level: 3 },
-    { name: 'Con biết sử dụng giới từ “Trước – sau” để trả lời vị trí của 1 vật khi được hỏi bằng cụm 2-3 từ ( Ví dụ: cô hỏi cô ngồi ở đâu so với con? - Con trả lời: trước mặt cô). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con biết sử dụng giới từ “Trong - ngoài” để trả lời vị trí của 1 vật khi được hỏi bằng cụm 2-3 từ  ( Ví dụ: cô hỏi con để  bút chì ở đâu? - Con trả lời: để trong cặp). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con biết sử dụng giới từ “Trái  - phải” để trả lời vị trí của 1 vật khi được hỏi bằng cụm 2-3 từ . ( Ví dụ: cô hỏi con ngồi bên phía tay nào của cô? - Con trả lời: phía tay phải). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con biết sử dụng giới từ “Giữa” để trả lời vị trí của 1 vật khi được hỏi bằng cụm 2-3 từ . ( Ví dụ: quả táo ở vị trí nào? - Con trả lời: ở giữa quả cam và quả chuối). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con trả lời được câu hỏi “Cái gì + chức năng?’ ( ví dụ: cái gì dùng để viết bài? – cây bút,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con trả lời được câu hỏi “Con gì + ăn gì?’ ( ví dụ: Con bò ăn gì - con bò ăn cỏ,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con trả lời được câu hỏi “Con gì + sống ở đâu?’ ( ví dụ: Con cá sống ở đâu - dưới nước,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 3 },
-    { name: 'Con có thể sử dụng câu 4 -6 từ để mô tả một số loại quả quen thuộc dựa trên 2 đặc điểm: hình dạng, màu sắc ( ví dụ: quả cam hình tròn, màu cam;…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể trả lời được một số câu hỏi “Tại sao?” ( ví dụ: Tại sao áo con bị ướt? – Vì con uống nước bị đổ,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể trả lời được một số câu hỏi “Khi nào + nhu cầu?” ( ví dụ: khi nào con cần uống nước?- khi con khát nước,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể trả lời được một số câu hỏi “Như thế nào?” ( ví dụ: hôm nay trời như thế nào? – Hôm nay trời nắng,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể trả lời được một số câu hỏi “Hoạt động + ở đâu?” ( ví dụ: chúng ta có thể mua cá ở đâu? – mua cá ở chợ,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng câu 4-5 từ để trả lời câu hỏi “Tên vật + để làm gì?” ( ví dụ: cây bút dùng để làm gì? -  cây bút dùng để viết bài, …). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng câu 4-5 từ để diễn đạt nhu cầu: đồ chơi/ đồ ăn với từ “ muốn” ( ví dụ: con muốn chơi câu cá/ con muốn ăn bánh,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng giới từ “Trên - dưới”  để mô tả vị trí của vật bằng câu dài ( ví dụ: con chim ở trên cành cây con con thỏ ở dưới gốc cây,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng giới từ “Trước – sau” để mô tả vị trí của 1 vật bằng câu dài ( ví dụ: xe ô tô chạy trước xe tải còn xe tải chạy phía sau xe ô tô,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng giới từ “Trong - ngoài” để mô tả vị trí của 1 vật bằng câu dài ( ví dụ: cây bút chì ở trong cặp còn quyển sách ở bên ngoài cái cặp,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng giới từ “Trái  - phải” để mô tả vị trí của 1 vật bằng câu dài ( ví dụ: Quyển sách ở phía bên tay phải của con còn cây thước ở phía bên tay trái của con,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể mô tả con vật dựa trên các đặc điểm: màu sắc, tiếng kêu, thức ăn, nơi ở, lợi ích. ( ví dụ: con mèo có lông màu vàng, mèo kêu meo meo, mèo sống trong nhà, mèo giúp mình bắt chuột,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng 1 số cặp đối lập để so sánh 2 đối tượng với nhau ( ví dụ: tay của cô thì khô còn tay của con thì ướt,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con biết đặt câu hỏi có/ không tồn tại của vật/ người ( ví dụ: cô ơi, có con bò ở đây không?/ cô ơi, có cô Hậu ở đây không? …). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con biết sử dụng 1 số từ ngữ mô tả trạng thái thể chất để diễn tả trạng thái thể chất của bản thân ( ví dụ: con đói bụng quá!/ con khát nước quá!,….). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con biết kể lại được sự việc con vừa nhìn thấy ( ví dụ: sau khi quan sát 1 tình huống thực tế, con có thể kể lại “Cô ơi! lúc nãy con nhìn thấy bạn vẽ bậy lên tường,…”). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	 ', level: 4 },
-    { name: 'Con có thể trả lời được 2 – 3 sự việc con vừa thực hiện xong ( ví dụ: con vừa làm gì xong? – con vừa đi cất đồ chơi rồi con đi bỏ rác. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con nhớ và có thể trả lời đúng 2 – 3 hoạt động con vừa được học trong 1 giờ can thiệp khi được hỏi: “Hôm nay con học gì?”. Con đạt 6/10 cơ hội, duy trì trong 3 ngày. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể sử dụng cụm từ chỉ thời gian “Hôm qua, hôm nay” và kể lại chuỗi sự việc ngắn đã xảy ra của bản thân ( ví dụ: hôm qua ba chở con đi học còn hôm mẹ chở con đi học,…”. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể bình luận 1 số đặc điểm sự vật giống nhau có trong bức tranh/ đồ chơi con đang chơi ( ví dụ: cô ơi! có 2 con mèo luôn, 2 con mèo này đều có màu cam giống nhau,….). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể bình luận 1 số đặc điểm sự vật khác nhau khi quan sát 2 đối tượng ( ví dụ: chiếc xe cứu hỏa này to quá, xe ô tô này nhỏ hơn,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể truyền 1 thông điệp ngắn đến người khác ( ví dụ: cô ơi, lấy bình nước cho cô P với,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể truyền 1 thông điệp đến người khác sau đó trở về hồi đáp lại với cô ( ví dụ: “cô P ơi, cô L nói cô P đi về nhớ tắt điện cầu thang – hôi đáp: cô L ơi, cô P nói nhớ rồi”,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con biết đặt câu hỏi “Tên + đang làm gì?” khi muốn biết hành động của đối tượng ( ví dụ:  bạn đang làm gì đó?,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con biết đặt 1 số câu hỏi “Tại sao?” khi muốn biết lý do/ nguyên nhân của 1 sự vật, hiện tượng hoặc hành động ( ví dụ: tại sao bạn khóc?,…). Con đạt 6/10 cơ hội, duy trì trong 3 ngày.	', level: 4 },
-    { name: 'Con có thể duy trì được 1 cuộc hội thoại đơn giản gồm 2-3 lượt giao tiếp liên tiếp, phù hợp với ngữ cảnh. Con đạt 6/10 cơ hội, duy trì trong 3 ngày. ( ví dụ: A: bạn đang làm gì đó? B: Mình đang vẽ A: Bạn vẽ hình gì vậy? B: mình vẽ ngôi nhà,…)	', level: 4 },
-    { name: 'Con có thể kể lại nội dung chính câu chuyện ngắn đã được nghe cô kể dựa theo tranh ảnh có trong câu chuyện. Con đạt 6/10 cơ hội, duy trì trong 3 ngày.', level: 4 },
-]
+  {
+    level: 2,
+    name: "Sử dụng các ký hiệu riêng hoặc cử chỉ điệu bộ kèm phát âm để thể hiện (yêu cầu, diễn tả công việc đã hoàn thành, chia sẻ, giúp đỡ, sự phẩn đối), tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Phát âm 6 –10 từ đơn hoặc cố phát âm từ Phát âm từ trong sinh hoạt hàng ngày, thói quen gần đúng trong ngữ cảnh quen thuộc hàng ngày, các thói quen giác quan xã hội, các bài hát, tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Phát âm tự phát các từ có liên quan đến một thói quen chơi nào đó (lăn, đi, dừng), tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Sử dụng được tối thiểu 20 từ (có thể nói chưa chuẩn hoặc gần đúng), trong đó gồm có danh từ (tên của đồ vật, con vật, người) và những loại từ khác (chẳng hạn như động từ hoặc giới từ: đã xong, trên, …), tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Gắn tên một cách tự phát cho các đồ vật và tranh ảnh, tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Phát âm với các ngữ điệu khác nhau trong các bài hát … tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 2,
+    name: "Yêu cầu và từ chối bằng cách sử dụng các từ đơn có kèm ánh nhìn tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Gắn tên cho các hành động trong ngữ cảnh (VD: trong khi di chuyển cơ thể và/ hoặc các hành động với các đồ vật) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Sử dụng gần đúng tên của 3 người quan trọng (bao gồm cả bản thân) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Lắc đầu và nói “không” để từ chối tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Gật đầu thể hiện ý “có” và nói “có” để xác nhậntần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Hỏi (hoặc tương đương) “Cái gì?” khi bắt gặp cái gì đó lạ tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Khi người khác yêu cầu “Nhìn…” và đưa đồ vật ra, trẻ phản ứng bằng cách chuyển ánh nhìn, quay người và nhìn vào đồ vật được đưa ra tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Phản ứng lại yêu cầu “Nhìn… kìa” và chỉ tay bằng cách hướng về phía đồ vật/ người được chỉ định ở xa tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Đưa hoặc lấy đồ vật từ người khác có phối hợp giao tiếp mắt tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Đáp ứng lại với “ cho xem” bằng cách chìa đồ vật cho người lớn tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "“Cho người khác xem” đồ vật một cách tự phát tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Dõi theo tay chỉ hoặc ánh nhìn một cách tự phát (không có tín hiệu bằng lời) để thể hiện có sự để ý tới đồ vật đích, tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Tự phát chỉ tay vào những đồ vật yêu thích tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 2,
+    name: "Cười với người lớn trong hoạt động với đồ vật yêu thích tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  // Ngôn ngữ diễn đạt
+  {
+    level: 3,
+    name: "Nói được cụm 2 – 3 từ cho các ngữ cảnh giao tiếp khác nhau (VD: yêu cầu, chào hỏi, thu hút sự chú ý, phản đối) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 3,
+    name: "Nói được các câu 2 từ trở lên để bình luận với người khác tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Gọi tên được các hành động trong tranh và trong sách tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Bình luận và yêu cầu về vị trí (lên, xuống, trong, trên) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 3,
+    name: "Bình luận và yêu cầu bằng cách sử dụng cấu trúc sở hữu đơn giản (của tôi, của bạn) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 3,
+    name: "Thể hiện cử chỉ điệu bộ hoặc nói “Tôi/ con không biết” trong ngữ cảnh tần xuất 6/10 lần trong 3 ngày liên tiếp ",
+  },
+
+  {
+    level: 3,
+    name: "Sử dụng tên của người khác một cách nhất quán khi cần thu hút sự chú ý của họtần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 3,
+    name: "Gửi một thông điệp đơn giản tới người khác (“Đi tới nói với mẹ “con chào mẹ”) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Nói “Xin chào” và “Tạm biệt” một cách phù hợp, cả khởi xướng và hồi đáp lại tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Sử dụng đúng các đại từ chỉ bản thân và người khác (các biến thể xưng hô của trẻ và đối tác) tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Sử dụng các từ và điệu bộ cử chỉ đơn giản để diễn tả trải nghiệm cá nhân. tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Gọi tên 1 đến 2 màu sắc. Phản ứng lại một cách phù hợp với các câu hỏi “Cái gì?” tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 3,
+    name: "Phản ứng lại một cách phù hợp với các câu hỏi “Cái gì?” tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Phản ứng lại một cách phù hợp với các câu hỏi “Ở đâu? Tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  { level: 3, name: "Phản ứng lại một cách phù hợp với các câu hỏi “Ai?” " },
+  {
+    level: 3,
+    name: "Hỏi các câu hỏi “có/ không” đơn giản bằng cách tăng ngữ điệu (có thể tăng ngữ điệu ở câu có 1 từ ). Tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Hỏi các câu hỏi “Cái gì?” và “Ở đâu?”. Tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+
+  {
+    level: 3,
+    name: "Trả lời một số câu hỏi thông tin đơn giản: tên, tuổi, màu sắc áo … Tần xuất 6/10 lần trong 3 ngày liên tiếp",
+  },
+  {
+    level: 4,
+    name: "Trả lời các câu hỏi phức tạp (“Tại sao?”, “Như thế nào?”) Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Miêu tả các chức năng của đồ vật để trả lời câu hỏi (VD: “Con làm gì với cái thìa?”). Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Nói câu từ 3 – 4 từ một cách nhất quán. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các cụm danh từ khác nhau. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các cụm giới từ (VD: dưới, kế tiếp, đằng sau, đằng trước). Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các động từ khác nhau đúng ngữ pháp và bối cảnh. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Thể hiện chính xác ít nhất 80% tất cả các phụ âm và các từ kết hợp nguyên âm phụ âm (CVC, CV, VC) trong lời nói. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Miêu tả trải nghiệm hiện tại bằng cách sử dụng câu từ 3 – 4 từ. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Biết yêu cầu để được chấp nhận trong một hoạt động nào đó trẻ đang hướng tới. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  { level: 4, name: "Sử dụng số nhiều. Đạt 6/10 lần liên tiếp trong 3 ngày" },
+
+  {
+    level: 4,
+    name: "Sử dụng các từ sở hữu (VD: của anh ấy, của cô ấy, mũ của mẹ). Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: " Sử dụng thì quá khứ một cách phù hợp. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng danh từ chỉ đơn vị tự nhiên làm rõ loại 1 sự vật. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các từ so sánh hơn/ hơn nhất. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng động từ ở dạng phủ định. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng động từ hiện tại tiếp diễn. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các từ để miêu tả các trạng thái thể chất. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Trả lời các câu hỏi về các trạng thái thể chất: “Con làm gì khi con …?”. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các tên để phân loại cho những đồ vật quen thuộc. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Mô tả các đặc điểm của đồ vật. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Sử dụng các đại từ phản thân. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Trả lời điện thoại một cách phù hợp. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Tham gia vào hội thoại được người lớn khởi xướng trong 2 – 3 lượt liên quan đến các chức năng giao tiếp khác nhau (VD: bình luận, trả lời và yêu cầu thông tin). Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Khởi xướng và duy trì hội thoại với chủ đề tự tạo với một người lớn. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "25 Mô tả một chuỗi các hoạt động gồm từ 2 – 3 sự kiện (VD: đi thăm bà). Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Thể hiện “Con không biết” bằng cách nói kèm cử chỉ điệu bộ. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Yêu cầu được làm rõ nếu không hiểu. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Tham gia vào các chủ đề khác nhau trong suốt cuộc hội thoại. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Tự sửa lời nói của mình nếu người nghe không hiểu. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Trả lời các câu hỏi về bản thân và về những người khác. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+  {
+    level: 4,
+    name: "Sử dụng các mẫu lịch sự kiểu như “Xin lỗi”. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Tìm kiếm những người khác để có cảm giác an toàn, thuận tiện khi ở trong một nhóm đông. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Thể hiện các cảm xúc của bản thân một cách hợp lý. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Biết lần lượt trong khi chơi độc lập. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Miêu tả một sự kiện nào đó hoặc trải nghiệm với bạn cùng lứa. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Xác định được điều làm bản thân cảm thấy vui vẻ, buồn bã, giận dữ hay sợ hãi. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Xác định được cảm xúc của người khác dựa trên tình huống. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+
+  {
+    level: 4,
+    name: "Bắt đầu phát triển các cách giải quyết khi cảm thấy thất vọng, giận dữ hay sợ hãi. Đạt 6/10 lần liên tiếp trong 3 ngày",
+  },
+  {
+    level: 1,
+    name: "Yêu cầu đồ vật và các trò chơi xã hội bằng các cử động cơ thể cụ thể (ví dụ: duỗi chân ra để vỗ chân, với tay ra để yêu cầu). Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Sử dụng phương thức tiếp cận có định hướng mục tiêu để yêu cầu. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phản hồi chính xác khi được chọn giữa hai món bằng cách với tay hoặc nhìn vào món mình thích. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phát âm với mục đích giao tiếp. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Xin giúp đỡ bằng cách đưa đồ vật cho người lớn Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Kết hợp hai hoặc nhiều hành động giao tiếp có định hướng để yêu cầu đồ vật hoặc người (ví dụ: cử chỉ, với tay, ký hiệu, nhìn vào mặt người lớn, phát âm) yêu cầu, giúp đỡ hoặc phản đối. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Luân phiên phát âm với người đối thoại. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Trao đổi âm thanh qua lại với người lớn ít nhất hai vòng (nguyên âm). Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Trao đổi âm thanh qua lại với người lớn ít nhất hai vòng (CV). Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Thể hiện sự từ chối bằng cách đẩy vật thể ra xa hoặc trả lại vật thể cho người khác. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Chỉ vào các điểm gần để yêu cầu vật thể mong muốn. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Trẻ nhìn vào người hoặc vật để lấy thứ mình muốn khi người lớn ngăn cản/giữ lại thứ đó. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Khi yêu cầu đồ vật hoặc sự giúp đỡ, ánh mắt sẽ chuyển từ đồ vật sang người. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Chạm/chỉ để lựa chọn giữa hai đối tượng Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Kết hợp giọng nói và ánh mắt để đưa ra yêu cầu có chủ đích. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Chỉ vào vật thể ở xa để yêu cầu Sử dụng ngón trỏ (không dùng bàn tay mở) để chỉ vào vật mong muốn ở cách trẻ ít nhất 3 feet (khoảng 90 cm). Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Chỉ tay về phía xa để biểu thị sự lựa chọn giữa hai vật thể. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Chỉ vào các đồ vật, hình ảnh và người để bình luận (hoặc gọi tên). Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Khởi xướng sự chú ý chung bằng cách chuyển ánh mắt từ vật thể sang người lớn để bình luận về vật thể hoặc chia sẻ trải nghiệm. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phát âm năm phụ âm trở lên trong các âm thanh tự phát. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra các âm nguyên âm trong quá trình luyện giọng  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phát âm (phát ra các âm thanh bằng giọng) với ngữ điệu thay đổi khác nhau khi tự chơi âm thanh một mình hoặc khi chơi tương tác âm thanh với người khác Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phát ra âm thanh để thể hiện niềm vui và sự không hài lòng trong các cuộc giao tiếp xã hội  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phát âm từ hai đến ba phụ âm khác nhau rải rác trong quá trình luyện thanh  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra các âm tiết đơn gồm phụ âm (C) và nguyên âm (V) bằng cách sử dụng một vài sự kết hợp khác nhau giữa C và V  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra tiếng rít, tiếng cười, tiếng hú và các âm thanh không phải lời nói khác trong trò chơi giọng nói.  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra các âm tiết CV lặp lại (CVCV, tiếng bập bẹ chuẩn) với các âm tiết giống hoặc khácnhau trong quá trình phát âm. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra tiếng bập bẹ chuẩn mực với các chuỗi CV khác nhau (tiếng bập bẹ đa dạng) trong trò chơi giọng nói. Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Phát âm các phụ âm răng lợi t, d và n, và các phụ âm bán nguyên âm h và y trong quá trình phát âm  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra những chuỗi âm tiết khó hiểu với ngữ điệu đặc trưng  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+  {
+    level: 1,
+    name: "Tạo ra những chuỗi âm tiết khó hiểu với ngữ điệu đặc trưng  Đạt 6/10 cơ hội, duy trì trong 4 ngày liên tiếp",
+  },
+];

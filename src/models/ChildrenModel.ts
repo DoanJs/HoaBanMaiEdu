@@ -3,8 +3,9 @@ import { TimeAtModel } from "./TimeAtModel";
 export interface ChildrenModel {
   id: string;
   fullName: string;
+  shortName: string;
   avatar: string;
-  birth: TimeAtModel
+  birth: string
   gender: string
   teacherIds: [string]
   managerIds: [string]

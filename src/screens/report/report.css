@@ -1,0 +1,439 @@
+/* ======================================================
+   DESIGN TOKENS
+====================================================== */
+
+:root {
+  --green-950: #052e22;
+  --green-900: #064e3b;
+  --green-800: #065f46;
+  --green-700: #047857;
+  --green-600: #059669;
+
+  --green-100: #dcfce7;
+
+  --yellow: #f5b700;
+  --red: #ef4444;
+
+  --line: rgba(6, 95, 70, 0.12);
+
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  --shadow-md: 0 12px 28px rgba(6, 95, 70, 0.08);
+  --shadow-lg: 0 22px 48px rgba(6, 95, 70, 0.12);
+}
+
+/* ======================================================
+   LAYOUT
+====================================================== */
+
+.dashboard-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(245, 183, 0, 0.12),
+      transparent 280px
+    ),
+    linear-gradient(
+      135deg,
+      #dff7e8 0%,
+      #ecfdf5 50%,
+      #f7fff9 100%
+    );
+}
+
+.page-panel {
+  background: rgba(255,255,255,.96);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+}
+
+/* ======================================================
+   BUTTON
+====================================================== */
+
+.action-btn-primary {
+  border: none;
+  border-radius: var(--radius-md);
+
+  padding: 10px 18px;
+
+  background: var(--green-700);
+  color: #fff;
+
+  font-weight: 700;
+
+  transition: all .25s ease;
+}
+
+.action-btn-primary:hover {
+  background: var(--green-800);
+  color: #fff;
+
+  transform: translateY(-2px);
+}
+
+/* ======================================================
+   SEARCH
+====================================================== */
+
+.search-box {
+  position: relative;
+}
+
+.search-box i {
+  position: absolute;
+
+  left: 16px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: var(--green-600);
+}
+
+.search-input {
+  height: 52px;
+
+  padding-left: 46px;
+
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(6,95,70,.18);
+}
+
+.search-input:focus {
+  border-color: var(--green-600);
+
+  box-shadow:
+    0 0 0 .2rem rgba(5,150,105,.12);
+}
+
+/* ======================================================
+   STATUS
+====================================================== */
+
+.status-approved {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 12px;
+
+  border-radius: 999px;
+
+  background: var(--green-100);
+  color: var(--green-800);
+
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+/* ======================================================
+   REPORT CARD
+====================================================== */
+
+.report-kh-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 220px;
+  height: 100%;
+
+  padding: 30px 20px 24px;
+
+  overflow: visible;
+
+  border-radius: 14px 14px 30px 14px;
+
+  color: var(--green-950);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.06),
+    0 14px 24px rgba(0,0,0,.08),
+    0 24px 40px rgba(0,0,0,.05);
+}
+
+.report-kh-card:hover {
+  transform: translateY(-5px);
+
+  box-shadow:
+    0 10px 18px rgba(0,0,0,.08),
+    0 24px 40px rgba(0,0,0,.12);
+}
+
+
+/* ==================================================
+   TABLE
+================================================== */
+
+.report-table-wrap {
+  max-height: 650px;
+  overflow: auto;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+}
+
+.report-table {
+  width: 100%;
+  margin-bottom: 0;
+  table-layout: fixed;
+  --bs-table-bg: #fff;
+}
+
+.report-table th,
+.report-table td {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.report-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
+  padding: 14px 12px;
+
+  font-size: 0.86rem;
+  font-weight: 900;
+
+  color: var(--green-900);
+  background: #f0fdf4 !important;
+
+  border-bottom: 1px solid var(--line);
+}
+
+.report-table td {
+  padding: 14px 12px;
+  line-height: 1.55;
+  vertical-align: top;
+  color: #334155;
+}
+
+.report-table .area-cell {
+  width: 10%;
+  font-weight: 900;
+  color: var(--green-900);
+}
+
+.report-table .goal-cell {
+  width: 30%;
+}
+
+.report-table .support-cell {
+  width: 10%;
+}
+
+.report-table .content-cell {
+  width: 15%;
+}
+.report-table .observe-cell {
+  width: 35%;
+}
+
+.comment-table .area-cell {
+  width: 15%;
+  font-weight: 900;
+  color: var(--green-900);
+}
+
+.comment-table .goal-cell {
+  width: 30%;
+}
+
+.comment-table .content-cell {
+  width: 55%;
+}
+/* ======================================================
+   GLASS EFFECT
+====================================================== */
+
+.report-kh-card > * {
+  position: relative;
+  z-index: 5;
+}
+
+.report-kh-glass {
+  position: absolute;
+  inset: 0;
+
+  z-index: 1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.55) 0%,
+      rgba(255,255,255,.18) 45%,
+      rgba(255,255,255,.04) 100%
+    );
+}
+
+/* ======================================================
+   FOLDED CORNER
+====================================================== */
+
+.report-kh-card::before {
+  content: "";
+
+  position: absolute;
+
+  right: 0;
+  bottom: 0;
+
+  width: 54px;
+  height: 54px;
+
+  z-index: 2;
+
+  background: rgba(0,0,0,.14);
+
+  clip-path: polygon(
+    100% 0,
+    0 100%,
+    100% 100%
+  );
+
+  filter: blur(4px);
+}
+
+.report-kh-card::after {
+  content: "";
+
+  position: absolute;
+
+  right: 0;
+  bottom: 0;
+
+  width: 46px;
+  height: 46px;
+
+  z-index: 3;
+
+  clip-path: polygon(
+    100% 0,
+    0 100%,
+    100% 100%
+  );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.72) 40%,
+      rgba(0,0,0,.08) 100%
+    );
+}
+
+/* ======================================================
+   BADGE
+====================================================== */
+
+.report-kh-badge {
+  position: absolute;
+
+  left: 50%;
+  top: 10%;
+
+  transform: translate(-50%, -50%);
+
+  z-index: 30;
+
+  width: 64px;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.report-kh-badge-img {
+  width: 60px;
+  height: 60px;
+
+  object-fit: contain;
+}
+
+/* ======================================================
+   CONTENT
+====================================================== */
+
+.report-kh-title {
+  margin-bottom: 18px;
+
+  font-size: 1.2rem;
+  font-weight: 800;
+
+  line-height: 1.3;
+}
+
+.report-kh-info {
+  margin-bottom: 10px;
+
+  font-size: .9rem;
+  font-weight: 500;
+
+  opacity: .95;
+}
+
+.report-kh-footer {
+  /* margin-top: auto; */
+  /* padding-top: 16px; */
+}
+
+.report-teacher-box {
+  display: flex;
+  align-items: center;
+
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+.report-avatar {
+  width: 34px;
+  height: 34px;
+
+  margin-right: 10px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 2px solid rgba(255,255,255,.5);
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.15);
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width: 768px) {
+  .report-kh-card {
+    min-height: auto;
+    padding: 26px 16px 20px;
+  }
+
+  .report-kh-title {
+    font-size: 1.05rem;
+  }
+
+  .report-kh-badge-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .action-btn-primary {
+    width: 100%;
+  }
+}

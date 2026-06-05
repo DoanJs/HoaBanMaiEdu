@@ -1,4 +1,5 @@
 import { ChildrenModel } from "./ChildrenModel";
+import { CommentModel } from "./CommentModel";
 import { FieldModel } from "./FieldModel";
 import { InterventionModel } from "./InterventionModel";
 import { PlanModel } from "./PlanModel";
@@ -12,5 +13,5 @@ import { UserModel } from "./UserModel";
 
 export type {
     ChildrenModel, FieldModel, InterventionModel, PlanModel, PlanTaskModel, ReportModel,
-    ReportTaskModel, TargetModel, TimeAtModel, UserModel, ReportSavedModel
+    ReportTaskModel, TargetModel, TimeAtModel, UserModel, ReportSavedModel, CommentModel
 };
