@@ -78,7 +78,7 @@ export default function UserDropdown() {
         <div className="user-trigger" onClick={() => setOpen(!open)}>
           <img src={user?.avatar} alt="avatar" className="user-avatar" />
 
-          <div className="user-info">
+          <div className="user-info d-none d-md-block">
             <div className="user-name">{user.fullName}</div>
             <div className="user-role">{user.position}</div>
           </div>

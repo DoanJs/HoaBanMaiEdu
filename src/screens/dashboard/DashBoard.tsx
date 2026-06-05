@@ -395,7 +395,8 @@ export default function DashboardBootstrapGreen() {
                   alt="Trẻ đang chọn"
                 />
 
-                <span className="flex-grow-1 min-w-0 d-none d-md-block">
+                {/* <span className="flex-grow-1 min-w-0 d-none d-md-block"> */}
+                <span className="flex-grow-1 min-w-0">
                   <span className="d-block fw-bold text-dark text-truncate">
                     {child.fullName}
                   </span>

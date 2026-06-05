@@ -174,7 +174,6 @@ function CategoryCard({
   );
 }
 
-
 export default function GoalBankBootstrapGreen() {
   const { setSelectNavbar } = useSelectNavbarStore();
   const [activeCategory, setActiveCategory] = useState(activeCategoryDefault);
@@ -505,10 +504,11 @@ export default function GoalBankBootstrapGreen() {
                               <td>
                                 <label
                                   htmlFor={`goal-${goal.id}`}
-                                  className={`cursor-pointer mb-0 ${isSelectedTarget
-                                    ? "fst-italic text-green-dark"
-                                    : ""
-                                    }`}
+                                  className={`cursor-pointer mb-0 ${
+                                    isSelectedTarget
+                                      ? "fst-italic text-green-dark"
+                                      : ""
+                                  }`}
                                 >
                                   {goal.name}
                                 </label>
