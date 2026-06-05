@@ -7,11 +7,11 @@ export interface PlanCardTheme {
 
 // variables:
 export const CENTER_NAME =
-  "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI";
+  "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU";
 export const FIRST_NAME =
   "TRUNG TÂM CAN THIỆP SỚM";
 export const LAST_NAME =
-  "HOA BAN MAI";
+  "HOA BAN MAI EDU";
 // export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
 export const activeCategoryDefault = "gGNJ5mQZRSxkSW4qAu6F";//HoaBanMaiEdu
 export const indexedDBName = "HBMEdu";
