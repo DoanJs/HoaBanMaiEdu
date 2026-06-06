@@ -8,12 +8,13 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { indexedDBName } from "../../constants/info";
+import { CENTER_NAME, indexedDBName } from "../../constants/info";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import { auth } from "../../firebase.config";
 import { ChildrenModel, PlanModel, ReportModel } from "../../models";
 import { useChildrenStore, useUserStore } from "../../zustand";
 import "./children.css";
+import SplashScreen from "../splash/SplashScreen";
 
 function StudentCard({
   student,

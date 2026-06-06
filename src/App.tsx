@@ -24,6 +24,7 @@ import ReportDetailBootstrapGreen from "./screens/report/ReportDetails";
 import ApprovedReportBootstrapGreen from "./screens/report/Reports";
 import ScrollButtons from "./screens/scroll/ScrollButtons";
 import { useUserStore } from "./zustand";
+import SplashScreen from "./screens/splash/SplashScreen";
 
 type AuthState = {
   user: User | null;
@@ -37,37 +38,102 @@ export default function App() {
     isLoading: true,
   });
 
+
+const [progress, setProgress] = useState(10);
+/**
+   * Progress giả khi Firebase Auth đang kiểm tra
+   */
+  useEffect(() => {
+    if (!authState.isLoading) return;
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) return prev;
+        return prev + Math.random() * 8;
+      });
+    }, 150);
+
+    return () => clearInterval(timer);
+  }, [authState.isLoading]);
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
-      setAuthState({ user: currentUser, isLoading: false });
+      setProgress(95);
+
+      setAuthState({
+        user: currentUser,
+        isLoading: false,
+      });
 
       if (currentUser) {
-        // chỉ fetch khi có user
         try {
-          getDoc(doc(db, "users", currentUser.uid as string))
-            .then(async (result) => {
-              setUser({ ...result.data(), id: currentUser.uid } as UserModel);
+          getDoc(doc(db, "users", currentUser.uid))
+            .then((result) => {
+              setUser({
+                ...result.data(),
+                id: currentUser.uid,
+              } as UserModel);
+
+              setProgress(100);
             })
             .catch(async () => {
               await signOut(auth);
+
               handleToastWarn(
-                "Tài khoản chưa được cấp quyền, vui lòng liên hệ admin !",
+                "Tài khoản chưa được cấp quyền, vui lòng liên hệ admin!"
               );
             });
         } catch (error) {
-          console.log("error: ", error);
+          console.log(error);
         }
       } else {
-        // clear user khi logout
         setUser(null);
+        setProgress(100);
       }
     });
+
     return () => unsub();
   }, [setUser]);
 
 
+  // useEffect(() => {
+  //   const unsub = onAuthStateChanged(auth, (currentUser) => {
+  //     setAuthState({ user: currentUser, isLoading: false });
+
+
+
+  //     if (currentUser) {
+  //       // chỉ fetch khi có user
+  //       try {
+  //         getDoc(doc(db, "users", currentUser.uid as string))
+  //           .then(async (result) => {
+  //             setUser({ ...result.data(), id: currentUser.uid } as UserModel);
+  //           })
+  //           .catch(async () => {
+  //             await signOut(auth);
+  //             handleToastWarn(
+  //               "Tài khoản chưa được cấp quyền, vui lòng liên hệ admin !",
+  //             );
+  //           });
+  //       } catch (error) {
+  //         console.log("error: ", error);
+  //       }
+  //     } else {
+  //       // clear user khi logout
+  //       setUser(null);
+  //     }
+  //   });
+  //   return () => unsub();
+  // }, [setUser]);
+
+
   if (authState.isLoading) {
-    return <SpinnerComponent />;
+    return (
+      <SplashScreen
+        progress={Math.round(progress)}
+        centerName="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI"
+      />
+    );
   }
 
   return (
