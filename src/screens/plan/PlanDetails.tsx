@@ -87,14 +87,14 @@ export default function PlanDetailBootstrapGreen() {
     // eslint-disable-next-line
   }, [plan]);
 
-  useEffect(() => {
-    if (myComments) {
-      if (myComments.length > 0) {
-        setIsComment(true);
-      }
-    }
-    // eslint-disable-next-line
-  }, [myComments]);
+  // useEffect(() => {
+  //   if (myComments) {
+  //     if (myComments.length > 0) {
+  //       setIsComment(true);
+  //     }
+  //   }
+  //   // eslint-disable-next-line
+  // }, [myComments]);
 
   useEffect(() => {
     setIsComment(myComments.length > 0);
