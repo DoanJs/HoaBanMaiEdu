@@ -182,7 +182,11 @@ export default function DashboardBootstrapGreen() {
       metaDoc: "comments",
       id: user?.id,
       nameCollect: "comments",
-      condition: [where("childId", '==', id), orderBy('createAt', 'desc')],
+      condition: [
+        where("teacherIds", "array-contains", user?.id),
+        where("childId", '==', id), 
+        orderBy('createAt', 'desc')
+      ],
     });
 
   useEffect(() => {
