@@ -2,11 +2,10 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { SpinnerComponent, ToastContainer } from "./components";
+import { ToastContainer } from "./components";
 import { handleToastWarn } from "./constants/handleToast";
 import { ADMINID } from "./constants/info";
 import { auth, db } from "./firebase.config";
-import { UserModel } from "./models";
 import AdminScreen from "./screens/admin/AdminScreen";
 import ForgotPasswordBootstrapGreen from "./screens/auth/ForgotPasswordScreen";
 import LoginBootstrapGreen from "./screens/auth/LoginScreen";
@@ -23,8 +22,8 @@ import AddReportBootstrapGreen from "./screens/report/AddReport";
 import ReportDetailBootstrapGreen from "./screens/report/ReportDetails";
 import ApprovedReportBootstrapGreen from "./screens/report/Reports";
 import ScrollButtons from "./screens/scroll/ScrollButtons";
-import { useUserStore } from "./zustand";
 import SplashScreen from "./screens/splash/SplashScreen";
+import { useUserStore } from "./zustand";
 
 type AuthState = {
   user: User | null;
@@ -38,69 +37,107 @@ export default function App() {
     isLoading: true,
   });
 
-
-const [progress, setProgress] = useState(10);
-/**
-   * Progress giả khi Firebase Auth đang kiểm tra
-   */
+  const [progress, setProgress] = useState(0);
+  const [authReady, setAuthReady] = useState(false);
+  // Progress 0 -> 90% trong 3 giây
   useEffect(() => {
-    if (!authState.isLoading) return;
+    if (authReady) return;
+
+    const duration = 2000;
+    const maxProgress = 99;
+    const intervalTime = 16;
+
+    const step = maxProgress / (duration / intervalTime);
 
     const timer = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 90) return prev;
-        return prev + Math.random() * 8;
+        if (prev >= maxProgress) return maxProgress;
+        return Math.min(prev + step, maxProgress);
       });
-    }, 150);
+    }, intervalTime);
 
     return () => clearInterval(timer);
-  }, [authState.isLoading]);
+  }, [authReady]);
 
+  // Check auth + load user profile
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (currentUser) => {
-      setProgress(95);
+    const unsub = onAuthStateChanged(auth, async (currentUser) => {
+      try {
+        if (currentUser) {
+          const userRef = doc(db, "users", currentUser.uid);
 
-      setAuthState({
-        user: currentUser,
-        isLoading: false,
-      });
+          const result = await getDoc(userRef);
 
-      if (currentUser) {
-        try {
-          getDoc(doc(db, "users", currentUser.uid))
-            .then((result) => {
-              setUser({
-                ...result.data(),
-                id: currentUser.uid,
-              } as UserModel);
+          if (!result.exists()) {
+            await signOut(auth);
 
-              setProgress(100);
-            })
-            .catch(async () => {
-              await signOut(auth);
+            handleToastWarn(
+              "Tài khoản chưa được cấp quyền, vui lòng liên hệ admin!",
+            );
 
-              handleToastWarn(
-                "Tài khoản chưa được cấp quyền, vui lòng liên hệ admin!"
-              );
+            setUser(null);
+
+            setAuthState({
+              user: null,
+              isLoading: true,
             });
-        } catch (error) {
-          console.log(error);
+
+            return;
+          }
+
+          setUser({
+            ...result.data(),
+            id: currentUser.uid,
+          } as any);
+
+          setAuthState({
+            user: currentUser,
+            isLoading: true,
+          });
+        } else {
+          setUser(null);
+
+          setAuthState({
+            user: null,
+            isLoading: true,
+          });
         }
-      } else {
+      } catch (error) {
+        console.error("Auth error:", error);
+
         setUser(null);
-        setProgress(100);
+
+        setAuthState({
+          user: null,
+          isLoading: true,
+        });
+      } finally {
+        setAuthReady(true);
       }
     });
 
     return () => unsub();
   }, [setUser]);
 
+  // Khi auth xong => lên 100% rồi vào app
+  useEffect(() => {
+    if (!authReady) return;
+
+    setProgress(100);
+
+    const timer = setTimeout(() => {
+      setAuthState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [authReady]);
 
   // useEffect(() => {
   //   const unsub = onAuthStateChanged(auth, (currentUser) => {
   //     setAuthState({ user: currentUser, isLoading: false });
-
-
 
   //     if (currentUser) {
   //       // chỉ fetch khi có user
@@ -126,7 +163,6 @@ const [progress, setProgress] = useState(10);
   //   return () => unsub();
   // }, [setUser]);
 
-
   if (authState.isLoading) {
     return (
       <SplashScreen
@@ -135,6 +171,15 @@ const [progress, setProgress] = useState(10);
       />
     );
   }
+
+  // if (authState.isLoading) {
+  //   return (
+  //     <SplashScreen
+  //       progress={Math.round(progress)}
+  //       centerName="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI"
+  //     />
+  //   );
+  // }
 
   return (
     <div>
