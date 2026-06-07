@@ -39,6 +39,7 @@ export default function App() {
 
   const [progress, setProgress] = useState(0);
   const [authReady, setAuthReady] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   // Progress 0 -> 90% trong 3 giây
   useEffect(() => {
     if (authReady) return;
@@ -79,7 +80,7 @@ export default function App() {
 
             setAuthState({
               user: null,
-              isLoading: true,
+              isLoading: false,
             });
 
             return;
@@ -92,14 +93,14 @@ export default function App() {
 
           setAuthState({
             user: currentUser,
-            isLoading: true,
+            isLoading: false,
           });
         } else {
           setUser(null);
 
           setAuthState({
             user: null,
-            isLoading: true,
+            isLoading: false,
           });
         }
       } catch (error) {
@@ -109,7 +110,7 @@ export default function App() {
 
         setAuthState({
           user: null,
-          isLoading: true,
+          isLoading: false,
         });
       } finally {
         setAuthReady(true);
@@ -126,14 +127,12 @@ export default function App() {
     setProgress(100);
 
     const timer = setTimeout(() => {
-      setAuthState((prev) => ({
-        ...prev,
-        isLoading: false,
-      }));
+      setShowSplash(false);
     }, 500);
 
     return () => clearTimeout(timer);
   }, [authReady]);
+
 
   // useEffect(() => {
   //   const unsub = onAuthStateChanged(auth, (currentUser) => {
@@ -163,23 +162,14 @@ export default function App() {
   //   return () => unsub();
   // }, [setUser]);
 
-  if (authState.isLoading) {
+  if (showSplash || authState.isLoading) {
     return (
       <SplashScreen
         progress={Math.round(progress)}
-        centerName="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI"
+        centerName=""
       />
     );
   }
-
-  // if (authState.isLoading) {
-  //   return (
-  //     <SplashScreen
-  //       progress={Math.round(progress)}
-  //       centerName="TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI"
-  //     />
-  //   );
-  // }
 
   return (
     <div>
