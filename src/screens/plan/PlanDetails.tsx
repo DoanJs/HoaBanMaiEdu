@@ -287,13 +287,13 @@ export default function PlanDetailBootstrapGreen() {
             </span>
           </div>
         </div>
-        <h3 className="mobile-goal-title">
+        <h3 style={{textAlign: 'justify'}} className="mobile-goal-title">
           {convertTargetField(goal.targetId, targets, fields).nameTarget}
         </h3>
         <div className="mobile-section">
           <b>Mức độ hỗ trợ: </b> {goal.intervention}
         </div>
-        <div className="mobile-section">
+        <div style={{textAlign: 'justify'}} className="mobile-section">
           <b>Nội dung:</b> {goal.content}
         </div>
       </article>
@@ -427,7 +427,7 @@ export default function PlanDetailBootstrapGreen() {
                         <tr key={goal.id}>
                           <td className="area-cell">{data.nameField}</td>
 
-                          <td className="goal-cell">
+                          <td  style={{textAlign: 'justify'}} className="goal-cell">
                             <div className="fw-semibold text-green-dark">
                               {data.nameTarget}
                             </div>
@@ -441,7 +441,7 @@ export default function PlanDetailBootstrapGreen() {
 
                           <td className="support-cell">{goal.intervention}</td>
 
-                          <td className="content-cell">{goal.content}</td>
+                          <td style={{textAlign: 'justify'}} className="content-cell">{goal.content}</td>
                         </tr>
                       );
                     })}

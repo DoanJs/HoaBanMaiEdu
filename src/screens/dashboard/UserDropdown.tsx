@@ -75,7 +75,7 @@ export default function UserDropdown() {
     <>
       <div className="user-dropdown-wrapper" ref={ref}>
         {/* Trigger */}
-        <div className="user-trigger" onClick={() => setOpen(!open)}>
+        <div className="user-trigger" onClick={() => setOpen(!open)} >
           <img src={user?.avatar} alt="avatar" className="user-avatar" />
 
           <div className="user-info d-none d-md-block">

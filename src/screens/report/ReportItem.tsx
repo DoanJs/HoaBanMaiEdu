@@ -99,7 +99,7 @@ export default function ReportItem(props: Props) {
     <tr>
       <td className="area-cell">{showTarget()?.field.name}</td>
 
-      <td className="goal-cell">
+      <td style={{textAlign: 'justify'}} className="goal-cell">
         <div className="fw-semibold text-green-dark">
           {showTarget()?.target.name}
         </div>
@@ -115,11 +115,11 @@ export default function ReportItem(props: Props) {
         {planTask?.intervention}
       </td>
 
-      <td className="content-cell">
+      <td style={{textAlign: 'justify'}} className="content-cell">
         {planTask?.content}
       </td>
 
-      <td className="observe-cell">
+      <td  style={{textAlign: 'justify'}} className="observe-cell">
         {status === "pending" ? (
           <textarea
             onChange={(e) => setContent(e.target.value)}

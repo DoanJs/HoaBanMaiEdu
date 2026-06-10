@@ -113,7 +113,8 @@ body {
 .brand-title {
   max-width: 360px;
 
-  color: var(--green-900) !important;
+  /* color: var(--green-900) !important; */
+  color: white;
 
   font-size: 1rem;
   font-weight: 900;

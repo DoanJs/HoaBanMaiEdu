@@ -69,7 +69,7 @@ function AddReportMobileCard({
             <span className="goal-level">Level: {targetInfo.levelTarget}</span>
           </div>
 
-          <h3 className="add-mobile-target-title">{targetInfo.nameTarget}</h3>
+          <h3 style={{textAlign: 'justify'}} className="add-mobile-target-title">{targetInfo.nameTarget}</h3>
         </div>
       </div>
 
@@ -83,7 +83,7 @@ function AddReportMobileCard({
         </div>
       </div>
 
-      <div className="add-mobile-section">
+      <div style={{textAlign: 'justify'}}  className="add-mobile-section">
         <div className="add-mobile-label">
           <i className="bi bi-journal-text me-2 text-green-dark" />
           Nội dung
@@ -93,7 +93,7 @@ function AddReportMobileCard({
         </div>
       </div>
 
-      <div className="add-mobile-section">
+      <div style={{textAlign: 'justify'}}  className="add-mobile-section">
         <div className="add-mobile-label d-flex justify-content-between align-items-center gap-2">
           <span>
             <i className="bi bi-chat-square-text-fill me-2 text-green-dark" />
@@ -636,11 +636,11 @@ export default function AddReportBootstrapGreen() {
               <table className="table report-create-table align-middle mb-0">
                 <thead>
                   <tr>
-                    <th>Lĩnh vực</th>
-                    <th>Mục tiêu</th>
-                    <th>Mức độ hỗ trợ</th>
-                    <th>Nội dung</th>
-                    <th>Tổng kết</th>
+                    <th style={{width: '8%'}}>Lĩnh vực</th>
+                    <th style={{width: '20%'}}>Mục tiêu</th>
+                    <th style={{width: '8%'}}>Mức độ hỗ trợ</th>
+                    <th style={{width: '30%'}}>Nội dung</th>
+                    <th style={{width: '34%'}}>Tổng kết</th>
                   </tr>
                 </thead>
 

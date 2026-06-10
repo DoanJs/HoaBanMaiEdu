@@ -102,7 +102,7 @@ function ReportMobileCard({
     <article className="goal-mobile-card">
       <div className="d-flex justify-content-between gap-3 mb-2">
         <div>
-          <span className="goal-index">#{index + 1}</span>
+          <span className="goal-index">{index + 1}.</span>
           <span className="area-pill ms-2 me-3">
             {showTarget()?.field.name}
           </span>
@@ -111,14 +111,14 @@ function ReportMobileCard({
           </span>
         </div>
       </div>
-      <h3 className="mobile-goal-title">{showTarget()?.target.name}</h3>
+      <h3  style={{textAlign: 'justify'}} className="mobile-goal-title">{showTarget()?.target.name}</h3>
       <div className="mobile-section">
         <b>Mức độ hỗ trợ:</b> {planTask?.intervention}
       </div>
-      <div className="mobile-section">
+      <div  style={{textAlign: 'justify'}} className="mobile-section">
         <b>Nội dung:</b> {planTask?.content}
       </div>
-      <div className="mobile-section">
+      <div  style={{textAlign: 'justify'}} className="mobile-section">
         <b>Tổng kết:</b>{" "}
         {status === "pending" ? (
           <textarea
@@ -538,11 +538,11 @@ export default function ReportDetailBootstrapGreen() {
               <table className="table report-table align-middle mb-0">
                 <thead>
                   <tr>
-                    <th className="area-cell">Lĩnh vực</th>
-                    <th className="goal-cell">Mục tiêu</th>
-                    <th className="support-cell">Mức độ hỗ trợ</th>
-                    <th className="content-cell">Nội dung</th>
-                    <th className="observe-cell">Tổng kết</th>
+                    <th style={{width: '8%'}} className="area-cell">Lĩnh vực</th>
+                    <th style={{width: '20%'}} className="goal-cell">Mục tiêu</th>
+                    <th style={{width: '8%'}} className="support-cell">Mức độ hỗ trợ</th>
+                    <th style={{width: '20%'}} className="content-cell">Nội dung</th>
+                    <th style={{width: '44%'}} className="observe-cell">Tổng kết</th>
                   </tr>
                 </thead>
 

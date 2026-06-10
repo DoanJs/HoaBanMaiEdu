@@ -149,7 +149,7 @@ export default function AddReportItem(props: Props) {
         <div className="summary-ai-wrap">
           <textarea
             className="form-control report-textarea"
-            rows={4}
+            rows={5}
             placeholder="Nhập đánh giá, nhận xét..."
             value={addReport.total || ""}
             onChange={(e) => onChangeTotal(addReport.id, e.target.value)}
