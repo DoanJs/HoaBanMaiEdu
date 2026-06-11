@@ -76,6 +76,8 @@ export default function HomeStudentsBootstrapGreen() {
   const { children, setChildren } = useChildrenStore();
   const [plansTotal, setPlansTotal] = useState<PlanModel[]>([]);
   const [reportsTotal, setReportsTotal] = useState<ReportModel[]>([]);
+  const [showNotificationOnly, setShowNotificationOnly] = useState(false)
+  const [showLogout, setShowLogout] = useState(false)
 
   const { data: data_children, loading: loading_children } =
     useFirestoreWithMetaCondition({
@@ -147,13 +149,28 @@ export default function HomeStudentsBootstrapGreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_plans, loading_plans]);
 
+  const pendingChildIds = useMemo(() => {
+    return new Set(
+      plansTotal.
+        concat(reportsTotal)
+        .filter((item) => item.status === 'pending')
+        .map(item => item.childId)
+    )
+  }, [plansTotal, reportsTotal])
+
   const filteredStudents = useMemo(() => {
     const search = keyword.trim().toLowerCase();
     return children.filter((student) => {
-      const content = `${student.fullName} ${student.id}`.toLowerCase();
-      return !search || content.includes(search);
+      const content = `${student.fullName}`.toLowerCase();
+      const matchKeyword = !search || content.includes(search);
+
+      if (showNotificationOnly) {
+        return matchKeyword && pendingChildIds.has(student.id)
+      }
+
+      return matchKeyword
     });
-  }, [keyword, children]);
+  }, [keyword, children, pendingChildIds, showNotificationOnly]);
 
   const clearIndexedDB = () => {
     return new Promise((resolve: any, reject) => {
@@ -192,17 +209,18 @@ export default function HomeStudentsBootstrapGreen() {
       setIsLoading(false);
     }
   };
-  const handleShowNotification = (childId: string) => {
-    const arrayPending = plansTotal
-      .concat(reportsTotal)
-      .filter((_) => _.status === "pending");
-    const indexTotal = arrayPending.findIndex((_) => _.childId === childId);
-    if (indexTotal !== -1) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  // const handleShowNotification = (childId: string) => {
+  //   const arrayPending = plansTotal
+  //     .concat(reportsTotal)
+  //     .filter((_) => _.status === "pending");
+  //   const indexTotal = arrayPending.findIndex((_) => _.childId === childId);
+  //   if (indexTotal !== -1) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
+
   // -----------------test add data-----------------
   // const addDataToFirebase = async () => {
 
@@ -309,7 +327,6 @@ export default function HomeStudentsBootstrapGreen() {
   //   console.log('Completed')
   // };
   // ------------------test add data-----------------
-
   if (loading_children) return <SpinnerComponent />;
   return (
     <>
@@ -339,7 +356,7 @@ export default function HomeStudentsBootstrapGreen() {
                   className="logout-btn"
                   aria-label="Đăng xuất"
                   title="Đăng xuất"
-                  onClick={handleLogout}
+                  onClick={() => setShowLogout(true)}
                 >
                   <i className="bi bi-box-arrow-right" />
                 </button>
@@ -378,12 +395,15 @@ export default function HomeStudentsBootstrapGreen() {
                         <i className="bi bi-people-fill" />
                         {children.length} trẻ
                       </span>
-                      <span className="stat-pill red">
+                      <span className="stat-pill red" onClick={() => setShowNotificationOnly(prev => !prev)}>
                         <i className="bi bi-bell-fill" />
                         {
                           plansTotal
                             .concat(reportsTotal)
                             .filter((_) => _.status === "pending").length
+                        }
+                        {
+                          showNotificationOnly && <span>Tất cả trẻ</span>
                         }
                       </span>
                     </div>
@@ -397,7 +417,7 @@ export default function HomeStudentsBootstrapGreen() {
                     <StudentCard
                       key={student.id}
                       student={student}
-                      isNotification={handleShowNotification(student.id)}
+                      isNotification={pendingChildIds.has(student.id)}
                     />
                   ))}
                 </div>
@@ -412,6 +432,38 @@ export default function HomeStudentsBootstrapGreen() {
               )}
             </section>
           </main>
+        </div>
+      )}
+
+      {showLogout && (
+        <div className="custom-modal-backdrop">
+          <div className="custom-modal">
+            {/* Title */}
+            <h5 className="fw-black text-danger mb-2">Xác nhận đăng xuất</h5>
+
+            {/* Description */}
+            <p className="text-green-muted small">
+              Cô chắc chắn muốn đăng xuất khỏi thiết bị này ?
+            </p>
+
+            {/* Actions */}
+            <div className="d-flex gap-2 justify-content-end mt-3">
+              <button
+                className="btn action-btn-soft"
+                onClick={() => setShowLogout(false)}
+              >
+                Huỷ
+              </button>
+
+              <button
+                className="btn action-btn-danger"
+                onClick={handleLogout}
+              >
+                <i className="bi bi-box-arrow-right me-2" />
+                Xác nhận
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

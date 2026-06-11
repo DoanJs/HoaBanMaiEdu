@@ -250,6 +250,7 @@ body {
   color: var(--green-900);
 
   font-weight: 900;
+  cursor:pointer
 }
 
 .stat-pill.red i {
