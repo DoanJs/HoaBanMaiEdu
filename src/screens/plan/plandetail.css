@@ -189,6 +189,7 @@ body {
   background: #e55353;
   padding: 6px 16px;
   border-radius: var(--radius-pill);
+  width: auto;
 }
 
 .action-btn-danger:hover {
@@ -418,5 +419,8 @@ body {
 
   .comment-total {
     flex-direction: column;
+  }
+  .action-btn-danger {
+    width: 100%;
   }
 }
