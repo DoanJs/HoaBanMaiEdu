@@ -25,6 +25,7 @@ export default function AdminBackupData() {
         "targets",
         "users",
         "reportSaveds",
+        "comments"
       ];
 
       let allData: any = {};
