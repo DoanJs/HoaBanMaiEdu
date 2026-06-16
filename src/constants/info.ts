@@ -79,6 +79,16 @@ export const getCurrentMonth = () => {
   return `${month}/${year}`;
 };
 
+export const getNextMonth = () => {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  const month = String(next.getMonth() + 1).padStart(2, "0");
+  const year = next.getFullYear();
+
+  return `${month}/${year}`;
+};
+
 export const formatDateSearch = (time: any) => {
   const timeMs = getTimeMs(time);
 

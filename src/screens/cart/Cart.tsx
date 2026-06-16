@@ -94,7 +94,6 @@
 //   const { targets } = useTargetStore();
 //   const { removeCart, editCart } = useCartStore();
 
-
 //   const handleSelectIntervention = (val: string) => {
 //     editCart(cart.id, { ...cart, intervention: val });
 //   };
@@ -171,7 +170,6 @@
 //   const [isLoading, setIsLoading] = useState(false);
 //   const [disable, setDisable] = useState(false);
 //   const [plan, setPlan] = useState<PlanModel>();
-
 
 //   useEffect(() => {
 //     if (carts.length > 0) {
@@ -568,7 +566,6 @@
 // //         </button>
 // //       </div>
 
-
 // //       <div className="d-flex flex-wrap align-items-center mb-2">
 // //         <button
 // //           type="button"
@@ -618,9 +615,7 @@
 // //   );
 // // }
 
-
 // PHẦN CŨ CHƯA MATCHING VỚI SUGGEST
-
 
 import { httpsCallable } from "firebase/functions";
 import { useEffect, useMemo, useState } from "react";
@@ -637,7 +632,7 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { getCurrentMonth } from "../../constants/info";
+import { getCurrentMonth, getNextMonth } from "../../constants/info";
 import { functions } from "../../firebase.config";
 import { PlanModel } from "../../models";
 import {
@@ -667,21 +662,23 @@ function CartItemComponent(props: Props) {
   const { fields } = useFieldStore();
   const { removeCart, editCart } = useCartStore();
   const [type, setType] = useState("");
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [suggest, setSuggest] = useState<SuggestModel>();
   const { interventions } = useInterventionStore();
   const { targets } = useTargetStore();
-  const { suggests } = useSuggestStore()
+  const { suggests } = useSuggestStore();
 
   useEffect(() => {
     if (cart && cart.content) {
       setText(cart.content);
-      const index = suggests.findIndex((suggest) => suggest.name === cart.content)
+      const index = suggests.findIndex(
+        (suggest) => suggest.name === cart.content,
+      );
       if (index !== -1) {
-        setSuggest(suggests[index])
-        setType('Gợi ý')
+        setSuggest(suggests[index]);
+        setType("Gợi ý");
       } else {
-        setType('Ý khác')
+        setType("Ý khác");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -700,9 +697,9 @@ function CartItemComponent(props: Props) {
     editCart(cart.id, { ...cart, intervention: val });
   };
   const handleSuggestsWithField = (fieldId: string) => {
-    const items = suggests.filter((suggest) => suggest.fieldId === fieldId)
-    return items
-  }
+    const items = suggests.filter((suggest) => suggest.fieldId === fieldId);
+    return items;
+  };
 
   return (
     <tr>
@@ -726,7 +723,7 @@ function CartItemComponent(props: Props) {
         </select>
       </td>
       <td style={{ width: "30%" }}>
-        <div className='d-flex'>
+        <div className="d-flex">
           <button
             type="button"
             className="btn btn-success"
@@ -746,7 +743,7 @@ function CartItemComponent(props: Props) {
         </div>
         <div>
           <SpaceComponent height={8} />
-          {type === "Gợi ý" &&
+          {type === "Gợi ý" && (
             // <Select<SuggestModel>
             //   getOptionLabel={(option) => option.name}
             //   getOptionValue={(option) => option.id.toString()}
@@ -770,7 +767,7 @@ function CartItemComponent(props: Props) {
                 }),
               }}
             />
-          }
+          )}
 
           {type === "Ý khác" && (
             <textarea
@@ -789,8 +786,12 @@ function CartItemComponent(props: Props) {
         <div
           style={{ textAlign: "center", cursor: "pointer" }}
           onClick={() => {
-            removeCart(cart.id)
-            deleteDocData({ nameCollect: 'carts', id: cart.id, metaDoc: 'carts' })
+            removeCart(cart.id);
+            deleteDocData({
+              nameCollect: "carts",
+              id: cart.id,
+              metaDoc: "carts",
+            });
           }}
         >
           <Trash
@@ -813,11 +814,13 @@ export default function GoalCartBootstrapGreen() {
   const { child } = useChildStore();
   const { user } = useUserStore();
   const { cartEdit, setCartEdit } = useCartEditStore(); // thực tế nó chỉ là planId thôi
-  const [title, setTitle] = useState(getCurrentMonth());
+  // const [title, setTitle] = useState(getCurrentMonth());
+  const [plan, setPlan] = useState<PlanModel>();
+  const [title, setTitle] = useState(
+    cartEdit ? plan?.title || "" : getCurrentMonth(),
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
-  const [plan, setPlan] = useState<PlanModel>();
-
 
   useEffect(() => {
     if (carts.length > 0) {
@@ -967,7 +970,10 @@ export default function GoalCartBootstrapGreen() {
           <div className="col-12 col-xl-9">
             {carts.length > 0 && (
               <div className="table-responsive cart-table-wrap">
-                <table className="table cart-table align-middle mb-0" style={{ minWidth: '0 !important' }}>
+                <table
+                  className="table cart-table align-middle mb-0"
+                  style={{ minWidth: "0 !important" }}
+                >
                   <thead>
                     <tr style={{ textAlign: "center" }}>
                       <th scope="col">Lĩnh vực</th>
@@ -981,11 +987,9 @@ export default function GoalCartBootstrapGreen() {
 
                   <tbody>
                     {carts.length > 0 &&
-                      groupedCarts.map(
-                        (_, index) => (
-                          <CartItemComponent key={index} cart={_} />
-                        ),
-                      )}
+                      groupedCarts.map((_, index) => (
+                        <CartItemComponent key={index} cart={_} />
+                      ))}
                   </tbody>
                 </table>
               </div>
@@ -1002,10 +1006,12 @@ export default function GoalCartBootstrapGreen() {
               </div>
             )} */}
 
-            {carts.length === 0 && <div className="empty-cart">
-              <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
-              Không có mục tiêu phù hợp trong giỏ.
-            </div>}
+            {carts.length === 0 && (
+              <div className="empty-cart">
+                <i className="bi bi-cart3 fs-1 d-block mb-3 icon-yellow" />
+                Không có mục tiêu phù hợp trong giỏ.
+              </div>
+            )}
           </div>
 
           <div className="col-12 col-xl-3">
@@ -1016,12 +1022,29 @@ export default function GoalCartBootstrapGreen() {
 
               <div className="mb-3">
                 <div className="plan-field-label">Tháng kế hoạch</div>
-                <select className="form-select filter-select">
+                {/* <select className="form-select filter-select">
                   <option
                     defaultValue={`${cartEdit ? plan?.title : getCurrentMonth()}`}
                   >
                     {cartEdit ? plan?.title : getCurrentMonth()}
                   </option>
+                </select> */}
+                <select
+                  className="form-select filter-select"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  disabled={cartEdit}
+                >
+                  {cartEdit ? (
+                    <option value={plan?.title}>{plan?.title}</option>
+                  ) : (
+                    <>
+                      <option value={getCurrentMonth()}>
+                        {getCurrentMonth()}
+                      </option>
+                      <option value={getNextMonth()}>{getNextMonth()}</option>
+                    </>
+                  )}
                 </select>
               </div>
 
@@ -1180,8 +1203,9 @@ const css = `
     min-width: 1000px;
   }
 }
-`
-{/* <div className="row g-4">
+`;
+{
+  /* <div className="row g-4">
           <div className="col-12 col-xl-9">
             {carts.length > 0 ? (
               <div className="row g-3 g-xl-4">
@@ -1198,7 +1222,8 @@ const css = `
                 Không có mục tiêu phù hợp trong giỏ.
               </div>
             )}
-          </div> */}
+          </div> */
+}
 
 // function GoalCartCard({ cart }: any) {
 //   const { fields } = useFieldStore();
@@ -1323,7 +1348,6 @@ const css = `
 //           <i className="bi bi-trash3-fill" />
 //         </button>
 //       </div>
-
 
 //       <div className="d-flex flex-wrap align-items-center mb-2">
 //         <button
