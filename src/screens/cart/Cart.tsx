@@ -632,7 +632,11 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { getCurrentMonth, getNextMonth } from "../../constants/info";
+import {
+  getCurrentMonth,
+  getNextMonth,
+  getPreviousMonth,
+} from "../../constants/info";
 import { functions } from "../../firebase.config";
 import { PlanModel } from "../../models";
 import {
@@ -814,12 +818,9 @@ export default function GoalCartBootstrapGreen() {
   const { child } = useChildStore();
   const { user } = useUserStore();
   const { cartEdit, setCartEdit } = useCartEditStore(); // thực tế nó chỉ là planId thôi
-  // const [title, setTitle] = useState(getCurrentMonth());
-  const [plan, setPlan] = useState<PlanModel>();
-  const [title, setTitle] = useState(
-    cartEdit ? plan?.title || "" : getCurrentMonth(),
-  );
+  const [title, setTitle] = useState(getCurrentMonth());
   const [isLoading, setIsLoading] = useState(false);
+  const [plan, setPlan] = useState<PlanModel>();
   const [disable, setDisable] = useState(false);
 
   useEffect(() => {
@@ -1039,6 +1040,9 @@ export default function GoalCartBootstrapGreen() {
                     <option value={plan?.title}>{plan?.title}</option>
                   ) : (
                     <>
+                      <option value={getPreviousMonth()}>
+                        {getPreviousMonth()}
+                      </option>
                       <option value={getCurrentMonth()}>
                         {getCurrentMonth()}
                       </option>

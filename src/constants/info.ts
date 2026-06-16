@@ -71,6 +71,15 @@ export const fieldOrder = [
 ];
 
 // functions:
+export const getPreviousMonth = () => {
+  const now = new Date();
+  const previous = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const month = String(previous.getMonth() + 1).padStart(2, "0");
+  const year = previous.getFullYear();
+
+  return `${month}/${year}`;
+};
 export const getCurrentMonth = () => {
   const now = new Date();
   const month = String(now.getMonth() + 1).padStart(2, "0");
