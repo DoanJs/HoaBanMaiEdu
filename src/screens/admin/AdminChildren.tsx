@@ -1,6 +1,6 @@
 import { serverTimestamp } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Select, { MultiValue } from "react-select";
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { addDocData } from "../../constants/firebase/addDocData";
@@ -40,6 +40,7 @@ export default function AdminChildren() {
   const [showDelete, setShowDelete] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState("");
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -471,6 +472,17 @@ export default function AdminChildren() {
     setAvatarPreview(URL.createObjectURL(file));
   };
 
+  const scrollToEditForm = () => {
+    if (window.innerWidth >= 1200) return;
+
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
   return (
     <>
       <div className="row g-3 g-xl-4">
@@ -533,7 +545,10 @@ export default function AdminChildren() {
                         <td>
                           <button
                             className="icon-btn icon-edit"
-                            onClick={() => setChildEdit(child)}
+                            onClick={() => {
+                              setChildEdit(child);
+                              scrollToEditForm();
+                            }}
                           >
                             <i className="bi bi-pencil-fill"></i>
                           </button>
@@ -549,7 +564,10 @@ export default function AdminChildren() {
 
         {/* FORM */}
         <div className="col-12 col-xl-4">
-          <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative">
+          <div
+            ref={formRef}
+            className="page-panel qx-add-child-panel p-3 p-md-4 position-relative"
+          >
             {/* ICON XÓA */}
             {childEdit && (
               <button

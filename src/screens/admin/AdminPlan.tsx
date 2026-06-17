@@ -1,6 +1,6 @@
 import { serverTimestamp } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Select from "react-select";
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { getDocsData } from "../../constants/firebase/getDocsData";
@@ -29,6 +29,7 @@ export default function AdminPlan() {
   const [keyword, setKeyword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
     title: "",
@@ -309,6 +310,17 @@ export default function AdminPlan() {
     }
   };
 
+  const scrollToEditForm = () => {
+    if (window.innerWidth >= 1200) return;
+
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
   return (
     <>
       <div className="admin-target-page">
@@ -370,7 +382,10 @@ export default function AdminPlan() {
                           <td>
                             <button
                               className="icon-btn icon-edit"
-                              onClick={() => setPlanEdit(plan)}
+                              onClick={() => {
+                                setPlanEdit(plan);
+                                scrollToEditForm();
+                              }}
                             >
                               <i className="bi bi-pencil-fill" />
                             </button>
@@ -386,7 +401,10 @@ export default function AdminPlan() {
 
           {planEdit && (
             <div className="col-12 col-xl-4 admin-form-col">
-              <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
+              <div
+                ref={formRef}
+                className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100"
+              >
                 <button
                   className="icon-btn icon-delete position-absolute"
                   style={{ top: 12, left: 12 }}

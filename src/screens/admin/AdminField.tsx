@@ -1,5 +1,5 @@
 import { serverTimestamp } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { updateDocData } from "../../constants/firebase/updateDocData";
@@ -18,6 +18,7 @@ export default function AdminField() {
   const [fieldName, setFieldName] = useState("");
   const isDisabled = !fieldName.trim();
   const [isLoading, setIsLoading] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -127,6 +128,17 @@ export default function AdminField() {
     setFieldName("");
   };
 
+  const scrollToEditForm = () => {
+    if (window.innerWidth >= 1200) return;
+
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
   return (
     <>
       <div className="admin-target-page">
@@ -179,7 +191,10 @@ export default function AdminField() {
                           <td>
                             <button
                               className="icon-btn icon-edit"
-                              onClick={() => setFieldEdit(field)}
+                              onClick={() => {
+                                setFieldEdit(field);
+                                scrollToEditForm();
+                              }}
                             >
                               <i className="bi bi-pencil-fill"></i>
                             </button>
@@ -195,7 +210,8 @@ export default function AdminField() {
 
           {/* FORM */}
           <div className="col-12 col-xl-4 admin-form-col">
-            <div className="page-panel p-3 p-md-4 position-relative h-100">
+            <div 
+            ref={formRef} className="page-panel p-3 p-md-4 position-relative h-100">
               {/* DELETE */}
               {/* {fieldEdit && (
               <button

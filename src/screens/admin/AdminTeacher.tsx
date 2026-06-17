@@ -1,6 +1,6 @@
 import { serverTimestamp } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
@@ -20,6 +20,7 @@ export default function AdminTeacher() {
   const [teachers, setTeachers] = useState<any[]>([]);
   const [keyword, setKeyword] = useState("");
   const [showDelete, setShowDelete] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const [form, setForm] = useState({
     id: "",
@@ -277,6 +278,16 @@ export default function AdminTeacher() {
       setIsLoading(false);
     }
   };
+  const scrollToEditForm = () => {
+    if (window.innerWidth >= 1200) return;
+
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
 
   return (
     <>
@@ -332,7 +343,10 @@ export default function AdminTeacher() {
                           <td>
                             <button
                               className="icon-btn icon-edit"
-                              onClick={() => setTeacherEdit(teacher)}
+                              onClick={() => {
+                                setTeacherEdit(teacher);
+                                scrollToEditForm();
+                              }}
                             >
                               <i className="bi bi-pencil-fill"></i>
                             </button>
@@ -348,7 +362,10 @@ export default function AdminTeacher() {
 
           {/* FORM */}
           <div className="col-12 col-xl-4 admin-form-col">
-            <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
+            <div
+              ref={formRef}
+              className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100"
+            >
               {teacherEdit && (
                 <button
                   className="icon-btn icon-delete position-absolute"
@@ -456,8 +473,8 @@ export default function AdminTeacher() {
             </h5>
 
             <p className="text-green-muted small">
-              Hành động này sẽ xoá toàn bộ nội dung liên quan đến giáo viên và không thể khôi
-              phục.
+              Hành động này sẽ xoá toàn bộ nội dung liên quan đến giáo viên và
+              không thể khôi phục.
             </p>
 
             <div className="plan-delete-box mt-2">

@@ -1,5 +1,5 @@
 import { serverTimestamp } from "firebase/firestore";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
@@ -25,6 +25,7 @@ export default function AdminTarget() {
     fieldId: "",
     content: "",
   });
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -108,10 +109,10 @@ export default function AdminTarget() {
             prev.map((target) =>
               target.id === targetEdit.id
                 ? {
-                  ...target,
-                  ...data,
-                  updateAt: new Date(),
-                }
+                    ...target,
+                    ...data,
+                    updateAt: new Date(),
+                  }
                 : target,
             ),
           );
@@ -180,6 +181,16 @@ export default function AdminTarget() {
 
     setForm({ nameTarget: "", fieldId: "", level: 0, content: "" });
   };
+  const scrollToEditForm = () => {
+    if (window.innerWidth >= 1200) return;
+
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
 
   return (
     <>
@@ -238,7 +249,10 @@ export default function AdminTarget() {
                           <td>
                             <button
                               className="icon-btn icon-edit"
-                              onClick={() => setTargetEdit(target)}
+                              onClick={() => {
+                                setTargetEdit(target);
+                                scrollToEditForm();
+                              }}
                             >
                               <i className="bi bi-pencil-fill"></i>
                             </button>
@@ -254,7 +268,8 @@ export default function AdminTarget() {
 
           {/* FORM */}
           <div className="col-12 col-xl-4 admin-form-col">
-            <div className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
+            <div 
+                ref={formRef} className="page-panel qx-add-child-panel p-3 p-md-4 position-relative h-100">
               {/* {targetEdit && (
                 <button
                   className="icon-btn icon-delete position-absolute"
@@ -325,9 +340,7 @@ export default function AdminTarget() {
                 className="form-control mb-3"
                 rows={6}
                 value={form.content}
-                onChange={(e) =>
-                  setForm({ ...form, content: e.target.value })
-                }
+                onChange={(e) => setForm({ ...form, content: e.target.value })}
                 placeholder="Nhập nội dung gợi ý"
               />
 
