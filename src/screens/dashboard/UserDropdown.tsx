@@ -75,7 +75,7 @@ export default function UserDropdown() {
     <>
       <div className="user-dropdown-wrapper" ref={ref}>
         {/* Trigger */}
-        <div className="user-trigger" onClick={() => setOpen(!open)} >
+        <div className="user-trigger" onClick={() => setOpen(!open)}>
           <img src={user?.avatar} alt="avatar" className="user-avatar" />
 
           <div className="user-info d-none d-md-block">
@@ -83,7 +83,9 @@ export default function UserDropdown() {
             <div className="user-role">{user.position}</div>
           </div>
 
-          <i className={`bi bi-chevron-down ms-2 d-none d-md-block ${open ? "rotate" : ""}`} />
+          <i
+            className={`bi bi-chevron-down ms-2 d-none d-md-block ${open ? "rotate" : ""}`}
+          />
         </div>
 
         {/* Dropdown */}
@@ -113,6 +115,14 @@ export default function UserDropdown() {
             >
               <i className="bi bi-person-plus me-2" />
               Đăng ký tài khoản
+            </Link>
+
+            <Link
+              to="./setting"
+              className="dropdown-item-custom text-decoration-none"
+            >
+              <i className="bi bi-gear me-2" />
+              Cài đặt
             </Link>
 
             <div className="dropdown-divider-custom" />

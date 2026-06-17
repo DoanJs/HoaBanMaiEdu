@@ -98,6 +98,14 @@
   padding-right: 6px;
 }
 
+.admin-child-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e8f5e9;
+}
+
 /* .table-scroll::-webkit-scrollbar {
   width: 6px;
 }

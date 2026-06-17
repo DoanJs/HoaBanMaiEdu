@@ -5,7 +5,9 @@ interface UserState {
   user: UserModel | null;
   loading: boolean;
   error: string | null;
-  setUser: (user: UserModel | null) => void;
+  setUser: (
+    user: UserModel | null | ((prev: UserModel | null) => UserModel | null),
+  ) => void;
   clearUser: () => void;
 }
 
@@ -14,7 +16,10 @@ const useUserStore = create<UserState>((set) => ({
   loading: false,
   error: null,
 
-  setUser: (user: UserModel | null) => set({ user }),
+  setUser: (user) =>
+    set((state) => ({
+      user: typeof user === "function" ? user(state.user) : user,
+    })),
   clearUser: () => set({ user: null }),
 }));
 

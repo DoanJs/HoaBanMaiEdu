@@ -24,6 +24,7 @@ import ApprovedReportBootstrapGreen from "./screens/report/Reports";
 import ScrollButtons from "./screens/scroll/ScrollButtons";
 import SplashScreen from "./screens/splash/SplashScreen";
 import { useUserStore } from "./zustand";
+import UserSettingPage from "./screens/setting/Setting";
 
 type AuthState = {
   user: User | null;
@@ -213,6 +214,7 @@ export default function App() {
           <Route path="cart" element={<GoalCartBootstrapGreen />} />
           {/* <Route path="setting" element={<Setting />} /> */}
           <Route path="changepassword" element={<ChangePassword />} />
+          <Route path="setting" element={<UserSettingPage />} />
           <Route
             path="admin"
             element={

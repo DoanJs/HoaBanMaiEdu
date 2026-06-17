@@ -11,11 +11,9 @@ export interface PlanCardTheme {
 export const CENTER_NAME = "TRUNG TÂM CAN THIỆP SỚM HOA BAN MAI EDU";
 export const FIRST_NAME = "TRUNG TÂM CAN THIỆP SỚM";
 export const LAST_NAME = "HOA BAN MAI EDU";
-// export const activeCategoryDefault = "3EUhuJoxzHauQpx1pPxq";//HoaBanMaiEdu-Mobile
 export const activeCategoryDefault = "gGNJ5mQZRSxkSW4qAu6F"; //HoaBanMaiEdu
 export const indexedDBName = "HBMEdu";
 export const ADMINID = "52LPPcC0ejgAWSEoWhWBCT8KHsm2"; //HoaBanMaiEdu
-// export const ADMINID = "QeCNbJPVLwVwy01S3hB3dgALsRm1";//HoaBanMaiEdu-Mobile
 const planCardThemes = [
   {
     bg: "#fdecef",

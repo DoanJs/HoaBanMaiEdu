@@ -13,6 +13,7 @@ import { functions } from "../../firebase.config";
 import { ChildrenModel, UserModel } from "../../models";
 import { useUserStore } from "../../zustand";
 import "./adminchildren.css";
+import { uploadChildAvatar } from "../../constants/uploadAvatar";
 
 interface OptionType {
   id: string;
@@ -33,12 +34,12 @@ export default function AdminChildren() {
     shortName: "",
     birth: "",
     gender: "",
-    avatar: "",
     status: "studying", //studying || paused , còn xóa luôn thì k cần
   });
   const [keyword, setKeyword] = useState("");
   const [showDelete, setShowDelete] = useState(false);
-  const isDisabled = !form.fullName?.trim() || !form.avatar;
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -56,12 +57,12 @@ export default function AdminChildren() {
     if (childEdit) {
       setForm({
         fullName: childEdit.fullName,
-        avatar: childEdit.avatar,
         status: childEdit.status || "studying",
         shortName: childEdit.shortName,
         birth: childEdit.birth,
         gender: childEdit.gender,
       });
+      setAvatarPreview(childEdit.avatar);
       setSelectTeachers(
         childEdit.teacherIds.map((_) => {
           const indexTeacher = teachers.findIndex(
@@ -73,7 +74,7 @@ export default function AdminChildren() {
     }
   }, [childEdit]);
   useEffect(() => {
-    if (form.avatar && form.fullName && selectTeachers.length > 0) {
+    if (form.fullName && selectTeachers.length > 0) {
       ///chổ này thời gian sau nếu trẻ đồng bộ được status thì fix lại
       setDisable(false);
     } else {
@@ -198,7 +199,7 @@ export default function AdminChildren() {
 
     const data = {
       fullName: form.fullName,
-      avatar: form.avatar,
+      avatar: avatarPreview || "/HBMEdu-icon-512x512.png",
       status: form.status,
       shortName: form.shortName,
       birth: form.birth,
@@ -211,6 +212,17 @@ export default function AdminChildren() {
     try {
       // ✅ CẬP NHẬT TRẺ: dùng Cloud Function
       if (childEdit) {
+        let avatar = data.avatar;
+
+        if (avatarFile) {
+          const resultAvatar = await uploadChildAvatar(
+            avatarFile,
+            childEdit.id,
+          );
+
+          avatar = resultAvatar.avatar;
+        }
+
         const res = await httpsCallable<
           {
             childId: string;
@@ -234,6 +246,7 @@ export default function AdminChildren() {
         )({
           childId: childEdit.id,
           ...data,
+          avatar,
         });
 
         setNewChildren((prev) =>
@@ -261,17 +274,26 @@ export default function AdminChildren() {
           nameCollect: "children",
           value: {
             ...data,
+            avatar: "",
             createAt: serverTimestamp(),
             updateAt: serverTimestamp(),
           },
           metaDoc: "children",
         });
 
+        let avatar = "";
+
+        if (avatarFile) {
+          const resultAvatar = await uploadChildAvatar(avatarFile, result.id);
+          avatar = resultAvatar?.avatar || "";
+        }
+
         setNewChildren((prev) => [
           ...prev,
           {
             ...data,
             id: result.id,
+            avatar,
             createAt: new Date(),
             updateAt: new Date(),
           },
@@ -280,16 +302,7 @@ export default function AdminChildren() {
         handleToastSuccess(`Thêm trẻ mới thành công!`);
       }
 
-      setForm({
-        fullName: "",
-        avatar: "",
-        status: "",
-        shortName: "",
-        birth: "",
-        gender: "",
-      });
-      setSelectTeachers([]);
-      setChildEdit(undefined);
+      handleCreateNew();
     } catch (err: any) {
       console.error(err);
 
@@ -310,7 +323,6 @@ export default function AdminChildren() {
   const handleCreateNew = () => {
     setForm({
       fullName: "",
-      avatar: "",
       status: "",
       shortName: "",
       birth: "",
@@ -318,6 +330,8 @@ export default function AdminChildren() {
     });
     setSelectTeachers([]);
     setChildEdit(undefined);
+    setAvatarPreview("");
+    setAvatarFile(null);
   };
 
   // XÓA trẻ
@@ -403,7 +417,6 @@ export default function AdminChildren() {
       setChildEdit(undefined);
       setForm({
         fullName: "",
-        avatar: "",
         status: "",
         shortName: "",
         birth: "",
@@ -445,7 +458,17 @@ export default function AdminChildren() {
       }
     } finally {
       setIsLoading(false);
+      handleCreateNew();
     }
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
   };
 
   return (
@@ -581,12 +604,34 @@ export default function AdminChildren() {
               <option value="Nữ">Nữ</option>
             </select>
 
-            <input
+            {/* <input
               className="form-control mb-2"
               placeholder="Avatar"
               value={form.avatar}
               onChange={(e) => setForm({ ...form, avatar: e.target.value })}
-            />
+            /> */}
+
+            <span>Ảnh đại diện:</span>
+            <div className="text-center d-flex align-items-center justify-content-center mb-2">
+              <img
+                src={avatarPreview || "/HBMEdu-icon-512x512.png"}
+                className="admin-child-avatar me-3"
+                alt="avatar"
+              />
+
+              <input
+                type="file"
+                id="childAvatar"
+                hidden
+                accept="image/*"
+                onChange={handleAvatarChange}
+              />
+
+              <label htmlFor="childAvatar" className="btn btn-light mt-2">
+                <i className="bi bi-camera me-2"></i>
+                Đổi ảnh
+              </label>
+            </div>
 
             <Select
               className="mb-2"
@@ -612,7 +657,7 @@ export default function AdminChildren() {
             <button
               className="btn action-btn-primary w-100"
               onClick={disable ? undefined : handleChild}
-              disabled={isDisabled}
+              disabled={disable}
             >
               {childEdit ? "Cập nhật" : "Đăng ký"}
             </button>
@@ -630,8 +675,8 @@ export default function AdminChildren() {
 
             {/* Description */}
             <p className="text-green-muted small">
-              Hành động này sẽ xoá toàn bộ nội dung liên quan đến trẻ và không thể khôi
-              phục.
+              Hành động này sẽ xoá toàn bộ nội dung liên quan đến trẻ và không
+              thể khôi phục.
             </p>
 
             {/* Plan info */}
