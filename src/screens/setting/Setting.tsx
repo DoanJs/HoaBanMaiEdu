@@ -3,7 +3,10 @@ import { SpinnerComponent } from "../../components";
 import { useUserStore } from "../../zustand";
 import { uploadTeacherAvatar } from "../../constants/uploadAvatar";
 import LoadingOverlay from "../../components/LoadingOverLay";
-import { handleToastError, handleToastSuccess } from "../../constants/handleToast";
+import {
+  handleToastError,
+  handleToastSuccess,
+} from "../../constants/handleToast";
 import { updateDocData } from "../../constants/firebase/updateDocData";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -11,10 +14,10 @@ import { auth } from "../../firebase.config";
 import { indexedDBName } from "../../constants/info";
 
 export default function UserSettingPage() {
-  const navigate = useNavigate()
-  const { user, setUser } = useUserStore()
-  const [showUpdate, setShowUpdate] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
+  const { user, setUser } = useUserStore();
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [phone, setPhone] = useState(user?.phone || "");
@@ -22,16 +25,12 @@ export default function UserSettingPage() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(user?.avatar || "");
 
-
   const hasChanged =
     fullName.trim() !== (user?.fullName || "").trim() ||
     phone.trim() !== (user?.phone || "").trim() ||
     avatarFile !== null;
 
-
-  const handleAvatarChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
@@ -53,42 +52,35 @@ export default function UserSettingPage() {
 
       // Upload avatar nếu có ảnh mới
       if (avatarFile) {
-        const result = await uploadTeacherAvatar(
-          avatarFile,
-          user.id
-        );
+        const result = await uploadTeacherAvatar(avatarFile, user.id);
 
         setUser((prev) =>
           prev
             ? {
-              ...prev,
-              avatar: result.avatar
-            }
-            : null
+                ...prev,
+                avatar: result.avatar,
+              }
+            : null,
         );
       }
 
       // Chỉ update profile khi có thay đổi
-      if (
-        fullName !== user.fullName ||
-        phone !== user.phone
-      ) {
-
+      if (fullName !== user.fullName || phone !== user.phone) {
         await updateDocData({
-          nameCollect: 'users',
+          nameCollect: "users",
           id: user.id,
           valueUpdate: { ...user, fullName, phone },
-          metaDoc: 'users'
-        })
+          metaDoc: "users",
+        });
 
         setUser((prev) =>
           prev
             ? {
-              ...prev,
-              fullName,
-              phone
-            }
-            : null
+                ...prev,
+                fullName,
+                phone,
+              }
+            : null,
         );
       }
 
@@ -96,12 +88,12 @@ export default function UserSettingPage() {
 
       handleToastSuccess("Cập nhật thông tin thành công");
     } catch (error: any) {
-      handleToastError('Cập nhật thông tin thất bại');
+      handleToastError("Cập nhật thông tin thất bại");
     } finally {
       setIsLoading(false);
     }
-  }
- const clearIndexedDB = () => {
+  };
+  const clearIndexedDB = () => {
     return new Promise((resolve: any, reject) => {
       const request = indexedDB.deleteDatabase(indexedDBName);
 
@@ -139,7 +131,7 @@ export default function UserSettingPage() {
     }
   };
 
-  if (!user) return <SpinnerComponent />
+  if (!user) return <SpinnerComponent />;
   return (
     <>
       <style>{css}</style>
@@ -198,6 +190,7 @@ export default function UserSettingPage() {
             <div className="form-group">
               <label>Chức vụ</label>
               <input
+                className="bg-secondary-subtle"
                 disabled={true}
                 value={user.position}
               />
@@ -206,6 +199,7 @@ export default function UserSettingPage() {
             <div className="form-group">
               <label>Email</label>
               <input
+                className="bg-secondary-subtle"
                 disabled={true}
                 value={user.email}
               />
@@ -213,10 +207,7 @@ export default function UserSettingPage() {
 
             <div className="form-group">
               <label>Số điện thoại</label>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
+              <input value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
 
             {/* <div className="form-group">
@@ -257,16 +248,27 @@ export default function UserSettingPage() {
             </p>
 
             <div className="security-row">
-              <Link className="outline-btn btn d-flex align-items-center justify-content-center"
+              <Link
+                className="outline-btn btn d-flex align-items-center justify-content-center"
                 to="../changepassword"
-              >Đổi mật khẩu</Link>
-              <button onClick={handleLogout} className="danger-btn">Đăng xuất</button>
+              >
+                Đổi mật khẩu
+              </Link>
+              <button onClick={handleLogout} className="danger-btn">
+                Đăng xuất
+              </button>
             </div>
           </div>
 
           <div className="action-row">
             <button className="cancel-btn">Hủy</button>
-            <button disabled={!hasChanged} className="submit-btn" onClick={() => setShowUpdate(true)}>Cập nhật thông tin</button>
+            <button
+              disabled={!hasChanged}
+              className="submit-btn"
+              onClick={() => setShowUpdate(true)}
+            >
+              Cập nhật thông tin
+            </button>
           </div>
         </div>
       </section>
@@ -275,11 +277,14 @@ export default function UserSettingPage() {
         <div className="custom-modal-backdrop">
           <div className="custom-modal">
             {/* Title */}
-            <h5 className="fw-black text-danger mb-2">Xác nhận cập nhật thông tin</h5>
+            <h5 className="fw-black text-danger mb-2">
+              Xác nhận cập nhật thông tin
+            </h5>
 
             {/* Description */}
             <p className="text-green-muted small">
-              Hành động này sẽ cập nhật lại những thay đổi về thông tin cá nhân của mình. Cô chắc chắn chứ ?
+              Hành động này sẽ cập nhật lại những thay đổi về thông tin cá nhân
+              của mình. Cô chắc chắn chứ ?
             </p>
 
             {/* Actions */}
@@ -291,10 +296,7 @@ export default function UserSettingPage() {
                 Huỷ
               </button>
 
-              <button
-                className="btn submit-btn"
-                onClick={handleUpdateInfo}
-              >
+              <button className="btn submit-btn" onClick={handleUpdateInfo}>
                 <i className="bi bi-check2-all me-2" />
                 Xác nhận
               </button>
