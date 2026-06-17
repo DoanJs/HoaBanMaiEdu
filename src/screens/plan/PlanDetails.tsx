@@ -1,4 +1,4 @@
-import { doc, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { serverTimestamp, where } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Message } from "iconsax-react";
 import moment from "moment";
@@ -8,6 +8,7 @@ import { SpinnerComponent } from "../../components";
 import LoadingOverlay from "../../components/LoadingOverLay";
 import { convertTargetField } from "../../constants/convertTargetAndField";
 import { handleTimeStampFirestore } from "../../constants/convertTimeStamp";
+import { addDocData } from "../../constants/firebase/addDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import { updateDocData } from "../../constants/firebase/updateDocData";
 import { groupArrayWithField } from "../../constants/groupArrayWithField";
@@ -16,7 +17,7 @@ import {
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { exportWord } from "../../exportFile/WordExport";
-import { db, functions } from "../../firebase.config";
+import { functions } from "../../firebase.config";
 import { PlanTaskModel, UserModel } from "../../models";
 import {
   useCartEditStore,
@@ -31,7 +32,6 @@ import {
   useUserStore,
 } from "../../zustand";
 import "./plandetail.css";
-import { addDocData } from "../../constants/firebase/addDocData";
 
 export default function PlanDetailBootstrapGreen() {
   const [showFeedback, setShowFeedback] = useState(false);
@@ -188,9 +188,9 @@ export default function PlanDetailBootstrapGreen() {
       metaDoc: "comments",
     });
 
-    await updateDoc(doc(db, "Meta", "comments"), {
-      lastUpdated: serverTimestamp(),
-    });
+    // await updateDoc(doc(db, "Meta", "comments"), {
+    //   lastUpdated: serverTimestamp(),
+    // });
     await updateDocData({
       nameCollect: "plans",
       id: plan.id,
@@ -287,13 +287,13 @@ export default function PlanDetailBootstrapGreen() {
             </span>
           </div>
         </div>
-        <h3 style={{textAlign: 'justify'}} className="mobile-goal-title">
+        <h3 style={{ textAlign: "justify" }} className="mobile-goal-title">
           {convertTargetField(goal.targetId, targets, fields).nameTarget}
         </h3>
         <div className="mobile-section">
           <b>Mức độ hỗ trợ: </b> {goal.intervention}
         </div>
-        <div style={{textAlign: 'justify'}} className="mobile-section">
+        <div style={{ textAlign: "justify" }} className="mobile-section">
           <b>Nội dung:</b> {goal.content}
         </div>
       </article>
@@ -427,7 +427,10 @@ export default function PlanDetailBootstrapGreen() {
                         <tr key={goal.id}>
                           <td className="area-cell">{data.nameField}</td>
 
-                          <td  style={{textAlign: 'justify'}} className="goal-cell">
+                          <td
+                            style={{ textAlign: "justify" }}
+                            className="goal-cell"
+                          >
                             <div className="fw-semibold text-green-dark">
                               {data.nameTarget}
                             </div>
@@ -441,7 +444,12 @@ export default function PlanDetailBootstrapGreen() {
 
                           <td className="support-cell">{goal.intervention}</td>
 
-                          <td style={{textAlign: 'justify'}} className="content-cell">{goal.content}</td>
+                          <td
+                            style={{ textAlign: "justify" }}
+                            className="content-cell"
+                          >
+                            {goal.content}
+                          </td>
                         </tr>
                       );
                     })}
