@@ -320,18 +320,6 @@ export default function GoalBankBootstrapGreen() {
             {fields.length > 0 &&
               fields
                 .sort((a, b) => {
-                  // const order = [
-                  //   "VwWwTwTaRGrvnjIgFq1y", // Ngôn ngữ hiểu
-                  //   "0RptPhhmbwDhyXFstiet", // Ngôn ngữ diễn đạt
-                  //   "Jr5TN0Q2XH1zOGN9oT1f", // Nhận thức
-                  //   "7GDprhycm7vmjdbuDiny", // Vận động tinh
-                  //   "EvH8IShW7sUs0ojOHrfo", // Vận động thô
-                  //   "XV4FJbN7cv4UXpN2tOqR", // Cá nhân xã hội
-                  //   "r34oZoUXxuOq8FBEQkf8", // Tập trung chú ý
-                  //   "ZeOjbxP7naiU0pAAK6q2", // Kỹ năng xã hội
-                  //   "gxZsB2xYu0IiJel5Ni5z", // Kỹ năng chơi
-                  //   "jOdWy1TwAzuEy1lRXT7i", // Kỹ năng bắt chước
-                  // ];
                   return fieldOrder.indexOf(a.id) - fieldOrder.indexOf(b.id);
                 })
                 .map((category) => (

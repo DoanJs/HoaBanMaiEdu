@@ -2,16 +2,12 @@ import { orderBy, where } from "firebase/firestore";
 import { Message } from "iconsax-react";
 import { useEffect, useState } from "react";
 import { Link, Outlet, useParams } from "react-router-dom";
-import {
-  Logo,
-  SpinnerComponent,
-} from "../../components";
+import { Logo, SpinnerComponent } from "../../components";
 import { getDocData } from "../../constants/firebase/getDocData";
 import { getDocsData } from "../../constants/firebase/getDocsData";
 import {
   query_fields,
   query_interventions,
-  query_suggests,
   query_targets,
 } from "../../constants/firebase/query/Index";
 import { CENTER_NAME, handleCommentTotal } from "../../constants/info";
@@ -28,7 +24,6 @@ import {
   UserModel,
 } from "../../models";
 import { CartModel } from "../../models/CartModel";
-import { SuggestModel } from "../../models/SuggestModel";
 import {
   useCartStore,
   useChildStore,
@@ -39,7 +34,6 @@ import {
   useReportSavedStore,
   useReportStore,
   useSelectNavbarStore,
-  useSuggestStore,
   useTargetStore,
   useTeacherStore,
   useTotalPlanTaskStore,
@@ -109,7 +103,6 @@ export default function DashboardBootstrapGreen() {
   const { child, setChild } = useChildStore();
   const { teachers, setTeachers } = useTeacherStore(); //teachers này là của riêng đứa trẻ đó # với teachers của toàn hệ thống
   const { setTargets } = useTargetStore();
-  const { setSuggests } = useSuggestStore();
   const { setFields } = useFieldStore();
   const { setInterventions } = useInterventionStore();
   const { plans, setPlans } = usePlanStore();
@@ -132,12 +125,6 @@ export default function DashboardBootstrapGreen() {
       metaDoc: "targets",
     },
   );
-  const { data: data_suggests, loading: loading_suggests } =
-    useFirestoreWithMeta({
-      key: "suggestsCache",
-      query: query_suggests,
-      metaDoc: "suggests",
-    });
   const { data: data_interventions, loading: loading_interventions } =
     useFirestoreWithMeta({
       key: "interventions",
@@ -184,8 +171,8 @@ export default function DashboardBootstrapGreen() {
       nameCollect: "comments",
       condition: [
         where("teacherIds", "array-contains", user?.id),
-        where("childId", '==', id), 
-        orderBy('createAt', 'desc')
+        where("childId", "==", id),
+        orderBy("createAt", "desc"),
       ],
     });
 
@@ -245,12 +232,6 @@ export default function DashboardBootstrapGreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data_targets, loading_targets]);
-  useEffect(() => {
-    if (!loading_suggests) {
-      setSuggests(data_suggests as SuggestModel[]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data_suggests, loading_suggests]);
   useEffect(() => {
     if (id) {
       getDocData({
@@ -325,8 +306,8 @@ export default function DashboardBootstrapGreen() {
                 <Link
                   to={`${item.navigate}`}
                   onClick={() => {
-                    setSelectNavbar(item.navigate)
-                    onClose()
+                    setSelectNavbar(item.navigate);
+                    onClose();
                   }}
                   key={item.label}
                   type="button"
@@ -356,13 +337,15 @@ export default function DashboardBootstrapGreen() {
 
             <div className="mt-auto pt-4">
               <div>
-                <img alt="dashboad-menu" src="/menu-background.png"/>
+                <img alt="dashboad-menu" src="/menu-background.png" />
               </div>
               <div className="support-card text-center">
                 <div className="support-icon mx-auto mb-3">
                   <i className="bi bi-heart-pulse-fill" />
                 </div>
-                <div className="fw-bold text-green-dark">Tuy nhỏ bé nhưng tạo nên giá trị khác biệt phi thường</div>
+                <div className="fw-bold text-green-dark">
+                  Tuy nhỏ bé nhưng tạo nên giá trị khác biệt phi thường
+                </div>
               </div>
             </div>
           </div>

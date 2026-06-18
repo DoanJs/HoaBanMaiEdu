@@ -210,18 +210,6 @@ export default function HomeStudentsBootstrapGreen() {
     }
   };
 
-  // const handleShowNotification = (childId: string) => {
-  //   const arrayPending = plansTotal
-  //     .concat(reportsTotal)
-  //     .filter((_) => _.status === "pending");
-  //   const indexTotal = arrayPending.findIndex((_) => _.childId === childId);
-  //   if (indexTotal !== -1) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // };
-
   // -----------------test add data-----------------
   // const addDataToFirebase = async () => {
   //   //   const dataCNXH = targetsCNXH.map((_) => {
