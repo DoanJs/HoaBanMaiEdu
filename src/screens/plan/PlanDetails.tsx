@@ -1,4 +1,4 @@
-import { serverTimestamp, where } from "firebase/firestore";
+import { doc, serverTimestamp, updateDoc, where } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Message } from "iconsax-react";
 import moment from "moment";
@@ -17,7 +17,7 @@ import {
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { exportWord } from "../../exportFile/WordExport";
-import { functions } from "../../firebase.config";
+import { db, functions } from "../../firebase.config";
 import { PlanTaskModel, UserModel } from "../../models";
 import {
   useCartEditStore,
@@ -188,9 +188,9 @@ export default function PlanDetailBootstrapGreen() {
       metaDoc: "comments",
     });
 
-    // await updateDoc(doc(db, "Meta", "comments"), {
-    //   lastUpdated: serverTimestamp(),
-    // });
+    await updateDoc(doc(db, "Meta", "comments"), {
+      lastUpdated: serverTimestamp(),
+    });
     await updateDocData({
       nameCollect: "plans",
       id: plan.id,

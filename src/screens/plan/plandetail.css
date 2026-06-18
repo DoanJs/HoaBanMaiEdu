@@ -262,6 +262,7 @@ body {
   width: 35%;
 }
 
+
 .comment-table .area-cell {
   width: 15%;
   font-weight: 900;
@@ -393,6 +394,9 @@ body {
 
   .comment-total {
     flex-direction: column;
+  }
+  .comment-table-wrap {
+    width: 900px;
   }
 }
 
