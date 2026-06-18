@@ -76,7 +76,7 @@ html, body, #root { min-height:100%; background:#dff7e8!important; } body{margin
 }
 /* Cột layout */
 .cart-table .area-cell {
-  width: 10%;
+  width: 8%;
   font-weight: 900;
   color: var(--green-900);
 }
@@ -86,11 +86,11 @@ html, body, #root { min-height:100%; background:#dff7e8!important; } body{margin
 }
 
 .cart-table .content-cell {
-  width: 45%;
+  width: 25%;
 }
 
 .cart-table .support-cell {
-  width: 20%;
+  width: 10%;
 }
 
 .cart-table .action-cell {
