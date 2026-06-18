@@ -76,8 +76,8 @@ export default function HomeStudentsBootstrapGreen() {
   const { children, setChildren } = useChildrenStore();
   const [plansTotal, setPlansTotal] = useState<PlanModel[]>([]);
   const [reportsTotal, setReportsTotal] = useState<ReportModel[]>([]);
-  const [showNotificationOnly, setShowNotificationOnly] = useState(false)
-  const [showLogout, setShowLogout] = useState(false)
+  const [showNotificationOnly, setShowNotificationOnly] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
 
   const { data: data_children, loading: loading_children } =
     useFirestoreWithMetaCondition({
@@ -151,12 +151,12 @@ export default function HomeStudentsBootstrapGreen() {
 
   const pendingChildIds = useMemo(() => {
     return new Set(
-      plansTotal.
-        concat(reportsTotal)
-        .filter((item) => item.status === 'pending')
-        .map(item => item.childId)
-    )
-  }, [plansTotal, reportsTotal])
+      plansTotal
+        .concat(reportsTotal)
+        .filter((item) => item.status === "pending")
+        .map((item) => item.childId),
+    );
+  }, [plansTotal, reportsTotal]);
 
   const filteredStudents = useMemo(() => {
     const search = keyword.trim().toLowerCase();
@@ -165,10 +165,10 @@ export default function HomeStudentsBootstrapGreen() {
       const matchKeyword = !search || content.includes(search);
 
       if (showNotificationOnly) {
-        return matchKeyword && pendingChildIds.has(student.id)
+        return matchKeyword && pendingChildIds.has(student.id);
       }
 
-      return matchKeyword
+      return matchKeyword;
     });
   }, [keyword, children, pendingChildIds, showNotificationOnly]);
 
@@ -209,6 +209,7 @@ export default function HomeStudentsBootstrapGreen() {
       setIsLoading(false);
     }
   };
+
   // const handleShowNotification = (childId: string) => {
   //   const arrayPending = plansTotal
   //     .concat(reportsTotal)
@@ -223,109 +224,120 @@ export default function HomeStudentsBootstrapGreen() {
 
   // -----------------test add data-----------------
   // const addDataToFirebase = async () => {
+  //   //   const dataCNXH = targetsCNXH.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'XV4FJbN7cv4UXpN2tOqR',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataKNBC = targetsKNBC.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'jOdWy1TwAzuEy1lRXT7i',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataKNC = targetsKNC.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'gxZsB2xYu0IiJel5Ni5z',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataKNXH= targetsKNXH.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'ZeOjbxP7naiU0pAAK6q2',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataNNDD = targetsNNDD.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: '0RptPhhmbwDhyXFstiet',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataNNH = targetsNNH.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'VwWwTwTaRGrvnjIgFq1y',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataNT = targetsNT.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'Jr5TN0Q2XH1zOGN9oT1f',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataTTCY = targetsTTCY.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'r34oZoUXxuOq8FBEQkf8',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataVDT = targetsVDT.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: '7GDprhycm7vmjdbuDiny',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
+  //   //   const dataVDTho = targetsVDTho.map((_) => {
+  //   //     return {
+  //   //       ..._,
+  //   //       fieldId: 'EvH8IShW7sUs0ojOHrfo',
+  //   //       createAt: serverTimestamp(),
+  //   //       updateAt: serverTimestamp(),
+  //   //     }
+  //   //   })
 
-  //   const dataCNXH = targetsCNXH.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'XV4FJbN7cv4UXpN2tOqR',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataKNBC = targetsKNBC.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'jOdWy1TwAzuEy1lRXT7i',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataKNC = targetsKNC.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'gxZsB2xYu0IiJel5Ni5z',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataKNXH= targetsKNXH.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'ZeOjbxP7naiU0pAAK6q2',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataNNDD = targetsNNDD.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: '0RptPhhmbwDhyXFstiet',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataNNH = targetsNNH.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'VwWwTwTaRGrvnjIgFq1y',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataNT = targetsNT.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'Jr5TN0Q2XH1zOGN9oT1f',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataTTCY = targetsTTCY.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'r34oZoUXxuOq8FBEQkf8',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataVDT = targetsVDT.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: '7GDprhycm7vmjdbuDiny',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
-  //   const dataVDTho = targetsVDTho.map((_) => {
-  //     return {
-  //       ..._,
-  //       fieldId: 'EvH8IShW7sUs0ojOHrfo',
-  //       createAt: serverTimestamp(),
-  //       updateAt: serverTimestamp(),
-  //     }
-  //   })
+  //   //   const datas = [
+  //   //     ...dataCNXH,
+  //   //     ...dataKNBC,
+  //   //     ...dataKNC,
+  //   //     ...dataKNXH,
+  //   //     ...dataNNDD,
+  //   //     ...dataNNH,
+  //   //     ...dataNT,
+  //   //     ...dataTTCY,
+  //   //     ...dataVDT,
+  //   //     ...dataVDTho
+  //   //   ]
+  //   //   // const promiseItems = datas.map((_) => addDocData({
+  //   //   //   nameCollect: 'targets',
+  //   //   //   value: _,
+  //   //   //   metaDoc: 'targets'
+  //   //   // }))
 
-  //   const datas = [
-  //     ...dataCNXH,
-  //     ...dataKNBC,
-  //     ...dataKNC,
-  //     ...dataKNXH,
-  //     ...dataNNDD,
-  //     ...dataNNH,
-  //     ...dataNT,
-  //     ...dataTTCY,
-  //     ...dataVDT,
-  //     ...dataVDTho
-  //   ]
-  //   // const promiseItems = datas.map((_) => addDocData({
-  //   //   nameCollect: 'targets',
-  //   //   value: _,
-  //   //   metaDoc: 'targets'
-  //   // }))
+  //   //   // await Promise.all(promiseItems)
+  //   //   console.log('Completed')
 
-  //   // await Promise.all(promiseItems)
-  //   console.log('Completed')
+  //   const promiseItems = dataMatching.map((item) =>
+  //     setDoc(doc(db, "targets", item.id), {
+  //       ...item,
+  //       createAt: serverTimestamp(),
+  //       updateAt: serverTimestamp(),
+  //     }),
+  //   );
+
+  //   await Promise.all(promiseItems);
+  //   console.log('completed')
   // };
+
   // ------------------test add data-----------------
   if (loading_children) return <SpinnerComponent />;
   return (
@@ -395,16 +407,17 @@ export default function HomeStudentsBootstrapGreen() {
                         <i className="bi bi-people-fill" />
                         {children.length} trẻ
                       </span>
-                      <span className="stat-pill red" onClick={() => setShowNotificationOnly(prev => !prev)}>
+                      <span
+                        className="stat-pill red"
+                        onClick={() => setShowNotificationOnly((prev) => !prev)}
+                      >
                         <i className="bi bi-bell-fill" />
                         {
                           plansTotal
                             .concat(reportsTotal)
                             .filter((_) => _.status === "pending").length
                         }
-                        {
-                          showNotificationOnly && <span>Tất cả trẻ</span>
-                        }
+                        {showNotificationOnly && <span>Tất cả trẻ</span>}
                       </span>
                     </div>
                   </div>
@@ -455,10 +468,7 @@ export default function HomeStudentsBootstrapGreen() {
                 Huỷ
               </button>
 
-              <button
-                className="btn action-btn-danger"
-                onClick={handleLogout}
-              >
+              <button className="btn action-btn-danger" onClick={handleLogout}>
                 <i className="bi bi-box-arrow-right me-2" />
                 Xác nhận
               </button>

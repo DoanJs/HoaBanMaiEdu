@@ -537,7 +537,7 @@ export default function ReportDetailBootstrapGreen() {
             <div className="table-responsive">
               <table className="table report-table align-middle mb-0">
                 <thead>
-                  <tr>
+                  <tr style={{textAlign: 'center'}}>
                     <th style={{width: '8%'}} className="area-cell">Lĩnh vực</th>
                     <th style={{width: '20%'}} className="goal-cell">Mục tiêu</th>
                     <th style={{width: '8%'}} className="support-cell">Mức độ hỗ trợ</th>

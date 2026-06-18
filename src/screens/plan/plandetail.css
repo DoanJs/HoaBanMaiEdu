@@ -202,7 +202,7 @@ body {
 
 .plan-table-wrap {
   max-height: 650px;
-  overflow: auto;
+  /* overflow: auto; */
   border-radius: 22px;
   border: 1px solid var(--line);
 }
