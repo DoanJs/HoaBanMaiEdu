@@ -9,9 +9,9 @@ import {
 } from "../../constants/handleToast";
 import { indexedDBName } from "../../constants/info";
 import { auth, rtdb } from "../../firebase.config";
-import { useUserStore } from "../../zustand";
+import { useChildStore, useUserStore } from "../../zustand";
 import "./userdropdown.css";
-import { ref, set } from "firebase/database";
+import { ref, remove, set } from "firebase/database";
 
 export default function UserDropdown() {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ export default function UserDropdown() {
   const refHTML = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUserStore();
+  const { child } = useChildStore();
 
   // click outside để đóng
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function UserDropdown() {
         online: false,
         lastSeen: Date.now(),
       });
+      await remove(ref(rtdb, `viewingChildren/${child?.id}/${uid}`));
     }
     setIsLoading(true);
 

@@ -48,6 +48,7 @@ import "./dashboard.css";
 import UserDropdown from "./UserDropdown";
 import { onValue, ref } from "firebase/database";
 import { rtdb } from "../../firebase.config";
+import { useViewingChild } from "../../hooks/useViewingChild";
 
 const menuItems = [
   // {
@@ -104,6 +105,13 @@ const menuItems = [
 export default function DashboardBootstrapGreen() {
   const { id } = useParams();
   const { user } = useUserStore();
+  
+  useViewingChild({
+    childId: id,
+    fullName: user?.fullName,
+    avatar: user?.avatar,
+  });
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { selectNavbar, setSelectNavbar } = useSelectNavbarStore();
   const { child, setChild } = useChildStore();

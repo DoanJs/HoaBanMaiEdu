@@ -14,14 +14,16 @@ import { auth, rtdb } from "../../firebase.config";
 import { ChildrenModel, PlanModel, ReportModel } from "../../models";
 import { useChildrenStore, useUserStore } from "../../zustand";
 import "./children.css";
-import { ref, set } from "firebase/database";
+import { onValue, ref, set } from "firebase/database";
 
 function StudentCard({
   student,
   isNotification,
+  viewers,
 }: {
   student: ChildrenModel;
   isNotification: boolean;
+  viewers: any[];
 }) {
   return (
     <Link to={student.status === "paused" ? "#" : `home/${student.id}`}>
@@ -64,6 +66,23 @@ function StudentCard({
             {student.fullName}
           </div>
         </div>
+
+        {viewers.length > 0 && (
+          <div className="viewing-row">
+            <span className="viewing-label">Đang xem</span>
+
+            <div className="viewing-avatars">
+              {viewers.slice(0, 4).map((viewer: any, index: number) => (
+                <img
+                 key={`${viewer.uid}-${index}`}
+                  src={viewer.avatar || "/default-avatar.png"}
+                  className="viewing-avatar"
+                  title={`${viewer.fullName} đang xem`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </button>
     </Link>
   );
@@ -79,6 +98,18 @@ export default function HomeStudentsBootstrapGreen() {
   const [reportsTotal, setReportsTotal] = useState<ReportModel[]>([]);
   const [showNotificationOnly, setShowNotificationOnly] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
+
+  const [viewingChildren, setViewingChildren] = useState<any>({});
+
+  useEffect(() => {
+    const viewingRef = ref(rtdb, "viewingChildren");
+
+    const unsubscribe = onValue(viewingRef, (snapshot) => {
+      setViewingChildren(snapshot.val() || {});
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const { data: data_children, loading: loading_children } =
     useFirestoreWithMetaCondition({
@@ -423,13 +454,19 @@ export default function HomeStudentsBootstrapGreen() {
 
               {filteredStudents.length > 0 ? (
                 <div className="students-grid">
-                  {[...filteredStudents].map((student) => (
-                    <StudentCard
-                      key={student.id}
-                      student={student}
-                      isNotification={pendingChildIds.has(student.id)}
-                    />
-                  ))}
+                  {[...filteredStudents].map((student) => {
+                    const viewers = Object.values(
+                      viewingChildren?.[student.id] || {},
+                    ) as any[];
+                    return (
+                      <StudentCard
+                        key={student.id}
+                        student={student}
+                        isNotification={pendingChildIds.has(student.id)}
+                        viewers={viewers}
+                      />
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="empty-state">
