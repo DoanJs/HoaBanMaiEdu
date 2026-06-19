@@ -13,6 +13,7 @@ import {
 import {
   CENTER_NAME,
   getOnlineStatus,
+  getOnlineTitleByRole,
   handleCommentTotal,
 } from "../../constants/info";
 import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
@@ -105,13 +106,13 @@ const menuItems = [
 export default function DashboardBootstrapGreen() {
   const { id } = useParams();
   const { user } = useUserStore();
-  
+
   useViewingChild({
     childId: id,
     fullName: user?.fullName,
     avatar: user?.avatar,
   });
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { selectNavbar, setSelectNavbar } = useSelectNavbarStore();
   const { child, setChild } = useChildStore();
@@ -471,8 +472,13 @@ export default function DashboardBootstrapGreen() {
                               className={`teacher-status-dot ${
                                 isOnline ? "online" : "offline"
                               }`}
-                              title={getOnlineStatus(
+                              // title={getOnlineStatus(
+                              //   teacherStatus?.[teacher.id],
+                              // )}
+                              title={getOnlineTitleByRole(
                                 teacherStatus?.[teacher.id],
+                                teacher.role,
+                                user?.role,
                               )}
                             />
                           </div>
@@ -493,8 +499,13 @@ export default function DashboardBootstrapGreen() {
                                 className={`teacher-status-dot ${
                                   isOnline ? "online" : "offline"
                                 }`}
-                                title={getOnlineStatus(
+                                // title={getOnlineStatus(
+                                //   teacherStatus?.[teacher.id],
+                                // )}
+                                title={getOnlineTitleByRole(
                                   teacherStatus?.[teacher.id],
+                                  teacher.role,
+                                  user?.role,
                                 )}
                               />
                             </div>

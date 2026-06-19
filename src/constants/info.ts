@@ -201,7 +201,6 @@ export const getTimeMs = (time: any): number => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
-
 export const getOnlineStatus = (status: any) => {
   if (!status) return "Chưa xác định";
 
@@ -213,8 +212,8 @@ export const getOnlineStatus = (status: any) => {
     typeof status.lastSeen === "number"
       ? status.lastSeen
       : status.lastSeen?.toDate
-      ? status.lastSeen.toDate().getTime()
-      : null;
+        ? status.lastSeen.toDate().getTime()
+        : null;
 
   if (!lastSeen) return "Chưa xác định";
 
@@ -229,4 +228,16 @@ export const getOnlineStatus = (status: any) => {
 
   const days = Math.floor(hours / 24);
   return `⚪ Offline ${days} ngày trước`;
+};
+
+export const getOnlineTitleByRole = (
+  status: any,
+  teacherRole?: string,
+  currentUserRole?: string,
+) => {
+  if (teacherRole === "admin" && currentUserRole !== "admin") {
+    return status?.online ? "Đang online" : "Offline";
+  }
+
+  return getOnlineStatus(status);
 };
