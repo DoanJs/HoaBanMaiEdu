@@ -200,3 +200,33 @@ export const getTimeMs = (time: any): number => {
 
   return Number.isNaN(parsed) ? 0 : parsed;
 };
+
+
+export const getOnlineStatus = (status: any) => {
+  if (!status) return "Chưa xác định";
+
+  if (status.online === true) return "🟢 Đang online";
+
+  if (!status.lastSeen) return "Chưa xác định";
+
+  const lastSeen =
+    typeof status.lastSeen === "number"
+      ? status.lastSeen
+      : status.lastSeen?.toDate
+      ? status.lastSeen.toDate().getTime()
+      : null;
+
+  if (!lastSeen) return "Chưa xác định";
+
+  const diff = Date.now() - lastSeen;
+  const minutes = Math.floor(diff / 60000);
+
+  if (minutes < 1) return "⚪ Vừa offline";
+  if (minutes < 60) return `⚪ Offline ${minutes} phút trước`;
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `⚪ Offline ${hours} giờ trước`;
+
+  const days = Math.floor(hours / 24);
+  return `⚪ Offline ${days} ngày trước`;
+};

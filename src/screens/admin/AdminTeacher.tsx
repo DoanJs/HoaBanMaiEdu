@@ -9,8 +9,10 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { functions } from "../../firebase.config";
+import { functions, rtdb } from "../../firebase.config";
 import { useUserStore } from "../../zustand";
+import { onValue, ref } from "firebase/database";
+import { getOnlineStatus } from "../../constants/info";
 
 export default function AdminTeacher() {
   const { user } = useUserStore();
@@ -31,6 +33,18 @@ export default function AdminTeacher() {
     role: "",
     telegramChatId: "",
   });
+
+   const [teacherStatus, setTeacherStatus] = useState<any>({});
+
+  useEffect(() => {
+    const statusRef = ref(rtdb, "status");
+
+    const unsubscribe = onValue(statusRef, (snapshot) => {
+      setTeacherStatus(snapshot.val() || {});
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -335,6 +349,10 @@ export default function AdminTeacher() {
                         <tr key={teacher.id}>
                           <td>
                             <div>{teacher.fullName}</div>
+                            <p className="small text-muted mb-0">
+                            {getOnlineStatus(teacherStatus?.[teacher.id])}
+                             {/* {JSON.stringify(teacherStatus?.[teacher.id])} */}
+                          </p>
                             <b>{teacher.id}</b>
                           </td>
 

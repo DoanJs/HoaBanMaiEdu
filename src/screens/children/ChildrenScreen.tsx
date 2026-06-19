@@ -10,10 +10,11 @@ import {
 } from "../../constants/handleToast";
 import { indexedDBName } from "../../constants/info";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
-import { auth } from "../../firebase.config";
+import { auth, rtdb } from "../../firebase.config";
 import { ChildrenModel, PlanModel, ReportModel } from "../../models";
 import { useChildrenStore, useUserStore } from "../../zustand";
 import "./children.css";
+import { ref, set } from "firebase/database";
 
 function StudentCard({
   student,
@@ -103,6 +104,7 @@ export default function HomeStudentsBootstrapGreen() {
       nameCollect: "plans",
       condition: [where("teacherIds", "array-contains", user?.id)],
     });
+
   // ------test----
   // const { data: data_fields, loading } = useFirestoreWithMeta({
   //     key: "fieldsCache",
@@ -192,6 +194,13 @@ export default function HomeStudentsBootstrapGreen() {
     });
   };
   const handleLogout = async () => {
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      await set(ref(rtdb, `status/${uid}`), {
+        online: false,
+        lastSeen: Date.now(),
+      });
+    }
     setIsLoading(true);
 
     try {

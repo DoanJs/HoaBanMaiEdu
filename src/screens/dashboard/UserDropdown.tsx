@@ -8,21 +8,22 @@ import {
   handleToastSuccess,
 } from "../../constants/handleToast";
 import { indexedDBName } from "../../constants/info";
-import { auth } from "../../firebase.config";
+import { auth, rtdb } from "../../firebase.config";
 import { useUserStore } from "../../zustand";
 import "./userdropdown.css";
+import { ref, set } from "firebase/database";
 
 export default function UserDropdown() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const refHTML = useRef<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useUserStore();
 
   // click outside để đóng
   useEffect(() => {
     const handleClickOutside = (e: any) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+      if (refHTML.current && !refHTML.current.contains(e.target)) {
         setOpen(false);
       }
     };
@@ -51,6 +52,13 @@ export default function UserDropdown() {
   };
 
   const handleLogout = async () => {
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      await set(ref(rtdb, `status/${uid}`), {
+        online: false,
+        lastSeen: Date.now(),
+      });
+    }
     setIsLoading(true);
 
     try {
@@ -73,7 +81,7 @@ export default function UserDropdown() {
 
   return (
     <>
-      <div className="user-dropdown-wrapper" ref={ref}>
+      <div className="user-dropdown-wrapper" ref={refHTML}>
         {/* Trigger */}
         <div className="user-trigger" onClick={() => setOpen(!open)}>
           <img src={user?.avatar} alt="avatar" className="user-avatar" />

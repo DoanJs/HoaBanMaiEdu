@@ -10,8 +10,9 @@ import {
 import { updateDocData } from "../../constants/firebase/updateDocData";
 import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase.config";
+import { auth, rtdb } from "../../firebase.config";
 import { indexedDBName } from "../../constants/info";
+import { ref, set } from "firebase/database";
 
 export default function UserSettingPage() {
   const navigate = useNavigate();
@@ -113,6 +114,13 @@ export default function UserSettingPage() {
     });
   };
   const handleLogout = async () => {
+    const uid = auth.currentUser?.uid;
+    if (uid) {
+      await set(ref(rtdb, `status/${uid}`), {
+        online: false,
+        lastSeen: Date.now(),
+      });
+    }
     setIsLoading(true);
 
     try {

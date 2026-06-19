@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
+import { getDatabase } from "firebase/database";
 
 // config for hoabanmaiedu-mobile
 // const firebaseConfig = {
@@ -22,7 +23,10 @@ const firebaseConfig = {
   storageBucket: "hoabanmaiedu-23415.firebasestorage.app",
   messagingSenderId: "953698484929",
   appId: "1:953698484929:web:a2a755f90af9f8d77f8a40",
-  measurementId: "G-WJ8MJ6GHB3"
+  measurementId: "G-WJ8MJ6GHB3",
+  databaseURL:
+    "https://hoabanmaiedu-23415-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 };
 
 // setLogLevel("debug");
@@ -31,5 +35,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const functions = getFunctions(app, "asia-southeast1");
+const rtdb = getDatabase(app);
 // const analytics = getAnalytics(app);
-export { auth, db, functions };
+export { auth, db, functions, rtdb};

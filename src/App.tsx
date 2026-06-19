@@ -25,6 +25,7 @@ import ScrollButtons from "./screens/scroll/ScrollButtons";
 import SplashScreen from "./screens/splash/SplashScreen";
 import { useUserStore } from "./zustand";
 import UserSettingPage from "./screens/setting/Setting";
+import { usePresence } from "./hooks/usePresence";
 
 type AuthState = {
   user: User | null;
@@ -32,6 +33,7 @@ type AuthState = {
 };
 
 export default function App() {
+  usePresence();
   const { setUser } = useUserStore();
   const [authState, setAuthState] = useState<AuthState>({
     user: null,

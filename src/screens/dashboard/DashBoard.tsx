@@ -10,7 +10,11 @@ import {
   query_interventions,
   query_targets,
 } from "../../constants/firebase/query/Index";
-import { CENTER_NAME, handleCommentTotal } from "../../constants/info";
+import {
+  CENTER_NAME,
+  getOnlineStatus,
+  handleCommentTotal,
+} from "../../constants/info";
 import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
 import {
@@ -42,6 +46,8 @@ import {
 } from "../../zustand";
 import "./dashboard.css";
 import UserDropdown from "./UserDropdown";
+import { onValue, ref } from "firebase/database";
+import { rtdb } from "../../firebase.config";
 
 const menuItems = [
   // {
@@ -112,6 +118,18 @@ export default function DashboardBootstrapGreen() {
   const { setTotalPlanTasks } = useTotalPlanTaskStore();
   const { setTotalReportTasks } = useTotalReportTaskStore();
   const { carts, setCarts } = useCartStore();
+
+  const [teacherStatus, setTeacherStatus] = useState<any>({});
+
+  useEffect(() => {
+    const statusRef = ref(rtdb, "status");
+
+    const unsubscribe = onValue(statusRef, (snapshot) => {
+      setTeacherStatus(snapshot.val() || {});
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const { data: data_fields, loading } = useFirestoreWithMeta({
     key: "fieldsCache",
@@ -434,24 +452,46 @@ export default function DashboardBootstrapGreen() {
                     </div>
                   </RowComponent> */}
                   <div className="d-flex flex-column flex-md-row align-items-start gap-2 gap-md-4">
-                    {/* Cột trái */}
                     <div>
-                      {leftTeachers.map((teacher: UserModel, index: number) => (
-                        <div className="small text-green-muted" key={index}>
-                          {index + 1}. {teacher.fullName}
-                        </div>
-                      ))}
+                      {leftTeachers.map((teacher: UserModel, index: number) => {
+                        const isOnline =
+                          teacherStatus?.[teacher.id]?.online === true;
+                        return (
+                          <div className="small text-green-muted" key={index}>
+                            {index + 1}. {teacher.fullName}
+                            <span
+                              className={`teacher-status-dot ${
+                                isOnline ? "online" : "offline"
+                              }`}
+                              title={getOnlineStatus(
+                                teacherStatus?.[teacher.id],
+                              )}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
 
-                    {/* Cột phải */}
                     <div>
                       {rightTeachers.map(
-                        (teacher: UserModel, index: number) => (
-                          <div className="small text-green-muted" key={index}>
-                            {index + 1 + leftTeachers.length}.{" "}
-                            {teacher.fullName}
-                          </div>
-                        ),
+                        (teacher: UserModel, index: number) => {
+                          const isOnline =
+                            teacherStatus?.[teacher.id]?.online === true;
+                          return (
+                            <div className="small text-green-muted" key={index}>
+                              {index + 1 + leftTeachers.length}.{" "}
+                              {teacher.fullName}
+                              <span
+                                className={`teacher-status-dot ${
+                                  isOnline ? "online" : "offline"
+                                }`}
+                                title={getOnlineStatus(
+                                  teacherStatus?.[teacher.id],
+                                )}
+                              />
+                            </div>
+                          );
+                        },
                       )}
                     </div>
                   </div>
