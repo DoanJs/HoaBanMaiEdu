@@ -1,3 +1,4 @@
+import { onValue, ref } from "firebase/database";
 import { orderBy, where } from "firebase/firestore";
 import { Message } from "iconsax-react";
 import { useEffect, useState } from "react";
@@ -13,11 +14,12 @@ import {
 import {
   CENTER_NAME,
   getOnlineStatus,
-  getOnlineTitleByRole,
   handleCommentTotal,
 } from "../../constants/info";
 import { useFirestoreWithMeta } from "../../constants/useFirestoreWithMeta";
 import { useFirestoreWithMetaCondition } from "../../constants/useFirestoreWithMetaCondition";
+import { rtdb } from "../../firebase.config";
+import { useViewingChild } from "../../hooks/useViewingChild";
 import {
   CommentModel,
   FieldModel,
@@ -47,9 +49,6 @@ import {
 } from "../../zustand";
 import "./dashboard.css";
 import UserDropdown from "./UserDropdown";
-import { onValue, ref } from "firebase/database";
-import { rtdb } from "../../firebase.config";
-import { useViewingChild } from "../../hooks/useViewingChild";
 
 const menuItems = [
   // {
@@ -111,6 +110,7 @@ export default function DashboardBootstrapGreen() {
     childId: id,
     fullName: user?.fullName,
     avatar: user?.avatar,
+    role: user?.role
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -468,7 +468,7 @@ export default function DashboardBootstrapGreen() {
                         return (
                           <div className="small text-green-muted" key={index}>
                             {index + 1}. {teacher.fullName}
-                            <span
+                            {/* <span
                               className={`teacher-status-dot ${
                                 isOnline ? "online" : "offline"
                               }`}
@@ -480,7 +480,17 @@ export default function DashboardBootstrapGreen() {
                                 teacher.role,
                                 user?.role,
                               )}
-                            />
+                            /> */}
+                            {teacher.role !== "admin" && (
+                              <span
+                                className={`teacher-status-dot ${
+                                  isOnline ? "online" : "offline"
+                                }`}
+                                title={getOnlineStatus(
+                                  teacherStatus?.[teacher.id],
+                                )}
+                              />
+                            )}
                           </div>
                         );
                       })}
@@ -495,7 +505,7 @@ export default function DashboardBootstrapGreen() {
                             <div className="small text-green-muted" key={index}>
                               {index + 1 + leftTeachers.length}.{" "}
                               {teacher.fullName}
-                              <span
+                              {/* <span
                                 className={`teacher-status-dot ${
                                   isOnline ? "online" : "offline"
                                 }`}
@@ -507,7 +517,17 @@ export default function DashboardBootstrapGreen() {
                                   teacher.role,
                                   user?.role,
                                 )}
-                              />
+                              /> */}
+                              {teacher.role !== "admin" && (
+                                <span
+                                  className={`teacher-status-dot ${
+                                    isOnline ? "online" : "offline"
+                                  }`}
+                                  title={getOnlineStatus(
+                                    teacherStatus?.[teacher.id],
+                                  )}
+                                />
+                              )}
                             </div>
                           );
                         },

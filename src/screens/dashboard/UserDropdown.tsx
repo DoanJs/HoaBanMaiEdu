@@ -102,13 +102,22 @@ export default function UserDropdown() {
         {open && (
           <div className="user-dropdown">
             {user.role === "admin" && (
-              <Link
-                to={"./admin"}
-                className="dropdown-item-custom text-decoration-none"
-              >
-                <i className="bi bi-speedometer2 me-2" />
-                Trang quản trị
-              </Link>
+              <>
+                <Link
+                  to={"./admin"}
+                  className="dropdown-item-custom text-decoration-none"
+                >
+                  <i className="bi bi-speedometer2 me-2" />
+                  Trang quản trị
+                </Link>
+                <Link
+                  to={"../register"}
+                  className="dropdown-item-custom text-decoration-none"
+                >
+                  <i className="bi bi-person-plus me-2" />
+                  Đăng ký tài khoản
+                </Link>
+              </>
             )}
 
             <Link
@@ -117,14 +126,6 @@ export default function UserDropdown() {
             >
               <i className="bi bi-key me-2" />
               Đổi mật khẩu
-            </Link>
-
-            <Link
-              to={"../register"}
-              className="dropdown-item-custom text-decoration-none"
-            >
-              <i className="bi bi-person-plus me-2" />
-              Đăng ký tài khoản
             </Link>
 
             <Link

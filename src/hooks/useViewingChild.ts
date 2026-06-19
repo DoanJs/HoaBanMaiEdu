@@ -6,26 +6,21 @@ type Props = {
   childId?: string;
   fullName?: string;
   avatar?: string;
+  role?: string;
 };
 
-export const useViewingChild = ({
-  childId,
-  fullName,
-  avatar,
-}: Props) => {
+export const useViewingChild = ({ childId, fullName, avatar, role }: Props) => {
   useEffect(() => {
     const uid = auth.currentUser?.uid;
 
     if (!uid || !childId) return;
 
-    const viewingRef = ref(
-      rtdb,
-      `viewingChildren/${childId}/${uid}`
-    );
+    const viewingRef = ref(rtdb, `viewingChildren/${childId}/${uid}`);
 
     set(viewingRef, {
       fullName: fullName || "",
       avatar: avatar || "",
+      role: role || "",
     });
 
     onDisconnect(viewingRef).remove();
@@ -33,5 +28,5 @@ export const useViewingChild = ({
     return () => {
       remove(viewingRef);
     };
-  }, [childId, fullName, avatar]);
+  }, [childId, fullName, avatar, role]);
 };

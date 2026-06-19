@@ -67,19 +67,22 @@ function StudentCard({
           </div>
         </div>
 
-        {viewers.length > 0 && (
+        {viewers.filter(v => v.role !== "admin").length > 0 && (
           <div className="viewing-row">
             <span className="viewing-label">Đang xem</span>
 
             <div className="viewing-avatars">
-              {viewers.slice(0, 4).map((viewer: any, index: number) => (
-                <img
-                 key={`${viewer.uid}-${index}`}
-                  src={viewer.avatar || "/default-avatar.png"}
-                  className="viewing-avatar"
-                  title={`${viewer.fullName} đang xem`}
-                />
-              ))}
+              {viewers
+                .filter((v) => v.role !== "admin")
+                .slice(0, 4)
+                .map((viewer: any, index: number) => (
+                  <img
+                    key={`${viewer.uid}-${index}`}
+                    src={viewer.avatar || "/default-avatar.png"}
+                    className="viewing-avatar"
+                    title={`${viewer.fullName} đang xem`}
+                  />
+                ))}
             </div>
           </div>
         )}
