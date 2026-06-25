@@ -260,6 +260,7 @@ export default function GoalCartBootstrapGreen() {
           planId: cartEdit,
           childId: child.id,
           carts,
+          title
         });
 
         const index = plans.findIndex((item) => item.id === cartEdit);
@@ -267,6 +268,7 @@ export default function GoalCartBootstrapGreen() {
         if (index !== -1) {
           editPlan(cartEdit, {
             ...plans[index],
+            title,
             updateById: user.id,
             updateAt: Date.now(),
           });
