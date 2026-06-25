@@ -12,7 +12,11 @@ import {
   handleToastError,
   handleToastSuccess,
 } from "../../constants/handleToast";
-import { getCurrentMonth, getNextMonth, getPreviousMonth } from "../../constants/info";
+import {
+  getCurrentMonth,
+  getNextMonth,
+  getPreviousMonth,
+} from "../../constants/info";
 import { functions } from "../../firebase.config";
 import { PlanModel } from "../../models";
 import {
@@ -376,9 +380,9 @@ export default function GoalCartBootstrapGreen() {
                   className="form-select filter-select"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  disabled={cartEdit}
+                  // disabled={cartEdit}
                 >
-                  {cartEdit ? (
+                  {/* {cartEdit ? (
                     <option value={plan?.title}>{plan?.title}</option>
                   ) : (
                     <>
@@ -390,7 +394,12 @@ export default function GoalCartBootstrapGreen() {
                       </option>
                       <option value={getNextMonth()}>{getNextMonth()}</option>
                     </>
-                  )}
+                  )} */}
+                  <option value={getPreviousMonth()}>
+                    {getPreviousMonth()}
+                  </option>
+                  <option value={getCurrentMonth()}>{getCurrentMonth()}</option>
+                  <option value={getNextMonth()}>{getNextMonth()}</option>
                 </select>
               </div>
 
