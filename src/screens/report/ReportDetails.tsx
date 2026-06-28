@@ -580,7 +580,7 @@ export default function ReportDetailBootstrapGreen() {
 
           {isPending && isComment && (
             <div className="d-flex align-items-start justify-content-between comment-total">
-              <div className="plan-hero feedback-box flex-grow-1 comment-content me-2">
+              <div className="plan-hero feedback-box flex-grow-1 comment-content me-2 mb-3">
                 <Message color="#ef4444" size={26} variant="Bold" />
 
                 <div className="ms-2">
