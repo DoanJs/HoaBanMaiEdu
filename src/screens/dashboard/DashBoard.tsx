@@ -192,7 +192,7 @@ export default function DashboardBootstrapGreen() {
     });
   const { data: data_comments, loading: loading_comments } =
     useFirestoreWithMetaCondition({
-      key: "commentsCache",
+       key: `commentsCache_${user?.id}_${id}`,
       metaDoc: "comments",
       id: user?.id,
       nameCollect: "comments",
@@ -202,6 +202,8 @@ export default function DashboardBootstrapGreen() {
         orderBy("createAt", "desc"),
       ],
     });
+
+    console.log('data_comments: ', data_comments)
 
   useEffect(() => {
     if (!loading_comments) {

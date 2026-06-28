@@ -87,6 +87,11 @@ export default function PlanDetailBootstrapGreen() {
     // eslint-disable-next-line
   }, [plan]);
 
+  
+  console.log(comments)
+  console.log(plan)
+  console.log(comments.filter((cmt) => cmt._id === plan.id).reverse())
+
   // useEffect(() => {
   //   if (myComments) {
   //     if (myComments.length > 0) {
