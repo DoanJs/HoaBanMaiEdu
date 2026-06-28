@@ -54,7 +54,7 @@ export default function AdminBackupData() {
             onClick={() => setShowAlert(true)}
             disabled={isLoading}
           >
-            Backup tất cả data Quảng Xương Edu
+            Backup tất cả data HoaBanMaiEdu
           </button>
         </div>
       </div>
