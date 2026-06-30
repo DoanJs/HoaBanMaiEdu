@@ -271,10 +271,22 @@ body {
 
 .comment-table .goal-cell {
   width: 30%;
+  font-weight: 900;
+  color: var(--green-900);
 }
 
 .comment-table .content-cell {
   width: 55%;
+  font-weight: 900;
+  color: var(--green-900);
+}
+
+.comment-table tbody tr {
+  border-bottom: 1px solid rgb(198, 196, 196);
+}
+.comment-table tbody td {
+  border-bottom: none;
+   vertical-align: top;
 }
 /* ==================================================
    STATUS

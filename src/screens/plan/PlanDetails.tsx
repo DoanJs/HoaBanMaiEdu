@@ -61,7 +61,7 @@ export default function PlanDetailBootstrapGreen() {
 
   // const myComments = comments.filter(cmt => cmt._id === plan.id)?.reverse() || []
   const myComments = useMemo(() => {
-    return comments.filter((cmt) => cmt._id === plan.id).reverse();
+    return comments.filter((cmt) => cmt._id === plan.id)
   }, [comments, plan.id]);
 
   const teacherMap = useMemo(() => {
@@ -565,7 +565,7 @@ export default function PlanDetailBootstrapGreen() {
 
                 <tbody>
                   {myComments.length > 0 &&
-                    myComments.map((cmt, index) => {
+                    [...myComments].reverse().map((cmt, index) => {
                       return (
                         <tr key={`cmt-${cmt.id}-${index}`}>
                           <td>
